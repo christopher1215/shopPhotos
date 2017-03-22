@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11201" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Share Content Select Ctr-->
+        <scene sceneID="r3A-QP-3oc">
+            <objects>
+                <viewController storyboardIdentifier="ShareContentSelectCtr" id="fZM-94-sWY" customClass="ShareContentSelectCtr" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="eI4-Na-A0Y"/>
+                        <viewControllerLayoutGuide type="bottom" id="e3a-6g-bvD"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="FH7-0I-vtU">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2RP-te-PUw">
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Zel-OY-GAl">
+                                        <subviews>
+                                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="btn_back_black" translatesAutoresizingMaskIntoConstraints="NO" id="55e-eK-an8">
+                                                <frame key="frameInset" minX="5" minY="5" width="34" height="34"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            </imageView>
+                                        </subviews>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="44" id="5ky-LP-PTy"/>
+                                            <constraint firstAttribute="height" constant="44" id="oXV-au-T8u"/>
+                                        </constraints>
+                                    </view>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="传到朋友圈" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SqU-wJ-YeY">
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="200" id="7pP-DB-cgY"/>
+                                            <constraint firstAttribute="height" constant="43" id="Mi1-Zo-2iJ"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VLU-2z-u4w">
+                                        <color key="backgroundColor" red="0.93333333330000001" green="0.93333333330000001" blue="0.93333333330000001" alpha="1" colorSpace="calibratedRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="1" id="yw4-T3-dxd"/>
+                                        </constraints>
+                                    </view>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="use-Yz-Grg">
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="44" id="XAf-y8-Acx"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                        <state key="normal" title="取消">
+                                            <color key="titleColor" red="1" green="0.31372549019607843" blue="0.050980392156862744" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </state>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstItem="Zel-OY-GAl" firstAttribute="leading" secondItem="2RP-te-PUw" secondAttribute="leading" id="I0W-jm-7eN"/>
+                                    <constraint firstAttribute="bottom" secondItem="SqU-wJ-YeY" secondAttribute="bottom" id="JE7-j9-gHU"/>
+                                    <constraint firstItem="SqU-wJ-YeY" firstAttribute="centerX" secondItem="2RP-te-PUw" secondAttribute="centerX" id="N01-Gn-SPt"/>
+                                    <constraint firstAttribute="trailing" secondItem="use-Yz-Grg" secondAttribute="trailing" constant="10" id="ORg-El-0AL"/>
+                                    <constraint firstAttribute="trailing" secondItem="VLU-2z-u4w" secondAttribute="trailing" id="TtY-WW-iBa"/>
+                                    <constraint firstItem="VLU-2z-u4w" firstAttribute="leading" secondItem="2RP-te-PUw" secondAttribute="leading" id="V1g-UX-Tkg"/>
+                                    <constraint firstItem="VLU-2z-u4w" firstAttribute="top" secondItem="use-Yz-Grg" secondAttribute="bottom" id="a55-IS-MGi"/>
+                                    <constraint firstAttribute="bottom" secondItem="Zel-OY-GAl" secondAttribute="bottom" id="iBA-ze-EUp"/>
+                                    <constraint firstItem="use-Yz-Grg" firstAttribute="top" secondItem="2RP-te-PUw" secondAttribute="top" constant="20" id="iGD-f4-M2O"/>
+                                    <constraint firstAttribute="height" constant="64" id="vR6-vt-LeN"/>
+                                    <constraint firstAttribute="bottom" secondItem="VLU-2z-u4w" secondAttribute="bottom" id="wkk-k4-fZA"/>
+                                </constraints>
+                            </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vej-mg-6Wm">
+                                <color key="backgroundColor" red="1" green="0.31372549019607843" blue="0.050980392156862744" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="45" id="6Wr-ND-G6B"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <state key="normal" title="一键传图到朋友圈">
+                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="2RP-te-PUw" secondAttribute="trailing" id="2kD-ld-pPC"/>
+                            <constraint firstItem="2RP-te-PUw" firstAttribute="top" secondItem="FH7-0I-vtU" secondAttribute="top" id="Rop-4n-B0j"/>
+                            <constraint firstItem="vej-mg-6Wm" firstAttribute="leading" secondItem="FH7-0I-vtU" secondAttribute="leading" constant="10" id="Vw3-3I-Cjj"/>
+                            <constraint firstAttribute="trailing" secondItem="vej-mg-6Wm" secondAttribute="trailing" constant="10" id="Wov-0S-uEw"/>
+                            <constraint firstItem="e3a-6g-bvD" firstAttribute="top" secondItem="vej-mg-6Wm" secondAttribute="bottom" constant="10" id="qtI-JV-xdz"/>
+                            <constraint firstItem="2RP-te-PUw" firstAttribute="leading" secondItem="FH7-0I-vtU" secondAttribute="leading" id="xhc-Vb-2Bq"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="back" destination="Zel-OY-GAl" id="FTH-hx-tam"/>
+                        <outlet property="cancel" destination="use-Yz-Grg" id="OpP-RD-K5D"/>
+                        <outlet property="pageTitle" destination="SqU-wJ-YeY" id="l5l-Hm-6rY"/>
+                        <outlet property="sure" destination="vej-mg-6Wm" id="24O-jS-klQ"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="WrV-Dg-e6L" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-294" y="137"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="btn_back_black" width="50" height="50"/>
+    </resources>
+</document>
