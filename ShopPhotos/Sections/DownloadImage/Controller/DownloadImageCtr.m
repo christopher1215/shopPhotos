@@ -40,6 +40,7 @@
 - (void)createAutoLayout{
     
     self.imageArray = [NSMutableArray array];
+    
     [self.back addTarget:self action:@selector(backSelected)];
     [self.cancle addTarget:self action:@selector(cancelSelcted)];
     [self.sure addTarget:self action:@selector(sureSelected)];

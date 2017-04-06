@@ -230,24 +230,24 @@
 - (void)regSelected{
     
     if(self.phone.enter.text.length == 0){
-        ShowAlert(@"请输入手机号码");
+        SPAlert(@"请输入手机号码",self);
         return;
     }
     if(self.phoneCode.enter.text.length == 0){
-        ShowAlert(@"请输入手机验证码");
+        SPAlert(@"请输入手机验证码",self);
         return;
     }
     
     if(self.password.enter.text.length == 0){
-        ShowAlert(@"请输入密码");
+        SPAlert(@"请输入密码",self);
         return;
     }
     if(![self.password.enter.text isEqualToString:self.againPassword.enter.text]){
-        ShowAlert(@"两次密码输入不一致");
+        SPAlert(@"两次密码输入不一致",self);
         return;
     }
     if(self.email.enter.text.length == 0){
-        ShowAlert(@"请输入邮箱");
+        SPAlert(@"请输入邮箱",self);
         return;
     }
     
@@ -261,11 +261,11 @@
 - (void)uSureSlected{
 
     if(self.uAccount.enter.text.length == 0){
-        ShowAlert(@"请输入账号");
+        SPAlert(@"请输入账号",self);
         return;
     }
     if(self.uPassword.enter.text.length == 0){
-        ShowAlert(@"请输入密码");
+        SPAlert(@"请输入密码",self);
         return;
     }
     

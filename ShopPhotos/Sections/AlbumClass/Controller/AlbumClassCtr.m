@@ -190,7 +190,7 @@
 - (void)editClassName:(NSString *)name{
     
     if(!name || name.length == 0){
-        ShowAlert(@"请输入分类名");
+        SPAlert(@"请输入分类名",self);
         return;
     }
     

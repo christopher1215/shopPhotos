@@ -185,7 +185,7 @@
 - (void)setCount:(NSInteger)count{
     if(count > self.maxIndex){
         NSString * msg = [NSString stringWithFormat:@"最大选择%ld张",self.maxIndex];
-        ShowAlert(msg);
+        SPAlert(msg,self);
         return;
     }
     [self.optionTitle setText:[NSString stringWithFormat:@"%ld/%ld",count,self.maxIndex]];

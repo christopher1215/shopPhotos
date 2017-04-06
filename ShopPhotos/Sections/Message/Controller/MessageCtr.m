@@ -15,7 +15,7 @@
 #import "MessageMinCell.h"
 
 @interface MessageCtr ()<UITableViewDelegate,UITableViewDataSource,MessageEditOptionDelegate>
-@property (weak, nonatomic) IBOutlet UIView *back;
+@property (weak, nonatomic) IBOutlet UIButton *back;
 @property (weak, nonatomic) IBOutlet UIView *systemView;
 @property (weak, nonatomic) IBOutlet UILabel *systemText;
 @property (weak, nonatomic) IBOutlet UIView *systemLine;
@@ -29,6 +29,10 @@
 @property (assign, nonatomic) NSInteger pageIndex;
 @property (assign, nonatomic) NSInteger type;
 @property (strong, nonatomic) UITableView * tableMin;
+@property (weak, nonatomic) IBOutlet UIButton *btn_add;
+@property (weak, nonatomic) IBOutlet UIButton *btn_search;
+@property (weak, nonatomic) IBOutlet UILabel *backText;
+
 
 @end
 
@@ -57,6 +61,9 @@
 }
 
 - (void)setup{
+    
+    self.backText.text = @"";
+    [self.back setTitle:self.str_from forState:UIControlStateNormal];
     
     [self.back addTarget:self action:@selector(backSelected)];
     [self.systemView addTarget:self action:@selector(systemSelected)];
@@ -124,11 +131,14 @@
     
     [self.table setHidden:NO];
     [self.tableMin setHidden:YES];
-    [self.systemText setTextColor:ThemeColor];
+    [self.systemText setTextColor:IndigoColor];
     [self.systemLine setHidden:NO];
     
+    [self.btn_search setHidden:NO];
+    [self.btn_add setHidden:NO];
+    
     [self.mineLine setHidden:YES];
-    [self.mineText setTextColor:[UIColor blackColor]];
+    [self.mineText setTextColor:[UIColor grayColor]];
     self.type = 1;
     if(self.systemArray.count == 0){
         [self.table.mj_header beginRefreshing];
@@ -142,11 +152,14 @@
     [self.table setHidden:YES];
     [self.tableMin setHidden:NO];
     
-    [self.mineText setTextColor:ThemeColor];
+    [self.btn_search setHidden:YES];
+    [self.btn_add setHidden:YES];
+    
+    [self.mineText setTextColor:IndigoColor];
     [self.mineLine setHidden:NO];
     
     [self.systemLine setHidden:YES];
-    [self.systemText setTextColor:[UIColor blackColor]];
+    [self.systemText setTextColor:[UIColor grayColor]];
     self.type = 2;
     if(self.requsetArray.count == 0){
         [self.tableMin.mj_header beginRefreshing];
@@ -318,7 +331,8 @@
         
         }
         if(selectCount == 0) {
-            ShowAlert(@"当前未选中哦！");
+//            ShowAlert(@"当前未选中哦！");
+            SPAlert(@"当前未选中哦！",self);
             return;
         }
         NSDictionary * data = @{@"notice_ids":deleteID};
@@ -387,7 +401,8 @@
             }
            weakSelef.pageIndex++;
         }else{
-            [weakSelef showToast:requset.message];
+            [self.backText setText:requset.message];
+//            [weakSelef showToast:requset.message];
         }
         
         NSLog(@"%@",responseObject);

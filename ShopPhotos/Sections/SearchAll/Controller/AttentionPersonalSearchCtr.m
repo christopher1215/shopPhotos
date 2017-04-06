@@ -77,7 +77,7 @@
 - (void)searchSelected{
     [self.searchText resignFirstResponder];
     if(!self.searchText.text ||self.searchText.text.length == 0){
-        ShowAlert(@"请输入搜索关键字");
+        SPAlert(@"请输入搜索关键字",self);
         return;
     }
     

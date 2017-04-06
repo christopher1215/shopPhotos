@@ -12,7 +12,7 @@
 
 
 
-
+@property (strong, nonatomic) NSString *str_from;
 
 
 @end

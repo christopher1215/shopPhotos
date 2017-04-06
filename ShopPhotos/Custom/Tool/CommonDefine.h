@@ -7,6 +7,9 @@
 //
 
 // 打印日志
+
+#include "SPAlertCtrl.h"
+
 #ifdef DEBUG
 
 #define Log(...) NSLog(@"%s 第%d行 \n %@ \n",__func__,__LINE__,[NSString stringWithFormat:__VA_ARGS__])
@@ -31,6 +34,8 @@
 // 接口
 #define UOOTUURL @"https://m.uootu.com/get/app/index/initial/data/center/android"
 // 主题颜色
+#define IndigoColor [UIColor colorWithRed:0x3f/0xff green:0x92/0xff blue:0xfe/0xff alpha:1.0]
+
 #define ThemeColor [UIColor colorWithRed:1 green:84/255.0 blue:0/255.0 alpha:1.0]
 // 一级色
 #define ONECALLSCOLOR [UIColor colorWithRed:51/255.0 green:51/255.0 blue:51/255.0 alpha:1.0]
@@ -58,7 +63,9 @@
 // 字体加粗
 #define FontBold(size) [UIFont fontWithName:@"Helvetica-Bold" size:size]
 // 显示普通提示AlertView
-#define ShowAlert(msg) [[[UIAlertView alloc]initWithTitle:nil message:msg delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil] show]
+//#define ShowAlert(msg) [[[UIAlertView alloc]initWithTitle:nil message:msg delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil] show]
+
+#define SPAlert(msg, ctrl) [[SPAlertCtrl alloc]initWithTitle:nil message:msg cancelButtonTitle:@"确定" otherButtonTitles:nil controller:ctrl]
 // 获取Storyboard 上页面
 #define GETSTORYBOARD_MAIN_PAGE(identifier) [[UIStoryboard storyboardWithName:@"Platform" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:identifier]
 

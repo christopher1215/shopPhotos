@@ -19,9 +19,10 @@
 #import "PersonalHomeCtr.h"
 
 @interface CollectionPhotoCtr ()<MoreAlertDelegate,PhotosEditViewDelegate,CollectionTableViewDelegate>
-@property (weak, nonatomic) IBOutlet UIView *back;
-@property (weak, nonatomic) IBOutlet UIView *more;
-@property (weak, nonatomic) IBOutlet UIView *search;
+@property (weak, nonatomic) IBOutlet UIButton *back;
+//@property (weak, nonatomic) IBOutlet UIView *more;
+@property (weak, nonatomic) IBOutlet UIButton *search;
+@property (weak, nonatomic) IBOutlet UIButton *edit;
 @property (strong, nonatomic) CollectionTableView * table;
 @property (strong, nonatomic) MoreAlert * moreAlert;
 @property (strong, nonatomic) NSMutableArray * dataArray;
@@ -52,8 +53,10 @@
 
 - (void)setup{
     
+    [self.back setTitle:self.str_from forState:UIControlStateNormal];
+
     [self.back addTarget:self action:@selector(backSelected)];
-    [self.more addTarget:self action:@selector(moreSelected)];
+    [self.edit addTarget:self action:@selector(editSelected)];
     [self.search addTarget:self action:@selector(searchSelected)];
 }
 
@@ -141,9 +144,18 @@
     [self.table.table setContentOffset:CGPointMake(0, 0) animated:YES];
 }
 
-- (void)moreSelected{
+- (void)editSelected{
     
-    [self.moreAlert showAlert];
+    for(AlbumPhotosMdel * model in self.dataArray){
+        model.openEdit = YES;
+    }
+    [self.table loadData:self.dataArray];
+    [self.editHead setHidden:NO];
+    [self.editOption setHidden:NO];
+    self.table.sd_layout.bottomSpaceToView(self.view,64);
+    [self.table updateLayout];
+
+//    [self.moreAlert showAlert];
 }
 
 - (void)searchSelected{
@@ -171,7 +183,7 @@
     }
     
     if(editArray.count == 0){
-        ShowAlert(@"当前未选中哦！");
+        SPAlert(@"当前未选中哦！",self);
         return;
     }
     // 删除

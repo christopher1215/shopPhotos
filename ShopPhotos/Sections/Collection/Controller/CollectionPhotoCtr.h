@@ -10,4 +10,5 @@
 
 @interface CollectionPhotoCtr : BaseViewCtr
 @property (strong, nonatomic) NSString * uid;
+@property (strong, nonatomic) NSString *str_from;
 @end

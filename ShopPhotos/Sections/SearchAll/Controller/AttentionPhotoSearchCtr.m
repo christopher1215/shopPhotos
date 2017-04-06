@@ -84,7 +84,7 @@
 - (void)searchSelected{
     [self.searchText resignFirstResponder];
     if(!self.searchText.text ||self.searchText.text.length == 0){
-        ShowAlert(@"请输入搜索关键字");
+        SPAlert(@"请输入搜索关键字",self);
         return;
     }
     
@@ -97,7 +97,7 @@
 - (void)imageSearchSelected{
     
     if (![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]) {
-        ShowAlert(@"请允许相册访问");
+        SPAlert(@"请允许相册访问",self);
         return;
     }
     TZImagePickerController *imagePickerVc = [[TZImagePickerController alloc] initWithMaxImagesCount:9 delegate:self];

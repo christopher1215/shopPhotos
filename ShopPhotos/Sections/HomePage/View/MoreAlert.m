@@ -32,16 +32,18 @@
     
     
     self.alert = [[UIView alloc] init];
-    [self.alert setBackgroundColor:ColorHex(0X26252a)];
+//    [self.alert setBackgroundColor:ColorHex(0X26252a)];
+    [self.alert setBackgroundColor:ColorHexA(0Xffffff,0.7)];
     [self.alert addTarget:self action:nil];
     [self addSubview:self.alert];
     
     
     NSArray * titleArray;
     if(mode == OptionModel){
-        titleArray = @[@"上传相册",@"扫一扫",@"添加用户"];
+//        titleArray = @[@"上传相册",@"扫一扫",@"添加用户"];
+        titleArray = @[@"上传相册",@"添加用户"];
         self.alertWidth = 120;
-        self.alertHeight = 130;
+        self.alertHeight = 90;
         
     }else if(mode == PhotosModel){
         titleArray = @[@"编辑",@"上传相册"];
@@ -67,7 +69,7 @@
         [button setBackgroundColor:[UIColor clearColor]];
         [button setTitle:[titleArray objectAtIndex:index] forState:UIControlStateNormal];
         [button.titleLabel setFont:[UIFont systemFontOfSize:15]];
-        [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         button.tag = index;
         [button addTarget:self action:@selector(itemSelected:) forControlEvents:UIControlEventTouchUpInside];
         [self.alert addSubview:button];
@@ -79,7 +81,7 @@
         .heightIs(39.5);
         if(index != titleArray.count - 1){
             UIView * line = [[UIView alloc] init];
-            [line setBackgroundColor:[UIColor whiteColor]];
+            [line setBackgroundColor:[UIColor blackColor]];
             [self.alert addSubview:line];
             
             line.sd_layout

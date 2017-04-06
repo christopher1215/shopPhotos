@@ -192,7 +192,9 @@
 		484592771E27706500BC29D8 /* UserInfoDrawerCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 484591C01E27706500BC29D8 /* UserInfoDrawerCell.m */; };
 		48B48D571E2B687300F26756 /* StringCheck.m in Sources */ = {isa = PBXBuildFile; fileRef = 48B48D561E2B687300F26756 /* StringCheck.m */; };
 		48B48D9C1E2E492A00F26756 /* PostImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 48B48D9B1E2E492A00F26756 /* PostImage.m */; };
+		8D2F7F9D1E963C7700A5E232 /* DetailMessageCtr.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D2F7F9C1E963C7700A5E232 /* DetailMessageCtr.m */; };
 		8D7105DC1E82730A00AA632E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8D7105DB1E82730A00AA632E /* Assets.xcassets */; };
+		8DDF4E261E8FCC8E0096295D /* SPAlertCtrl.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDF4E251E8FCC8E0096295D /* SPAlertCtrl.m */; };
 		BD7755691E1F3AD10065C9E8 /* uootu.com.cer in Resources */ = {isa = PBXBuildFile; fileRef = BD7755681E1F38200065C9E8 /* uootu.com.cer */; };
 		BDE21A641E06152700F9EF03 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BDE21A631E06152700F9EF03 /* main.m */; };
 		BDE21A6D1E06152700F9EF03 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BDE21A6B1E06152700F9EF03 /* Main.storyboard */; };
@@ -554,7 +556,11 @@
 		48B48D9A1E2E492900F26756 /* PostImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PostImage.h; sourceTree = "<group>"; };
 		48B48D9B1E2E492A00F26756 /* PostImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PostImage.m; sourceTree = "<group>"; };
 		67C6F696B5EC90BABF3D1D6B /* Pods-ShopPhotos.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ShopPhotos.release.xcconfig"; path = "Pods/Target Support Files/Pods-ShopPhotos/Pods-ShopPhotos.release.xcconfig"; sourceTree = "<group>"; };
+		8D2F7F9C1E963C7700A5E232 /* DetailMessageCtr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailMessageCtr.m; sourceTree = "<group>"; };
+		8D2F7F9E1E963C8700A5E232 /* DetailMessageCtr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetailMessageCtr.h; sourceTree = "<group>"; };
 		8D7105DB1E82730A00AA632E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		8DDF4E241E8F59FC0096295D /* SPAlertCtrl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPAlertCtrl.h; sourceTree = "<group>"; };
+		8DDF4E251E8FCC8E0096295D /* SPAlertCtrl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPAlertCtrl.m; sourceTree = "<group>"; };
 		A1498C40836CCFD640AEB0BF /* libPods-ShopPhotos.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ShopPhotos.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BD52227B1E0BD010009E31AA /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
 		BD7755681E1F38200065C9E8 /* uootu.com.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = uootu.com.cer; sourceTree = "<group>"; };
@@ -751,6 +757,8 @@
 				484590281E27706400BC29D8 /* RequestErrorGrab.m */,
 				48B48D551E2B687300F26756 /* StringCheck.h */,
 				48B48D561E2B687300F26756 /* StringCheck.m */,
+				8DDF4E241E8F59FC0096295D /* SPAlertCtrl.h */,
+				8DDF4E251E8FCC8E0096295D /* SPAlertCtrl.m */,
 			);
 			path = Tool;
 			sourceTree = "<group>";
@@ -1353,6 +1361,8 @@
 				484590E81E27706500BC29D8 /* MessageCtr.h */,
 				484590E91E27706500BC29D8 /* MessageCtr.m */,
 				484590EA1E27706500BC29D8 /* MessageCtr.storyboard */,
+				8D2F7F9C1E963C7700A5E232 /* DetailMessageCtr.m */,
+				8D2F7F9E1E963C8700A5E232 /* DetailMessageCtr.h */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -2261,7 +2271,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		E53F18AFFD7BD3102CC9D675 /* [CP] Embed Pods Frameworks */ = {
@@ -2341,6 +2351,7 @@
 				484591C91E27706500BC29D8 /* FastCoder.m in Sources */,
 				484592561E27706500BC29D8 /* SearchAllCtr.m in Sources */,
 				4845923F1E27706500BC29D8 /* ScanBorderView.m in Sources */,
+				8D2F7F9D1E963C7700A5E232 /* DetailMessageCtr.m in Sources */,
 				4845921C1E27706500BC29D8 /* ChatLoginRequset.m in Sources */,
 				484591CF1E27706500BC29D8 /* PhotosController.m in Sources */,
 				484592311E27706500BC29D8 /* PhotoDetailsFooter.m in Sources */,
@@ -2392,6 +2403,7 @@
 				4845923B1E27706500BC29D8 /* PulishClassSelectAlert.m in Sources */,
 				484591E61E27706500BC29D8 /* AlbumClassTabelCtr.m in Sources */,
 				484591F41E27706500BC29D8 /* BaseViewCtr.m in Sources */,
+				8DDF4E261E8FCC8E0096295D /* SPAlertCtrl.m in Sources */,
 				484592461E27706500BC29D8 /* RegisteredCtr.m in Sources */,
 				4845924C1E27706500BC29D8 /* AttentionPersonalSearchCtr.m in Sources */,
 				4845920C1E27706500BC29D8 /* DynamicQRAlert.m in Sources */,

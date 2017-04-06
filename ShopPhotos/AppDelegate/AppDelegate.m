@@ -51,18 +51,18 @@
 - (void)updateTokenUse{
     
     CongfingURL * congfing = [self getValueWithKey:ShopPhotosApi];
-    
-    [HTTPRequest requestPOSTUrl:congfing.updateToken parametric:nil succed:^(id responseObject){
-        NSLog(@"%@",responseObject);
-        NSDictionary * data = [RequestErrorGrab getDicwitKey:@"data" toTarget:responseObject];
-        if(data && data.count){
-            NSString * token = [RequestErrorGrab getStringwitKey:@"token" toTarget:data];
-            [self setValue:token WithKey:ShopPhotosToken];
-        }
-        
-    } failure:^(NSError * error){
-    }];
-    
+    if (congfing != nil) {
+        [HTTPRequest requestPOSTUrl:congfing.updateToken parametric:nil succed:^(id responseObject){
+            NSLog(@"%@",responseObject);
+            NSDictionary * data = [RequestErrorGrab getDicwitKey:@"data" toTarget:responseObject];
+            if(data && data.count){
+                NSString * token = [RequestErrorGrab getStringwitKey:@"token" toTarget:data];
+                [self setValue:token WithKey:ShopPhotosToken];
+            }
+            
+        } failure:^(NSError * error){
+        }];
+    }
     NSLog(@"123");
 }
 

@@ -16,9 +16,7 @@
     if (self) {
         
         UILabel * title = [[UILabel alloc] init];
-        [title setBackgroundColor:ColorHex(0Xeeeeee)];
-        [title setText:@"OR"];
-        title.cornerRadius = 15;
+        [title setText:@"第三方登录"];
         [title setTextColor:ColorHex(0X888888)];
         [title setTextAlignment:NSTextAlignmentCenter];
         [self addSubview:title];
@@ -32,20 +30,20 @@
         [self addSubview:rightView];
         
         title.sd_layout
-        .leftSpaceToView(self,(frame.size.width-30)/2)
+        .leftSpaceToView(self,(frame.size.width-95)/2)
         .topEqualToView(self)
-        .widthIs(30)
+        .widthIs(95)
         .heightIs(30);
         
         leftView.sd_layout
         .leftEqualToView(self)
-        .rightSpaceToView(title,5)
+        .rightSpaceToView(title,-5)
         .topSpaceToView(self,(frame.size.height-1)/2)
         .heightIs(1);
         
         
         rightView.sd_layout
-        .rightSpaceToView(self,0)
+        .rightEqualToView(self)
         .leftSpaceToView(title,5)
         .topSpaceToView(self,(frame.size.height-1)/2)
         .heightIs(1);
@@ -82,8 +80,8 @@
         
         
         
-        [leftView.layer addSublayer:[self shadowAsInverse:CGRectMake(0, 0,(WindowWidth-60-30-10)/2, 1) winth:NO]];
-        [rightView.layer addSublayer:[self shadowAsInverse:CGRectMake(0, 0, (WindowWidth-60-30-10)/2, 1) winth:YES]];
+        [leftView.layer addSublayer:[self shadowAsInverse:CGRectMake(0, 0,(WindowWidth-60-95-10)/2, 1) winth:NO]];
+        [rightView.layer addSublayer:[self shadowAsInverse:CGRectMake(0, 0, (WindowWidth-60-95-10)/2, 1) winth:YES]];
     }
     return self;
 }

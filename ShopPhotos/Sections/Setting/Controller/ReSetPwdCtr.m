@@ -56,17 +56,19 @@
     
     
     if(!self.jPwd.text || self.jPwd.text.length == 0){
-        ShowAlert(@"请输入旧密码");
+//        ShowAlert(@"请输入旧密码");
+        SPAlert(@"请输入旧密码",self);
         return;
     }
     
     if(!self.nPwd.text || self.nPwd.text.length == 0){
-        ShowAlert(@"请输入新密码");
+//        ShowAlert(@"请输入新密码");
+        SPAlert(@"请输入新密码",self);
         return;
     }
     
     if(![self.nPwd.text isEqualToString:self.anPwd.text]){
-        ShowAlert(@"两次密码输入不一致");
+        SPAlert(@"两次密码输入不一致",self);
         return;
     }
     
@@ -95,7 +97,7 @@
             [weakSelef showToast:@"修改成功"];
             [weakSelef.navigationController popViewControllerAnimated:YES];
         }else{
-            ShowAlert(model.message);
+            SPAlert(model.message,self);
             //[weakSelef showToast:model.message];
         }
     } failure:^(NSError *error){

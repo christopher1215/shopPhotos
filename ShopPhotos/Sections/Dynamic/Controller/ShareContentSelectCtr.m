@@ -92,7 +92,7 @@
     
     
     if(self.imageArray.count == 0){
-        ShowAlert(@"请选择图片");
+        SPAlert(@"请选择图片",self);
         return;
     }
     

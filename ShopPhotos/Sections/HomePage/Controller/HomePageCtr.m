@@ -26,32 +26,36 @@
 #import "CollectionPhotoCtr.h"
 #import "PersonalHomeCtr.h"
 #import "PublishPhotosCtr.h"
+#import "DynamicCtr.h"
 
 @interface HomePageCtr ()<MoreAlertDelegate,AddFriendAlertDelegate>
+@property (weak, nonatomic) IBOutlet UIView *mainView;
 @property (weak, nonatomic) IBOutlet UIImageView *headImage;
 @property (weak, nonatomic) IBOutlet UITableView *table;
 @property (weak, nonatomic) IBOutlet UIImageView *head;
 @property (weak, nonatomic) IBOutlet UIView *search;
-@property (weak, nonatomic) IBOutlet UIView *more;
-@property (weak, nonatomic) IBOutlet UILabel *keep;
-@property (weak, nonatomic) IBOutlet UILabel *message;
+@property (weak, nonatomic) IBOutlet UIButton *more;
+@property (weak, nonatomic) IBOutlet UIButton *keep;
+@property (weak, nonatomic) IBOutlet UIButton *message;
 @property (weak, nonatomic) IBOutlet UIImageView *icon;
 @property (weak, nonatomic) IBOutlet UILabel *name;
-@property (weak, nonatomic) IBOutlet UIView *uidView;
+@property (weak, nonatomic) IBOutlet UIButton *uidView;
 @property (weak, nonatomic) IBOutlet UILabel *uidText;
-@property (weak, nonatomic) IBOutlet UIView *qqView;
+@property (weak, nonatomic) IBOutlet UIButton *qqView;
 @property (weak, nonatomic) IBOutlet UILabel *qqText;
-@property (weak, nonatomic) IBOutlet UIView *chatView;
-@property (weak, nonatomic) IBOutlet UILabel *chatText;
+@property (weak, nonatomic) IBOutlet UIButton *chatView;
+//@property (weak, nonatomic) IBOutlet UILabel *chatText;
 @property (weak, nonatomic) IBOutlet UILabel *signature;
-@property (weak, nonatomic) IBOutlet UIView *recommend;
-@property (weak, nonatomic) IBOutlet UIView *album;
-@property (weak, nonatomic) IBOutlet UIView *albumClass;
-@property (weak, nonatomic) IBOutlet UIView *setting;
+@property (weak, nonatomic) IBOutlet UIButton *recommend;
+@property (weak, nonatomic) IBOutlet UIButton *album;
+@property (weak, nonatomic) IBOutlet UIButton *albumClass;
+@property (weak, nonatomic) IBOutlet UIButton *dynamic;
+@property (weak, nonatomic) IBOutlet UIButton *setting;
 @property (strong, nonatomic) NSDictionary * settingConfig;
 @property (strong, nonatomic) NSString * iconURL;
 @property (strong, nonatomic) MoreAlert * moreAlert;
 @property (strong, nonatomic) AddFriendAlert * addAlert;
+@property (weak, nonatomic) IBOutlet UIButton *scan;
 
 @end
 
@@ -70,8 +74,10 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+
+    self.mainView.height = WindowHeight - 60;
+    self.mainView.backgroundColor = [UIColor clearColor];
     [self setup];
-    
 }
 
 - (void)setup{
@@ -81,15 +87,21 @@
     self.chatView.cornerRadius = 12;
     self.more.layer.cornerRadius = 19;
     [self.more addTarget:self action:@selector(moreSelected)];
-    self.search.layer.cornerRadius = 19;
+    self.search.layer.cornerRadius = 5;
     [self.search addTarget:self action:@selector(searchSelected)];
     [self.keep addTarget:self action:@selector(keepSelected)];
     [self.message addTarget:self action:@selector(messageSelected)];
+    self.headImage.layer.borderColor = [UIColor.whiteColor CGColor];
+    self.headImage.layer.borderWidth = 3;
+    self.headImage.layer.cornerRadius = self.headImage.width/2;
+    self.headImage.layer.masksToBounds = YES;
     [self.headImage addTarget:self action:@selector(iconSelected)];
     [self.recommend addTarget:self action:@selector(recommendSelected)];
     [self.album addTarget:self action:@selector(albumSelected)];
     [self.albumClass addTarget:self action:@selector(albumClassSelected)];
     [self.setting addTarget:self action:@selector(settingSelected)];
+    [self.dynamic addTarget:self action:@selector(dynamicSelected)];
+    [self.scan addTarget:self action:@selector(qrScanSelected)];
     
     UIBlurEffect *blur = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
     UIVisualEffectView *effectview = [[UIVisualEffectView alloc] initWithEffect:blur];
@@ -135,12 +147,18 @@
 - (void)keepSelected{
     CollectionPhotoCtr * collecttion = GETALONESTORYBOARDPAGE(@"CollectionPhotoCtr");
     collecttion.uid = self.photosUserID;
+    collecttion.str_from = @"首页";
     [self.navigationController pushViewController:collecttion animated:YES];
     
 }
 
+-(void) qrScanSelected{
+    [self moreAlertSelected:1];
+}
+
 - (void)messageSelected{
     MessageCtr * message = GETALONESTORYBOARDPAGE(@"MessageCtr");
+    message.str_from = @"首页";
     [self.navigationController pushViewController:message animated:YES];
 }
 
@@ -181,6 +199,12 @@
     SettingCtr * setting = GETALONESTORYBOARDPAGE(@"SettingCtr");
     setting.uid = self.photosUserID;
     [self.navigationController pushViewController:setting animated:YES];
+}
+
+- (void)dynamicSelected{
+    DynamicCtr * dynamic = GETALONESTORYBOARDPAGE(@"DynamicCtr");
+//    dynamic.uid = self.photosUserID;
+    [self.navigationController pushViewController:dynamic animated:YES];
 }
 
 #pragma mark - MoreAlertDelegate
@@ -294,8 +318,8 @@
         chatIocn.bounds = CGRectMake(0, -3, 15, 13);
         NSAttributedString *chatIocnStr = [NSAttributedString attributedStringWithAttachment:chatIocn];
         [chatText insertAttributedString:chatIocnStr atIndex:0];
-        [self.chatText setAttributedText:chatText];
-        [self.chatText setTextAlignment:NSTextAlignmentCenter];
+//        [self.chatText setAttributedText:chatText];
+//        [self.chatText setTextAlignment:NSTextAlignmentCenter];
     }else{
         NSMutableAttributedString * chatText = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@""]];
         NSTextAttachment * chatIocn = [[NSTextAttachment alloc] init];
@@ -303,8 +327,8 @@
         chatIocn.bounds = CGRectMake(5, -3, 15, 13);
         NSAttributedString *chatIocnStr = [NSAttributedString attributedStringWithAttachment:chatIocn];
         [chatText insertAttributedString:chatIocnStr atIndex:0];
-        [self.chatText setAttributedText:chatText];
-        [self.chatText setTextAlignment:NSTextAlignmentLeft];
+//        [self.chatText setAttributedText:chatText];
+//        [self.chatText setTextAlignment:NSTextAlignmentLeft];
     }
     
     NSString * sign = @"";
@@ -345,14 +369,14 @@
 }
 
 - (void)loadNetworkCount{
-    __weak __typeof(self)weakSelef = self;
+//    __weak __typeof(self)weakSelef = self;
     [HTTPRequest requestPOSTUrl:self.congfing.getCount parametric:nil succed:^(id responseObject){
         NSLog(@"2  %@",responseObject);
         HomePageCountModel * model = [[HomePageCountModel alloc] init];
         [model analyticInterface:responseObject];
         if(model.status == 0){
-            [weakSelef.keep setText:[NSString stringWithFormat:@"%@\n收藏",model.collectsCount]];
-            [weakSelef.message setText:[NSString stringWithFormat:@"%@\n消息",model.noticesCount]];
+//            [weakSelef.keep setText:[NSString stringWithFormat:@"%@\n收藏",model.collectsCount]];
+//            [weakSelef.message setText:[NSString stringWithFormat:@"%@\n消息",model.noticesCount]];
         }
     } failure:nil];
 }

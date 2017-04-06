@@ -580,7 +580,7 @@
     if([UIImagePNGRepresentation(imageViews.image) isEqual:UIImagePNGRepresentation([UIImage imageNamed:@"addgray"])]){
         
         if (![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]) {
-            ShowAlert(@"请允许相册访问");
+            SPAlert(@"请允许相册访问",self);
             return;
         }
         
@@ -687,25 +687,25 @@
     }
     // 上传发布相册
     if(images.count == 0){
-        ShowAlert(@"请选择图片");
+        SPAlert(@"请选择图片",self);
         return;
     }
     
     if(self.fatherClassSelectIndex == 0){
         
         if(self.faherEnter.text.length == 0){
-            ShowAlert(@"请输入主分类");
+            SPAlert(@"请输入主分类",self);
             return;
         }
         if(self.subEnter.text.length == 0){
-            ShowAlert(@"请输入子分类");
+            SPAlert(@"请输入子分类",self);
             return;
         }
     }else{
         
         if(self.subClassSelectIndex == 0){
             if(self.subClsssEnter.text.length == 0){
-                ShowAlert(@"请输入子分类");
+                SPAlert(@"请输入子分类",self);
                 return;
             }
         }

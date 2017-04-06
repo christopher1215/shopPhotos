@@ -28,7 +28,6 @@
     return self;
 }
 
-
 - (void)createAutoLayout:(TabBarModel *)model{
     
     _model = model;
@@ -42,7 +41,7 @@
     self.text = [[UILabel alloc] init];
     [self.text setTextAlignment:NSTextAlignmentCenter];
     [self.text setText:model.text];
-    [self.text setTextColor:[UIColor redColor]];
+    [self.text setTextColor:[UIColor darkGrayColor]];
     [self.text setFont:Font(11)];
     [self addSubview:self.text];
     
@@ -64,14 +63,14 @@
 - (void)setStyleSelected{
     
     [self.icon setImage:[UIImage imageNamed:self.model.selectedImage]];
-    [self.text setTextColor:ThemeColor];
+//    [self.text setTextColor:ThemeColor];
     
 }
 
 - (void)setStyleDefault{
 
     [self.icon setImage:[UIImage imageNamed:self.model.defaultImage]];
-    [self.text setTextColor:ColorHex(0X4d4d4d)];
+//    [self.text setTextColor:ColorHex(0X4d4d4d)];
     
 }
 @end

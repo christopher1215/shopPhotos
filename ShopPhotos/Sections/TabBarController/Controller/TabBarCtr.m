@@ -52,7 +52,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    self.tabBar.backgroundColor = [UIColor clearColor];
     [self createPage];
 }
 
@@ -74,7 +74,7 @@
     .leftEqualToView(self.view)
     .rightEqualToView(self.view)
     .bottomEqualToView(self.view)
-    .heightIs(65);
+    .heightIs(60);
 }
 
 #pragma mark - TabBarViewDelegate

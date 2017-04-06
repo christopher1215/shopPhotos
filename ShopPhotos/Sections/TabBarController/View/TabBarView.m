@@ -24,10 +24,6 @@
     if (self) {
         
         [self createAutoLayout];
-        self.layer.shadowColor = [UIColor blackColor].CGColor;
-        self.layer.shadowOffset = CGSizeMake(0,1);
-        self.layer.shadowOpacity = 0.4;
-        self.layer.shadowRadius = 3;
     }
     return self;
 }
@@ -42,9 +38,9 @@
     model1.text = @"主页";
     
     TabBarModel * model2 = [[TabBarModel alloc] init];
-    model2.defaultImage = @"ico_feed_default";
-    model2.selectedImage = @"ico_feed_selected";
-    model2.text = @"动态";
+    model2.defaultImage = @"ico_discovery_default";
+    model2.selectedImage = @"ico_discovery_selected";
+    model2.text = @"发现";
     
     TabBarModel * model3 = [[TabBarModel alloc] init];
     //model3.imageName = @"";
@@ -53,7 +49,7 @@
     TabBarModel * model4 = [[TabBarModel alloc] init];
     model4.defaultImage = @"ico_follow_default";
     model4.selectedImage = @"ico_follow_selected";
-    model4.text = @"关注";
+    model4.text = @"联系人";
     
     TabBarModel * model5 = [[TabBarModel alloc] init];
     model5.defaultImage = @"ico_mine_default";
@@ -65,17 +61,16 @@
     
     for(NSInteger index = 0; index < tabbarArray.count; index++){
         if(index == 2){
-            
             UIImageView * item = [[UIImageView alloc] init];
             [item setImage:[UIImage imageNamed:@"btn_publish"]];
             [item addTarget:self action:@selector(tabbarItemSelect:)];
             [self addSubview:item];
             item.tag = index;
             item.sd_layout
-            .leftSpaceToView(self,width*index)
+            .leftSpaceToView(self,width*index+8)
             .topEqualToView(self)
             .bottomEqualToView(self)
-            .widthIs(width);
+            .widthIs(width-16);
             
         }else{
             TabBarItem * item = [[TabBarItem alloc] initWithModel:[tabbarArray objectAtIndex:index]];
@@ -84,6 +79,7 @@
             item.tag = index;
             item.sd_layout
             .leftSpaceToView(self,width*index)
+            .topSpaceToView(self, 10)
             .topEqualToView(self)
             .bottomEqualToView(self)
             .widthIs(width);

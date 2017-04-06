@@ -356,7 +356,7 @@
         [alert addAction:[UIAlertAction actionWithTitle:@"打开微信" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action){
             
             if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"weixin://"]]) {
-                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"weixin://"]];
+                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"weixin://"] options:@{} completionHandler:nil];
             }else{
                 [weakSelef showToast:@"您没有安装微信"];
             }
@@ -383,7 +383,7 @@
             
             if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"mqq://"]]) {
                 
-                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"mqq://"]];
+                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"mqq://"] options:@{} completionHandler:nil];
             }else{
                 [weakSelef showToast:@"您没有安装QQ"];
             }

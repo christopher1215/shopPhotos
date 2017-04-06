@@ -1,0 +1,19 @@
+platform :ios, '7.0'
+
+target 'ShopPhotos' do
+ pod 'TZImagePickerController'
+ pod 'TOCropViewController'
+ pod 'RSKImageCropper' 
+ pod "AFNetworking"
+ pod "MBProgressHUD"
+ pod "MJPhotoBrowser"
+ pod "MJRefresh"
+ pod "SDWebImage"
+ pod "SDAutoLayout"
+ pod 'ShareSDK3'
+ pod 'MOBFoundation'
+ pod 'ShareSDK3/ShareSDKUI'
+ pod 'ShareSDK3/ShareSDKPlatforms/QQ'
+ pod 'ShareSDK3/ShareSDKPlatforms/WeChat'
+ pod 'IQKeyboardManager'
+end

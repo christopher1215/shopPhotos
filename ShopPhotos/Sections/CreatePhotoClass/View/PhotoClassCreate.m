@@ -273,7 +273,7 @@
     [self.tempTextTield resignFirstResponder];
     if(tap.view.tag == 10){
         if(self.showArray.count == 5) {
-            ShowAlert(@"一次最多新建5个子分类");
+            SPAlert(@"一次最多新建5个子分类",self);
             return;
         }
         UIView * enterView = [self.content viewWithTag:100+self.showArray.count];

@@ -188,7 +188,8 @@
 
 - (void)photoSelected{
     if (![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]) {
-        ShowAlert(@"请允许相册访问");
+//        ShowAlert(@"请允许相册访问");
+        SPAlert(@"请允许相册访问",self);
         return;
     }
     // 2. 创建图片选择控制器
@@ -251,7 +252,7 @@
         }
         case AVAuthorizationStatusDenied:
         case AVAuthorizationStatusRestricted:
-            ShowAlert(@"請在“設置－隱私－相機選項中，允許8591訪問您的相機");
+            SPAlert(@"請在“設置－隱私－相機選項中，允許8591訪問您的相機",self);
             break;
         default:
             break;

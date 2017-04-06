@@ -80,7 +80,7 @@
 
 - (void)photoBtnSelected{
     if (![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]) {
-        ShowAlert(@"请允许相册访问");
+        SPAlert(@"请允许相册访问",self);
         return;
     }
 

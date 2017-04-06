@@ -45,7 +45,6 @@ static const NSUInteger kDefaultTimeoutInterval = 5;
     }];
 }
 
-
 #pragma mark - 异步POST请求
 + (void)requestPOSTUrl:(NSString*)url
            parametric:(NSDictionary*)dic

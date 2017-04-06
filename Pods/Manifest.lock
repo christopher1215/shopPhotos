@@ -1,0 +1,81 @@
+PODS:
+  - AFNetworking (3.1.0):
+    - AFNetworking/NSURLSession (= 3.1.0)
+    - AFNetworking/Reachability (= 3.1.0)
+    - AFNetworking/Security (= 3.1.0)
+    - AFNetworking/Serialization (= 3.1.0)
+    - AFNetworking/UIKit (= 3.1.0)
+  - AFNetworking/NSURLSession (3.1.0):
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+  - AFNetworking/Reachability (3.1.0)
+  - AFNetworking/Security (3.1.0)
+  - AFNetworking/Serialization (3.1.0)
+  - AFNetworking/UIKit (3.1.0):
+    - AFNetworking/NSURLSession
+  - IQKeyboardManager (3.3.7)
+  - MBProgressHUD (1.0.0)
+  - MJPhotoBrowser (1.0.2):
+    - SDWebImage
+    - SVProgressHUD
+    - YLGIFImage
+  - MJRefresh (3.1.12)
+  - MOBFoundation (2.2.15)
+  - RSKImageCropper (1.6.0)
+  - SDAutoLayout (2.1.7)
+  - SDWebImage (4.0.0):
+    - SDWebImage/Core (= 4.0.0)
+  - SDWebImage/Core (4.0.0)
+  - ShareSDK3 (3.6.1):
+    - MOBFoundation
+    - ShareSDK3/ShareSDK (= 3.6.1)
+  - ShareSDK3/ShareSDK (3.6.1):
+    - MOBFoundation
+  - ShareSDK3/ShareSDKPlatforms/QQ (3.6.1):
+    - MOBFoundation
+  - ShareSDK3/ShareSDKPlatforms/WeChat (3.6.1):
+    - MOBFoundation
+  - ShareSDK3/ShareSDKUI (3.6.1):
+    - MOBFoundation
+  - SVProgressHUD (2.1.2)
+  - TOCropViewController (2.0.12)
+  - TZImagePickerController (1.7.8)
+  - YLGIFImage (0.11)
+
+DEPENDENCIES:
+  - AFNetworking
+  - IQKeyboardManager
+  - MBProgressHUD
+  - MJPhotoBrowser
+  - MJRefresh
+  - MOBFoundation
+  - RSKImageCropper
+  - SDAutoLayout
+  - SDWebImage
+  - ShareSDK3
+  - ShareSDK3/ShareSDKPlatforms/QQ
+  - ShareSDK3/ShareSDKPlatforms/WeChat
+  - ShareSDK3/ShareSDKUI
+  - TOCropViewController
+  - TZImagePickerController
+
+SPEC CHECKSUMS:
+  AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
+  IQKeyboardManager: 249c3946acf61345c18b038eb50863fe2793e3a8
+  MBProgressHUD: 4890f671c94e8a0f3cf959aa731e9de2f036d71a
+  MJPhotoBrowser: b98b04d0e3b6a999feb44df68adec413af446809
+  MJRefresh: b96cdb21c4aa75a7b07654311ab2f315c497e806
+  MOBFoundation: 4975874f74c991f562151f6a4549e9a6ad743fd8
+  RSKImageCropper: 6903235c7a8a79acb1e1f3490e2c911b858f8208
+  SDAutoLayout: e9b36d04b8c0b504762a04d76fbbe5108944297a
+  SDWebImage: 76a6348bdc74eb5a55dd08a091ef298e56b55e41
+  ShareSDK3: dea6a14cc4385fa6493e10895ba11d07ef34d149
+  SVProgressHUD: c404a55d78acbeb7ebb78b76d3faf986475a6994
+  TOCropViewController: e6e31b38d785a901e5651a1e7fff71bcda6c5214
+  TZImagePickerController: 87a138ae5d585225aaa6c8abe2cface0f0ad19dd
+  YLGIFImage: c0ae132fe80e5282b2762a97d14e23ba71a748ae
+
+PODFILE CHECKSUM: 6ea3705febc8d73e5af36f32176a7ee7f32b2298
+
+COCOAPODS: 1.2.0

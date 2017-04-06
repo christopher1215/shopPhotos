@@ -196,7 +196,7 @@
     }
     
     if(editArray.count == 0){
-        ShowAlert(@"当前未选中哦！");
+        SPAlert(@"当前未选中哦！",self);
         return;
     }
     // 删除

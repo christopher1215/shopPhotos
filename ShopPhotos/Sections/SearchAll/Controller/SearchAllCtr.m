@@ -145,7 +145,7 @@
 - (void)imageSelected{
     NSLog(@"相册");
     if (![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]) {
-        ShowAlert(@"请允许相册访问");
+        SPAlert(@"请允许相册访问",self);
         return;
     }
     TZImagePickerController *imagePickerVc = [[TZImagePickerController alloc] initWithMaxImagesCount:9 delegate:self];
