@@ -16,17 +16,23 @@
 #import "ChangeClassAlert.h"
 #import "CreatePhotoClassCtr.h"
 #import "AlbumClassTabelCtr.h"
+#import "PhotosEditView.h"
+#import "PhotosOptionView.h"
 #import <MJRefresh.h>
 
-@interface AlbumClassCtr ()<MoreAlertDelegate,AlbumClassTableDelegate,ChangeClassAlertDelegate>
+@interface AlbumClassCtr ()<MoreAlertDelegate,AlbumClassTableDelegate,ChangeClassAlertDelegate,PhotosEditViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UIView *more;
 @property (weak, nonatomic) IBOutlet UIImageView *more_icon;
+@property (weak, nonatomic) IBOutlet UILabel *ttitle;
 
 @property (weak, nonatomic) IBOutlet UIView *search;
 @property (weak, nonatomic) IBOutlet UIImageView *search_icon;
+@property (weak, nonatomic) IBOutlet UIButton *order;
+@property (weak, nonatomic) IBOutlet UIButton *add;
 
-@property (weak, nonatomic) IBOutlet UIView *back;
+@property (weak, nonatomic) IBOutlet UIButton *back;
+@property (weak, nonatomic) IBOutlet UIButton *edit;
 @property (strong, nonatomic) AlbumClassTable * table;
 @property (strong, nonatomic) MoreAlert * moreAlert;
 @property (assign, nonatomic) BOOL editStatu;
@@ -36,6 +42,8 @@
 @property (strong, nonatomic) ChangeClassAlert * changeAlert;
 @property (strong, nonatomic) NSString * photoName;
 @property (strong, nonatomic) NSString * photoSubName;
+@property (strong, nonatomic) PhotosEditView * editHead;
+@property (strong, nonatomic) UIButton * editOption;
 
 @end
 
@@ -63,13 +71,38 @@
     [self createAutoLayout];
 }
 
-
-
 - (void)createAutoLayout{
     
     [self.back addTarget:self action:@selector(backSelected)];
     [self.search addTarget:self action:@selector(searchSelected)];
-    [self.more addTarget:self action:@selector(moreSelected)];
+    [self.order addTarget:self action:@selector(moreSelected)];
+    [self.edit addTarget:self action:@selector(editSelected)];
+    
+    _search.layer.cornerRadius = 15;
+    _search.layer.masksToBounds = TRUE;
+
+    self.editHead = [[PhotosEditView alloc] init];
+    self.editHead.delegate = self;
+    [self.view addSubview:self.editHead];
+    [self.editHead setHidden:YES];
+    self.editHead.sd_layout
+    .leftEqualToView(self.view)
+    .rightEqualToView(self.view)
+    .topEqualToView(self.view)
+    .heightIs(64);
+
+    self.editOption = [UIButton buttonWithType:UIButtonTypeSystem];
+    [self.editOption setTitle:@"删除" forState:UIControlStateNormal];
+    [self.editOption setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+    [self.editOption setBackgroundColor:[UIColor whiteColor]];
+    [self.view addSubview:self.editOption];
+    [self.editOption addTarget:self action:@selector(photosOptionSelected) forControlEvents:UIControlEventTouchUpInside];
+    [self.editOption setHidden:YES];
+    self.editOption.sd_layout
+    .leftEqualToView(self.view)
+    .bottomEqualToView(self.view)
+    .rightEqualToView(self.view)
+    .heightIs(64);
     
     self.table = [[AlbumClassTable alloc] init];
     self.table.albumDelegage = self;
@@ -77,11 +110,11 @@
     self.table.sd_layout
     .leftEqualToView(self.view)
     .rightEqualToView(self.view)
-    .topSpaceToView(self.view,64)
+    .topSpaceToView(self.view,114)
     .bottomEqualToView(self.view);
 
     self.moreAlert = [[MoreAlert alloc] init];
-    self.moreAlert.mode = PhotosClassModel;
+    self.moreAlert.mode = SortOrder;
     self.moreAlert.delegate = self;
     [self.view addSubview:self.moreAlert];
     [self.moreAlert setHidden:YES];
@@ -106,7 +139,6 @@
        [weakSelef loadNetworkData:@{@"uid":_uid}];
     }];
     [self.table.table.mj_header beginRefreshing];
-    
 }
 
 #pragma mark - OnClick
@@ -147,7 +179,38 @@
         self.editStatu = NO;
         return;
     }
+    
     [self.moreAlert showAlert];
+}
+
+-(void) editSelected {
+    [self.editHead setHidden:NO];
+    [self.editOption setHidden:NO];
+    [_editHead.title setText:_ttitle.text];
+    self.table.sd_layout.bottomSpaceToView(self.view,64);
+    self.table.isEditMode = YES;
+    [self.table updateLayout];
+    [self.table.table reloadData];
+}
+
+#pragma mark - PhotosEditViewDelegate
+- (void)photosEditSelected:(NSInteger)type {
+    if (type == 1) {
+        [self.editHead setHidden:YES];
+        [self.editOption setHidden:YES];
+        self.table.sd_layout.bottomSpaceToView(self.view,0);
+        self.table.isEditMode = NO;
+        self.table.isAllSelect = NO;
+        [self.table updateLayout];
+        [self.table.table reloadData];
+    }
+    else {
+        self.table.isAllSelect = YES;
+        [self.table.table reloadData];
+    }
+}
+
+- (void)photosOptionSelected {
 }
 
 #pragma mark - MoreAlertDelegate
@@ -203,7 +266,6 @@
                                    @"classify_id":[NSString stringWithFormat:@"%ld",model.classID],
                                    @"id":[NSString stringWithFormat:@"%ld",subModel.subClassID],
                                    @"cover":subModel.cover}];
-        
     }else{
         // 父类名称修改
         AlbumClassTableModel * model = [self.dataArray objectAtIndex:self.editSection];
@@ -211,12 +273,10 @@
         [self changeClassName:@{@"name":self.photoName,
                                 @"id":[NSString stringWithFormat:@"%ld",model.classID]}];
     }
-    
-    
 }
 
 #pragma mark - AlbumClassTableDelegate
-- (void)albumClassTableSelected:(NSIndexPath *)indexPath{
+- (void)albumClassTableSelected:(NSIndexPath *)indexPath {
     
     AlbumClassTableModel * model = [self.dataArray objectAtIndex:indexPath.section];
     AlbumClassTableSubModel * subModel = [model.dataArray objectAtIndex:indexPath.row];
@@ -241,14 +301,13 @@
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:@"删除父分类会把当前分类下所有子分类全部删除\n确定删除吗" preferredStyle:UIAlertControllerStyleAlert];
         [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action){
             [weakSelef deleteClass:@{@"id":[NSString stringWithFormat:@"%ld",model.classID]}];
-            
         }]];
         [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
         [self presentViewController:alert animated:YES completion:nil];
     }
 }
 
-- (void)albumClassTableSelectType:(NSInteger)type selectPath:(NSIndexPath *)indexPath{
+- (void)albumClassTableSelectType:(NSInteger)type selectPath:(NSIndexPath *)indexPath {
     self.subEditIndexPath = indexPath;
     AlbumClassTableModel * model = [self.dataArray objectAtIndex:self.subEditIndexPath.section];
     AlbumClassTableSubModel * subModel = [model.dataArray objectAtIndex:self.subEditIndexPath.row];
@@ -261,7 +320,6 @@
     }else{
         NSLog(@"cell delete select %ld - %ld",indexPath.section,indexPath.row);
         [self deleteSubClass:@{@"subclassification_ids":[NSString stringWithFormat:@"%ld",subModel.subClassID]}];
-        
     }
 }
 

@@ -11,10 +11,6 @@
 @interface PhotosEditView ()
 
 @property (strong, nonatomic) UIView * navigation;
-@property (strong, nonatomic) UIButton * cancel;
-@property (strong, nonatomic) UILabel * title;
-@property (strong, nonatomic) UIButton * all;
-
 
 @end
 

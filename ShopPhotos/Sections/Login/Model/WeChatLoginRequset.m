@@ -21,7 +21,7 @@
            self.userID = [RequestErrorGrab getStringwitKey:@"data" toTarget:data];
             if(self.userID && self.userID.length > 0 && self.status == 0){
                 UserModel * userModel = [[UserModel alloc] init];
-                userModel.userID = self.userID;
+                userModel.uid = self.userID;
                 [self setValue:userModel WithKey:CacheUserModel];
             }
         }else{

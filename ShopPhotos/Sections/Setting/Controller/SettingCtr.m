@@ -15,8 +15,14 @@
 #import "RequestUtil.h"
 #import "UserModel.h"
 #import <ShareSDK/ShareSDK.h>
+#import "AppDelegate.h"
+#import "ResetPasswordCtr.h"
+#import "FeedbackCtr.h"
 
-@interface SettingCtr ()
+@interface SettingCtr (){
+//    AppDelegate *appd;
+
+}
 @property (weak, nonatomic) IBOutlet UIView *back;
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UISwitch *switchCopy;
@@ -26,6 +32,7 @@
 @property (weak, nonatomic) IBOutlet UIView *removeCache;
 @property (weak, nonatomic) IBOutlet UILabel *dataSize;
 @property (weak, nonatomic) IBOutlet UIButton *loginOut;
+@property (weak, nonatomic) IBOutlet UIView *feedback;
 
 @end
 
@@ -37,7 +44,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+//    appd = (AppDelegate*)[UIApplication sharedApplication].delegate;
     [self setup];
     
     [self loadNetworkData:@{@"uid":self.uid}];
@@ -54,6 +61,7 @@
     [self.switchCopy addTarget:self action:@selector(switchSelected:) forControlEvents:UIControlEventValueChanged];
     [self.showPrize addTarget:self action:@selector(showPrizeSelected:) forControlEvents:UIControlEventValueChanged];
     [self.loginOut addTarget:self action:@selector(loginoutSelected) forControlEvents:UIControlEventTouchUpInside];
+    [self.feedback addTarget:self action:@selector(feedbackSelected)];
 }
 
 - (NSDictionary *)getPostData{
@@ -115,6 +123,9 @@
 - (void)resetPassworkSelected{
     ReSetPwdCtr * reSetpwd = GETALONESTORYBOARDPAGE(@"ReSetPwdCtr");
     [self.navigationController pushViewController:reSetpwd animated:YES];
+//    ResetPasswordCtr * resetPassword = GETALONESTORYBOARDPAGE(@"ResetPasswordCtr");
+//    resetPassword.fromType = @"resetPassword";
+//    [self.navigationController pushViewController:resetPassword animated:YES];
 }
 
 - (void)checkUpdataSelected{
@@ -149,6 +160,11 @@
 - (void)loginoutSelected{
     
     [self loadLoginOutData];
+}
+- (void)feedbackSelected{
+    
+    FeedbackCtr * feedback = GETALONESTORYBOARDPAGE(@"FeedbackCtr");
+    [self.navigationController pushViewController:feedback animated:YES];
 }
 
 #pragma makr - AFNetworking网络加载
@@ -195,14 +211,14 @@
 - (void)loadLoginOutData{
     [self showLoad];
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.appLogout parametric:nil succed:^(id responseObject){
+    [HTTPRequest requestDELETEUrl:[NSString stringWithFormat:@"%@%@",self.congfing.logout,[self.appd getParameterString]] parametric:nil succed:^(id responseObject){
         [weakSelef closeLoad];
         NSLog(@"%@",responseObject);
+        [ShareSDK cancelAuthorize:SSDKPlatformTypeQQ];
+        [ShareSDK cancelAuthorize:SSDKPlatformTypeWechat];
         [weakSelef removeValueWithKey:CacheUserModel];
         [weakSelef removeValueWithKey:SESSIONCOOKKEY];
         LoginCtr * login = GETALONESTORYBOARDPAGE(@"LoginCtr");
-        [ShareSDK cancelAuthorize:SSDKPlatformTypeQQ];
-        [ShareSDK cancelAuthorize:SSDKPlatformTypeWechat];
         [weakSelef.navigationController pushViewController:login animated:YES];
     } failure:^(NSError *error){
         [ShareSDK cancelAuthorize:SSDKPlatformTypeQQ];

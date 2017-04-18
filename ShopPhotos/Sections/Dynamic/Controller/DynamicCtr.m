@@ -34,8 +34,13 @@
 #import "CopyRequset.h"
 
 @interface DynamicCtr ()<DynamicTableViewDelegate,MoreAlertDelegate,AddFriendAlertDelegate,UserInfoDrawerDelegate,ShareDelegate>
-@property (weak, nonatomic) IBOutlet UIView *more;
-@property (weak, nonatomic) IBOutlet UIView *search;
+
+@property (weak, nonatomic) IBOutlet UIButton *more;
+@property (weak, nonatomic) IBOutlet UIButton *search;
+@property (strong, nonatomic) UIButton *back;
+@property (weak, nonatomic) IBOutlet UIButton *scan;
+@property (weak, nonatomic) IBOutlet UIView *head;
+
 @property (strong, nonatomic) NSMutableArray * dataArray;
 @property (strong, nonatomic) UserInfoDrawerCtr * userInfo;
 @property (strong, nonatomic) ShareCtr * share;
@@ -56,6 +61,13 @@
     return _dataArray;
 }
 
+- (id)init {
+    self = [super init];
+    
+    self.isBackButton = FALSE;
+    return self;
+}
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
 }
@@ -71,13 +83,31 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
     [self setup];
 }
 
 - (void)setup{
     
+    if (self.isBackButton == TRUE) {
+        [_scan removeFromSuperview];
+        _back = [[UIButton alloc] init];
+        [_back setImage:[UIImage imageNamed:@"btn_back_black"] forState:UIControlStateNormal];
+        [_back setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        [_back setTitle:@"首页" forState:UIControlStateNormal];
+        [_back.titleLabel setFont:[UIFont fontWithName:@"Helvetica" size:17]];
+
+        [_head addSubview:_back];
+        _back.sd_layout
+        .leftSpaceToView(_head,15)
+        .bottomSpaceToView(_head,10)
+        .widthIs(80)
+        .heightIs(20);
+        
+        [_back addTarget:self action:@selector(backSelected)];
+    }
+    
     [self.search addTarget:self action:@selector(searchSelected)];
+    [self.scan addTarget:self action:@selector(qrScanSelected)];
     [self.more addTarget:self action:@selector(moreSelected)];
     
     self.table = [[DynamicTableView alloc] init];
@@ -162,6 +192,14 @@
 
 - (void)topViewSelected{
     [self.table.table setContentOffset:CGPointMake(0, 0) animated:YES];
+}
+
+- (void)backSelected{
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (void)qrScanSelected {
+    [self moreAlertSelected:1];
 }
 
 - (void)moreSelected{
@@ -406,7 +444,6 @@
         }
             break;
     }
-    
 }
 
 

@@ -10,7 +10,7 @@
 #import "ShareContentSelectCell.h"
 
 @interface DownloadImageCtr ()<UICollectionViewDelegate,UICollectionViewDataSource>
-@property (weak, nonatomic) IBOutlet UIView *back;
+@property (weak, nonatomic) IBOutlet UIButton *back;
 @property (weak, nonatomic) IBOutlet UIButton *cancle;
 @property (strong, nonatomic)UICollectionView * photos;
 @property (weak, nonatomic) IBOutlet UIButton *sure;

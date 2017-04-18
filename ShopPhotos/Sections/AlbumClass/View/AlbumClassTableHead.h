@@ -12,6 +12,7 @@
 @protocol AlbumClassTableHeadDelegate <NSObject>
 
 - (void)albmClassTableHeadSelectType:(NSInteger)type slectedPath:(NSInteger)indexPath;
+- (void)albmClassTableHeadSelectCheck:(BOOL)type slectedPath:(NSInteger)indexPath;
 
 @end
 
@@ -19,11 +20,17 @@
 @property (weak, nonatomic) id<AlbumClassTableHeadDelegate>delegate;
 @property (assign, nonatomic) NSInteger indexPath;
 @property (strong, nonatomic) UIImageView * icon;
+@property (strong, nonatomic) UIImageView * folder;
+@property (strong, nonatomic) UIImageView * checkBox;
 @property (strong, nonatomic) UILabel * title;
-@property (strong, nonatomic) UIView * change;
-@property (strong, nonatomic) UIView * deleteBtn;
+@property (readwrite, nonatomic) BOOL isChecked;
+
+- (void)creteAutoLayout:(BOOL) isCheckBox selected:(BOOL) isChecked;
 
 - (void)openOption;
 - (void)closeOption;
+
+- (void)check;
+- (void)unCheck;
 
 @end

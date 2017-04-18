@@ -17,8 +17,9 @@
 #import "BaseModel.h"
 #import "NSObject+StoreValue.h"
 #import "StringCheck.h"
+#import "AppDelegate.h"
 
-static NSString * const URLHead = @"http://uootu.com/";
+static NSString * const URLHead = @"http://www.uootu.com/";
 //static NSString * const ShareURLHead = @"http://uootu.com";
 
 @interface BaseViewCtr : UIViewController
@@ -26,6 +27,8 @@ static NSString * const URLHead = @"http://uootu.com/";
 @property (strong, nonatomic)CongfingURL * congfing;
 @property (strong, nonatomic)NSDictionary * tokenData;
 @property (strong, nonatomic)NSString * photosUserID;
+@property (strong, nonatomic)AppDelegate *appd;
+//@property (strong, nonatomic)ErrMsgViewController *popupErrVC;
 
 - (void)showLoad;
 - (void)closeLoad;

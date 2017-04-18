@@ -21,16 +21,18 @@
     [super didReceiveMemoryWarning];
 }
 
-
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    self.appd = (AppDelegate*)[UIApplication sharedApplication].delegate;
+//    self.popupErrVC = [[ErrMsgViewController alloc] initWithNibName:@"ErrMsgViewController" bundle:nil];
     
     
     [self.navigationController.navigationBar setHidden:YES];
     //self.congfing = [self getValueWithKey:ShopPhotosApi];
     UserModel * userModel = [self getValueWithKey:CacheUserModel];
     if(userModel){
-        self.photosUserID = userModel.userID;
+        self.photosUserID = userModel.uid;
     }
     if(!self.photosUserID || self.photosUserID.length == 0){
         self.photosUserID = [[NSString alloc] init];

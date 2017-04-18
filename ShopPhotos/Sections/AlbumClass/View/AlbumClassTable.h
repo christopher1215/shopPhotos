@@ -16,8 +16,11 @@
 @end
 
 @interface AlbumClassTable : BaseView
+
 @property (strong, nonatomic) NSString * uid;
 @property (strong, nonatomic) UITableView * table;
 @property (strong, nonatomic) id<AlbumClassTableDelegate>albumDelegage;
 @property (strong, nonatomic) NSMutableArray * dataArray;
+@property (readwrite, nonatomic) BOOL isEditMode;
+@property (readwrite, nonatomic) BOOL isAllSelect;
 @end

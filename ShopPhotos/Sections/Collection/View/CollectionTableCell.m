@@ -24,6 +24,7 @@
 @property (strong, nonatomic) UIView * userIcon;
 @property (strong, nonatomic) UIImageView * userIconImage;
 @property (strong, nonatomic) UILabel * userName;
+@property (strong, nonatomic) UILabel * share;
 @property (strong, nonatomic) UIView * selectView;
 @property (strong, nonatomic) UIImageView * select;
 
@@ -45,7 +46,7 @@
 
 
 - (void)creteAutoLayout{
-    
+/*
     self.shadowb = [[UIView alloc] init];
     [self.shadowb setBackgroundColor:ColorHexA(0XDDDDDD,1)];
     [self.contentView addSubview:self.shadowb];
@@ -53,8 +54,10 @@
     self.shadowt = [[UIView alloc] init];
     [self.shadowt setBackgroundColor:ColorHexA(0XCCCCCC,1)];
     [self.contentView addSubview:self.shadowt];
-    
+  */
     self.content = [[UIView alloc] init];
+    self.content.layer.cornerRadius = 5.0f;
+    self.content.clipsToBounds = TRUE;
     [self.contentView addSubview:self.content];
 
     self.icon = [[UIImageView alloc] init];
@@ -63,12 +66,12 @@
     [self.content addSubview:self.icon];
     
     self.title = [[UILabel alloc] init];
-    self.title.numberOfLines = 2;
-    [self.title setFont:Font(12)];
+    self.title.numberOfLines = 1;
+    [self.title setFont:Font(15)];
     [self.title setTextColor:ColorHex(0X222222)];
     [self.title setBackgroundColor:[UIColor clearColor]];
     [self.content addSubview:self.title];
-    
+    /*
     self.prize = [[UILabel alloc] init];
     [self.prize setTextColor:ThemeColor];
     [self.prize setBackgroundColor:[UIColor clearColor]];
@@ -78,13 +81,13 @@
     self.collection = [[UIView alloc] init];
     [self.collection setBackgroundColor:[UIColor clearColor]];
     [self.collection addTarget:self action:@selector(collectionSelected)];
-    [self.content addSubview:self.collection];
+//    [self.content addSubview:self.collection];
     
     UIImageView * collectionIcon = [[UIImageView alloc] init];
     [collectionIcon setContentMode:UIViewContentModeScaleAspectFit];
     [collectionIcon setImage:[UIImage imageNamed:@"btn_star_selected"]];
     [self.collection addSubview:collectionIcon];
-    
+    */
     self.userIcon = [[UIView  alloc] init];
     [self.userIcon setBackgroundColor:[UIColor clearColor]];
     [self.userIcon addTarget:self action:@selector(userSelected)];
@@ -93,12 +96,21 @@
     self.userIconImage = [[UIImageView alloc] init];
     [self.userIconImage setContentMode:UIViewContentModeScaleAspectFit];
     [self.userIcon addSubview:self.userIconImage];
+    self.userIconImage.layer.cornerRadius = self.userIconImage.frame.size.width/2;
+    self.userIconImage.layer.masksToBounds = TRUE;
     
     self.userName = [[UILabel alloc] init];
-    [self.userName setFont:Font(12)];
+    [self.userName setFont:Font(15)];
     [self.userName addTarget:self action:@selector(userSelected)];
     [self.userName setBackgroundColor:[UIColor clearColor]];
     [self.content addSubview:self.userName];
+
+    self.share = [[UILabel alloc] init];
+    [self.share setFont:Font(19)];
+    [self.share setText:@"..."];
+    [self.share addTarget:self action:@selector(shareClicked)];
+    self.share.textAlignment = NSTextAlignmentLeft;
+    [self.content addSubview:self.share];
     
     self.selectView = [[UIView alloc] init];
     [self.selectView addTarget:self action:@selector(selectedClick)];
@@ -108,7 +120,7 @@
     [self.select setImage:[UIImage imageNamed:@"btn_circle_default"]];
     [self.selectView addSubview:self.select];
     
-    
+    /*
     self.shadowb.sd_layout
     .leftEqualToView(self.contentView)
     .rightEqualToView(self.contentView)
@@ -120,12 +132,12 @@
     .rightSpaceToView(self.contentView,2)
     .topSpaceToView(self.contentView,3)
     .bottomSpaceToView(self.contentView,3);
-    
+    */
     self.content.sd_layout
     .leftEqualToView(self.contentView)
     .topEqualToView(self.contentView)
     .bottomEqualToView(self.contentView)
-    .rightSpaceToView(self.contentView,6);
+    .rightSpaceToView(self.contentView,0);
     
     self.icon.sd_layout
     .leftEqualToView(self.content)
@@ -136,9 +148,9 @@
     self.title.sd_layout
     .leftSpaceToView(self.content,5)
     .rightSpaceToView(self.content,5)
-    .topSpaceToView(self.icon,0)
-    .heightIs(35);
-    
+    .topSpaceToView(self.icon,10)
+    .heightIs(17);
+    /*
     self.collection.sd_layout
     .rightSpaceToView(self.content,5)
     .topSpaceToView(self.title,0)
@@ -155,12 +167,12 @@
     .leftSpaceToView(self.content,5)
     .rightSpaceToView(self.collection,5)
     .topSpaceToView(self.title,0)
-    .heightIs(30);
-    
+    .heightIs(10);
+    */
     
     self.userIcon.sd_layout
     .leftSpaceToView(self.content,5)
-    .topSpaceToView(self.prize,0)
+    .topSpaceToView(self.title,0)
     .widthIs(30)
     .heightIs(30);
     
@@ -169,12 +181,20 @@
     .rightSpaceToView(self.userIcon,5)
     .topSpaceToView(self.userIcon,5)
     .bottomSpaceToView(self.userIcon,5);
-    
+
     self.userName.sd_layout
     .leftSpaceToView(self.userIcon,0)
-    .topSpaceToView(self.prize,0)
+    .topSpaceToView(self.title,0)
     .rightSpaceToView(self.content,5)
     .heightIs(30);
+    
+    self.share.sd_layout
+    .rightSpaceToView(self.content,2)
+    .leftSpaceToView(self.userName,10)
+    .bottomSpaceToView(self.content,15)
+//    .topSpaceToView(self.prize,0)
+    .widthIs(20)
+    .heightIs(25);
     
     
     self.selectView.sd_layout
@@ -211,6 +231,12 @@
     }
 }
 
+- (void)shareClicked{
+    if(self.delegate && [self.delegate respondsToSelector:@selector(shareClicked:)]){
+        [self.delegate shareClicked:self.indexPath];
+    }
+}
+
 - (void)setModel:(AlbumPhotosMdel *)model{
     
     if(!model)return;
@@ -218,6 +244,7 @@
     [self.icon sd_setImageWithURL:[NSURL URLWithString:model.big]];
     [self.title setText:model.name];
     [self.prize setText:[NSString stringWithFormat:@"￥%@",model.price]];
+    
     if(model.showPrice == 1){
         [self.prize setHidden:NO];
     }else{
@@ -226,6 +253,7 @@
     if(model.user && model.user.count > 0){
         NSString * userIcon = [model.user objectForKey:@"icon"];
         NSString * userName = [model.user objectForKey:@"name"];
+        
         if(userIcon) [self.userIconImage sd_setImageWithURL:[NSURL URLWithString:userIcon]];
         if(userName) [self.userName setText:userName];
     }
@@ -242,4 +270,5 @@
         [self.select setImage:[UIImage imageNamed:@"btn_circle_default"]];
     }
 }
+
 @end

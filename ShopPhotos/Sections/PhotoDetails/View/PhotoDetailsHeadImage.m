@@ -24,13 +24,13 @@
     self.image = [[UIImageView alloc] init];
     [self.image setContentMode:UIViewContentModeScaleAspectFit];
     [self addSubview:self.image];
-    
+
     self.cover = [[UIImageView alloc] init];
     [self.cover setBackgroundColor:[UIColor clearColor]];
     [self.cover setImage:[UIImage imageNamed:@"cover"]];
     [self addSubview:self.cover];
     [self.cover setHidden:YES];
-    
+  
     self.editView = [[UIView alloc] init];
     [self.editView setBackgroundColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:0.5]];
     [self addSubview:self.editView];
@@ -41,8 +41,9 @@
     [self.editView addSubview:self.settingBtn];
     
     self.deleteBtn = [UIButton buttonWithType:UIButtonTypeSystem];
-    [self.deleteBtn setTitle:@"删除" forState:UIControlStateNormal];
-    [self.deleteBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [self.deleteBtn setBackgroundImage:[UIImage imageNamed:@"btn_delete_w"] forState:UIControlStateNormal];
+//    [self.deleteBtn setTitle:@"删除" forState:UIControlStateNormal];
+//    [self.deleteBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.editView addSubview:self.deleteBtn];
     
     self.image.sd_layout
@@ -70,10 +71,10 @@
     .heightIs((((WindowWidth - 20)/3)-5)/2);
     
     self.deleteBtn.sd_layout
-    .leftEqualToView(self.editView)
-    .rightEqualToView(self.editView)
-    .topSpaceToView(self.settingBtn,0)
-    .heightIs((((WindowWidth - 20)/3)-5)/2);
+    .bottomSpaceToView(self.editView,20)
+    .centerXEqualToView(self.editView)
+    .widthIs(18)
+    .heightIs(18);
     
     [self.editView setHidden:YES];
     
@@ -82,6 +83,7 @@
 - (void)setImageCover:(BOOL)cover{
     [self.cover setHidden:!cover];
 }
+
 - (void)setEditStyle:(BOOL)edit{
     if(self.cover.hidden){
         [self.editView setHidden:!edit];

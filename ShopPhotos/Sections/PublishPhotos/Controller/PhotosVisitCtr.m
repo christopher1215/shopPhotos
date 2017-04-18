@@ -55,7 +55,6 @@
     .topSpaceToView(self.view,64)
     .rightEqualToView(self.view)
     .bottomEqualToView(self.view);
-
     
     
     self.countText = [[UILabel alloc] init];

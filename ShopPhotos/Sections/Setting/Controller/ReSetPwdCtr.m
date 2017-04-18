@@ -7,8 +7,12 @@
 //
 
 #import "ReSetPwdCtr.h"
+#import "AppDelegate.h"
 
-@interface ReSetPwdCtr ()<UITextFieldDelegate>
+@interface ReSetPwdCtr ()<UITextFieldDelegate>{
+//    AppDelegate *appd;
+
+}
 @property (weak, nonatomic) IBOutlet UIView *back;
 @property (weak, nonatomic) IBOutlet UIButton *sure;
 @property (weak, nonatomic) IBOutlet UITextField *jPwd;
@@ -25,6 +29,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+//    appd = (AppDelegate*)[UIApplication sharedApplication].delegate;
     
     [self setup];
 }
@@ -74,7 +79,8 @@
     
     
     [self changePassword:@{@"oldPassword":self.jPwd.text,
-                           @"password":self.nPwd.text}];
+                           @"password":self.nPwd.text,
+                           @"password_confirmation":self.nPwd.text}];
 }
 
 #pragma mark - UITextFieldDelegate
@@ -88,7 +94,7 @@
     
     [self showLoad];
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.resetPassword parametric:data succed:^(id responseObject){
+    [HTTPRequest requestPUTUrl:[NSString stringWithFormat:@"%@%@",self.congfing.updatePassword,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
         [weakSelef closeLoad];
         NSLog(@"%@",responseObject);
         BaseModel * model = [[BaseModel alloc] init];

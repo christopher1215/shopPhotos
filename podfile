@@ -16,4 +16,5 @@ target 'ShopPhotos' do
  pod 'ShareSDK3/ShareSDKPlatforms/QQ'
  pod 'ShareSDK3/ShareSDKPlatforms/WeChat'
  pod 'IQKeyboardManager'
+ pod 'UITextView+Placeholder'
 end

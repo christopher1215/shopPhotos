@@ -122,10 +122,10 @@
 
 }
 
-- (void)setModel:(UserInfoModel *)model{
+- (void)setModel:(UserModel *)model{
     
     
-    [self.icon sd_setImageWithURL:[NSURL URLWithString:model.icon]];
+    [self.icon sd_setImageWithURL:[NSURL URLWithString:model.avatar]];
     [self.name setText:model.name];
     [self.uid setText:[NSString stringWithFormat:@"有图号:%@",model.uid]];
     [self.qrImage setImage:[ReadQRCode creatCIQRCodeContent:[NSString stringWithFormat:@"https://www.uootu.com/%@",model.uid] ImageSize:280]];

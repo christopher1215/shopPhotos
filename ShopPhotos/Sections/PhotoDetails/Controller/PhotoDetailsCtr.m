@@ -8,6 +8,7 @@
 
 #import "PhotoDetailsCtr.h"
 #import "PhotoDetailsHead.h"
+#import "PhotosEditView.h"
 #import <UIImageView+WebCache.h>
 #import "PhotoDetailsFooter.h"
 #import "DetailPhotoRequset.h"
@@ -27,40 +28,44 @@
 #import "PublishPhotosCtr.h"
 #import "DynamicImagesModel.h"
 #import "CopyRequset.h"
+#import "PublishPhotoCtr.h"
 
-
-@interface PhotoDetailsCtr ()<UITextViewDelegate,UITextFieldDelegate,PhotoDetailsHeadDelegate,UIScrollViewDelegate,ShareDelegate,PhotoDetailsFooterDelegate>
-@property (weak, nonatomic) IBOutlet UIView *back;
-@property (weak, nonatomic) IBOutlet UIView *edit;
+@interface PhotoDetailsCtr ()<UITextViewDelegate,UITextFieldDelegate,PhotoDetailsHeadDelegate,UIScrollViewDelegate,ShareDelegate,PhotoDetailsFooterDelegate,PhotosEditViewDelegate>
+@property (weak, nonatomic) IBOutlet UIButton *back;
+@property (weak, nonatomic) IBOutlet UIButton *edit;
+@property (weak, nonatomic) IBOutlet UIButton *search;
 @property (weak, nonatomic) IBOutlet UIImageView *edit_icon;
 @property (weak, nonatomic) IBOutlet UIScrollView *content;
 @property (strong, nonatomic) PhotoDetailsHead * head;
+@property (strong, nonatomic) PhotosEditView * editHead;
+@property (strong, nonatomic) UIImageView * icon;
+@property (strong, nonatomic) UILabel * name;
+@property (strong, nonatomic) UILabel * date;
+
 @property (strong, nonatomic) PhotoDetailsFooter * foot;
 @property (strong, nonatomic) UIView * editView;
 @property (strong, nonatomic) UITextView * photoTitle;
-@property (strong, nonatomic) UIView * prizeView;
-@property (strong, nonatomic) UITextField * photoPrize;
-@property (strong, nonatomic) UIView * recommendView;
-@property (strong, nonatomic) UILabel * recommendText;
-@property (strong, nonatomic) UISwitch * recommendSwitch;
+//@property (strong, nonatomic) UIView * prizeView;
+//@property (strong, nonatomic) UITextField * photoPrize;
+//@property (strong, nonatomic) UIView * recommendView;
+//@property (strong, nonatomic) UILabel * recommendText;
+//@property (strong, nonatomic) UISwitch * recommendSwitch;
+@property (strong, nonatomic) UIView * line1;
+@property (strong, nonatomic) UIView * line2;
+
 @property (strong, nonatomic) UIView * remarksView;
 @property (strong, nonatomic) UILabel * reamrksText;
 @property (strong, nonatomic) UITextView * remarksContent;
 @property (strong, nonatomic) UIView * photoClass;
-@property (strong, nonatomic) UIView * photoClassParentView;
-@property (strong, nonatomic) UILabel * photoClassParentText;
-@property (strong, nonatomic) UILabel * photoClassParent;
-@property (strong, nonatomic) UIView * photoClassSubView;
-@property (strong, nonatomic) UILabel * photoClassSubText;
-@property (strong, nonatomic) UILabel * photoClassSub;
-@property (strong, nonatomic) UIImageView * share;
+@property (strong, nonatomic) UIButton * photoClassParent;
+@property (strong, nonatomic) UIButton * photoClassSub;
 @property (assign, nonatomic) BOOL editStatu;
 @property (strong, nonatomic) NSMutableArray * imageArray;
 @property (strong, nonatomic) NSString * classifyID;
 @property (strong, nonatomic) NSString * uid;
 @property (strong, nonatomic) NSString * subclassID;
 @property (strong, nonatomic) ShareCtr * shareView;
-@property (strong, nonatomic) UIView * shareSelect;
+@property (strong, nonatomic) UILabel * share;
 @property (strong, nonatomic) DynamicQRAlert * qrAlert;
 @end
 
@@ -93,118 +98,107 @@
 
 - (void)createAutoLayout{
     
+    self.editHead = [[PhotosEditView alloc] init];
+    self.editHead.delegate = self;
+    [self.editHead.all setTitle:@"完成" forState:UIControlStateNormal];
+    [self.editHead.title setText:@"相册详情"];
+
+    [self.view addSubview:self.editHead];
+    [self.editHead setHidden:YES];
+    self.editHead.sd_layout
+    .leftEqualToView(self.view)
+    .rightEqualToView(self.view)
+    .topEqualToView(self.view)
+    .heightIs(62);
+
+    UIView *userInfo = [[UIView alloc]init];
+    [self.content addSubview:userInfo];
+    userInfo.sd_layout
+    .leftEqualToView(self.content)
+    .topEqualToView(self.content)
+    .rightEqualToView(self.content)
+    .heightIs(50);
+    
+    self.icon = [[UIImageView alloc] init];
+    [userInfo addSubview:self.icon];
+    self.icon.sd_layout
+    .leftEqualToView(userInfo)
+    .topSpaceToView(userInfo,5)
+    .widthIs(42)
+    .heightIs(42);
+    
+    self.name = [[UILabel alloc] init];
+    [self.name setTextColor:[UIColor blackColor]];
+    [self.name setFont:[UIFont fontWithName:@"Helvetica" size:15]];
+    [userInfo addSubview:self.name];
+    self.name.sd_layout
+    .leftSpaceToView(self.icon,10)
+    .topSpaceToView(userInfo,5)
+    .rightEqualToView(userInfo)
+    .heightIs(20);
+    
+    self.date = [[UILabel alloc] init];
+    [self.date setFont:Font(13)];
+    [self.date setTextColor:ColorHex(0X808080)];
+    [userInfo addSubview:self.date];
+    self.date.sd_layout
+    .leftSpaceToView(self.icon,10)
+    .topSpaceToView(self.name,5)
+    .rightSpaceToView(userInfo,50)
+    .heightIs(18);
+    
     self.head = [[PhotoDetailsHead alloc] init];
     self.head.delegate = self;
     [self.content addSubview:self.head];
-    
     self.head.sd_layout
     .leftSpaceToView(self.content,Clearance)
     .rightSpaceToView(self.content,Clearance)
-    .topEqualToView(self.content)
+    .topSpaceToView(userInfo,10)
     .heightIs(WindowWidth-(Clearance*2));
-    
-    self.editView = [[UIView alloc] init];
-    [self.editView setBackgroundColor:[UIColor whiteColor]];
-    [self.content addSubview:self.editView];
-    
-    self.editView.sd_layout
-    .leftSpaceToView(self.content,Clearance)
-    .rightSpaceToView(self.content,Clearance)
-    .topSpaceToView(self.head,5)
-    .heightIs(160);
-    
     
     self.photoTitle = [[UITextView alloc] init];
     self.photoTitle.contentInset = UIEdgeInsetsMake(2,-4,-2,-4);
     self.photoTitle.scrollEnabled = NO;
     self.photoTitle.editable = NO;
     self.photoTitle.delegate = self;
-    [self.photoTitle setFont:Font(12)];
+    [self.photoTitle setFont:Font(15)];
+    [self.photoTitle setTextColor:[UIColor darkGrayColor]];
     [self.photoTitle setBackgroundColor:[UIColor whiteColor]];
-    [self.editView addSubview:self.photoTitle];
+    [self.content addSubview:self.photoTitle];
     self.photoTitle.sd_layout
-    .leftEqualToView(self.editView)
-    .topEqualToView(self.editView)
-    .rightEqualToView(self.editView)
+    .leftSpaceToView(self.content,Clearance)
+    .rightSpaceToView(_content,Clearance)
+    .topSpaceToView(self.head,5)
     .heightIs(50);
-    
-    self.prizeView = [[UIView alloc] init];
-    [self.prizeView setBackgroundColor:[UIColor whiteColor]];
-    [self.editView addSubview:self.prizeView];
-    self.prizeView.sd_layout
-    .leftEqualToView(self.editView)
-    .rightEqualToView(self.editView)
-    .topSpaceToView(self.photoTitle,3)
-    .heightIs(30);
-    
-    self.photoPrize = [[UITextField alloc] init];
-    [self.photoPrize setFont:[UIFont fontWithName:@"Helvetica-Bold" size:12]];
-    self.photoPrize.keyboardType = UIKeyboardTypeDecimalPad;
-    self.photoPrize.textColor = ThemeColor;
-    self.photoPrize.delegate = self;
-    [self.prizeView addSubview:self.photoPrize];
-    self.photoPrize.sd_layout
-    .leftEqualToView(self.prizeView)
-    .topSpaceToView(self.prizeView,5)
-    .bottomSpaceToView(self.prizeView,5)
-    .rightSpaceToView(self.prizeView,95);
-    UILabel * photoPrize = [[UILabel alloc] initWithFrame:CGRectMake(2, 0, 30, 40)];
-    [photoPrize setTextColor:ThemeColor];
-    [photoPrize setFont:[UIFont fontWithName:@"Helvetica-Bold" size:12]];
-    [photoPrize setText:@"￥"];
-    photoPrize.sd_layout.widthIs(10);
-    self.photoPrize.leftViewMode = UITextFieldViewModeAlways;
-    self.photoPrize.leftView = photoPrize;
-    
-    
-    self.recommendView = [[UIView alloc] init];
-    [self.recommendView setBackgroundColor:[UIColor whiteColor]];
-    [self.prizeView addSubview:self.recommendView];
-    self.recommendView.sd_layout
-    .leftSpaceToView(self.photoPrize,5)
-    .topEqualToView(self.prizeView)
-    .bottomEqualToView(self.prizeView)
-    .rightEqualToView(self.prizeView);
-    
-    
-    self.recommendText = [[UILabel alloc] init];
-    [self.recommendText setText:@"推荐"];
-    [self.recommendText setFont:Font(12)];
-    [self.recommendText setTextColor:ThemeColor];
-    [self.recommendView addSubview:self.recommendText];
-    self.recommendText.sd_layout
-    .leftSpaceToView(self.recommendView,0)
-    .topEqualToView(self.recommendView)
-    .bottomEqualToView(self.recommendView)
-    .widthIs(30);
-    
-    self.recommendSwitch = [[UISwitch alloc] init];
-    self.recommendSwitch.onTintColor = ThemeColor;
-    self.recommendSwitch.transform = CGAffineTransformMakeScale(0.8,0.8);
-    [self.recommendSwitch addTarget:self action:@selector(switchSelected:) forControlEvents:UIControlEventValueChanged];
-    [self.recommendView addSubview:self.recommendSwitch];
-    self.recommendSwitch.sd_layout
-    .rightSpaceToView(self.recommendView,-8)
-    .topSpaceToView(self.recommendView,2.5);
+
     
     self.remarksView = [[UIView alloc] init];
     [self.remarksView setBackgroundColor:[UIColor whiteColor]];
-    [self.editView addSubview:self.remarksView];
+    [self.content addSubview:self.remarksView];
     self.remarksView.sd_layout
-    .leftEqualToView(self.editView)
-    .rightEqualToView(self.editView)
-    .topSpaceToView(self.prizeView,3)
-    .heightIs(25);
+    .leftSpaceToView(self.content,Clearance)
+    .rightSpaceToView(self.content,Clearance)
+    .topSpaceToView(self.photoTitle,3)
+    .heightIs(65);
+
+    self.line1 = [[UIView alloc]init];
+    [self.line1 setBackgroundColor:ColorHex(0xebebeb)];
+    [self.remarksView addSubview:_line1];
+    self.line1.sd_layout
+    .leftSpaceToView(_remarksView,Clearance)
+    .rightSpaceToView(_remarksView,Clearance)
+    .topSpaceToView(_remarksView,0)
+    .heightIs(1);
     
     self.reamrksText = [[UILabel alloc] init];
     [self.reamrksText setText:@"备注:"];
-    [self.reamrksText setTextColor:ColorHex(0X888888)];
-    [self.reamrksText setFont:Font(12)];
+    [self.reamrksText setTextColor:ColorHex(0xebebeb)];
+    [self.reamrksText setFont:Font(15)];
     [self.remarksView addSubview:self.reamrksText];
     self.reamrksText.sd_layout
     .leftSpaceToView(self.remarksView,2)
-    .topSpaceToView(self.remarksView,0)
-    .widthIs(30)
+    .topSpaceToView(self.remarksView,3)
+    .widthIs(40)
     .heightIs(30);
     
     self.remarksContent = [[UITextView alloc] init];
@@ -213,117 +207,164 @@
     self.remarksContent.delegate = self;
     self.remarksContent.contentInset = UIEdgeInsetsMake(2,0,2,0);
     [self.remarksContent setBackgroundColor:[UIColor clearColor]];
-    [self.remarksContent setFont:Font(12)];
+    [self.remarksContent setFont:Font(15)];
+    [self.remarksContent setTextColor:[UIColor darkGrayColor]];
     [self.remarksView addSubview:self.remarksContent];
     self.remarksContent.sd_layout
     .leftSpaceToView(self.reamrksText,0)
     .topSpaceToView(self.remarksView,0)
     .rightSpaceToView(self.remarksView,0)
-    .bottomSpaceToView(self.remarksView,0);
+    .heightIs(50);
+    
+    self.line2 = [[UIView alloc]init];
+    [self.line2 setBackgroundColor:ColorHex(0xe0e0e0)];
+    [_remarksView addSubview:_line2];
+    self.line2.sd_layout
+    .leftSpaceToView(_remarksView,Clearance)
+    .rightSpaceToView(_remarksView,Clearance)
+    .bottomSpaceToView(_remarksView,0)
+    .heightIs(1);
     
     self.photoClass = [[UIView alloc] init];
     [self.photoClass setBackgroundColor:[UIColor clearColor]];
-    //self.photoClass.clipsToBounds = YES;
     [self.content addSubview: self.photoClass];
-    
     self.photoClass.sd_layout
     .leftSpaceToView(self.content,Clearance)
-    .rightSpaceToView(self.content,40)
-    .topSpaceToView(self.editView,5)
-    .heightIs(30);
+    .rightSpaceToView(self.content,Clearance)
+    .topSpaceToView(_remarksView,0)
+    .heightIs(40);
 
- 
-
-    self.photoClassParentText = [[UILabel alloc] init];
-    [self.photoClassParentText setText:@"分类:"];
-    [self.photoClassParentText setTextColor:ColorHex(0X888888)];
-    [self.photoClassParentText setFont:Font(12)];
-    [self.photoClass addSubview:self.photoClassParentText];
-    self.photoClassParentText.sd_layout
-    .leftEqualToView(self.photoClass)
-    .topEqualToView(self.photoClass)
-    .widthIs(30)
-    .heightIs(30);
-    
-    self.photoClassParentView = [[UIView alloc] init];
-    [self.photoClassParentView setBackgroundColor:ThemeColor];
-    self.photoClassParentView.cornerRadius = 12;
-    [self.photoClass addSubview:self.photoClassParentView];
-    self.photoClassParentView.sd_layout
-    .leftSpaceToView(self.photoClassParentText,0)
-    .topSpaceToView(self.photoClass,3)
-    .widthIs(50)
-    .heightIs(24);
-
-    self.photoClassParent = [[UILabel alloc] init];
-    [self.photoClassParent setFont:Font(12)];
-    self.photoClassParent.lineBreakMode = NSLineBreakByTruncatingMiddle;
-    [self.photoClassParent setTextColor:[UIColor whiteColor]];
+    self.photoClassParent = [[UIButton alloc] init];
+    [self.photoClassParent.titleLabel setFont:Font(12)];
+    [self.photoClassParent setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+    self.photoClassParent.layer.cornerRadius = 5;
+    self.photoClassParent.layer.borderWidth = 1;
+    self.photoClassParent.layer.borderColor = ColorHex(0xe0e0e0).CGColor;
     [self.photoClassParent addTarget:self action:@selector(photoClassParentSelected)];
-    [self.photoClassParentView addSubview:self.photoClassParent];
+    [self.photoClass addSubview:_photoClassParent];
     self.photoClassParent.sd_layout
-    .leftSpaceToView(self.photoClassParentView,8)
-    .topEqualToView(self.photoClassParentView)
-    .rightSpaceToView(self.photoClassParentView ,8)
-    .bottomEqualToView(self.photoClassParentView);
+    .leftSpaceToView(self.photoClass,0)
+    .topSpaceToView(self.photoClass,10)
+    .heightIs(25);
     
-    
-    UILabel * line11 = [[UILabel alloc] init];
-    [line11 setText:@">"];
-    [line11 setTextColor:ColorHex(0X888888)];
-    [line11 setFont:Font(13)];
-    [self.photoClass addSubview:line11];
-    line11.sd_layout
-    .leftSpaceToView(self.photoClassParentView,5)
-    .topSpaceToView(self.photoClass,3)
-    .heightIs(24)
+    UILabel * line3 = [[UILabel alloc] init];
+    [line3 setText:@">"];
+    [line3 setTextColor:ColorHex(0X888888)];
+    [line3 setFont:Font(13)];
+    [self.photoClass addSubview:line3];
+    line3.sd_layout
+    .leftSpaceToView(self.photoClassParent,5)
+    .topSpaceToView(self.photoClass,13)
+    .heightIs(20)
     .widthIs(10);
 
-
-    self.photoClassSubView = [[UIView alloc] init];
-    self.photoClassSubView.cornerRadius = 12;
-    [self.photoClassSubView addTarget:self action:@selector(photoClassSubViewSelected)];
-    [self.photoClassSubView setBackgroundColor:ColorHex(0X559EDD)];
-    [self.photoClass addSubview:self.photoClassSubView];
-    self.photoClassSubView.sd_layout
-    .leftSpaceToView(self.photoClassParentView,20)
-    .topSpaceToView(self.photoClass,3)
-    .widthIs(50)
-    .heightIs(24);
-
-    self.photoClassSub = [[UILabel alloc] init];
-    [self.photoClassSub setTextColor:[UIColor whiteColor]];
-    self.photoClassSub.font = Font(12);
-    self.photoClassSub.lineBreakMode = NSLineBreakByTruncatingMiddle;
-    [self.photoClassSubView addSubview:self.photoClassSub];
+    self.photoClassSub = [[UIButton alloc] init];
+    [self.photoClassSub.titleLabel setFont:Font(12)];
+    [self.photoClassSub setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+    self.photoClassSub.layer.cornerRadius = 5;
+    self.photoClassSub.layer.borderWidth = 1;
+    self.photoClassSub.layer.borderColor = ColorHex(0xe0e0e0).CGColor;
+    [self.photoClassSub addTarget:self action:@selector(photoClassSubViewSelected)];
+    [self.photoClass addSubview:_photoClassSub];
     self.photoClassSub.sd_layout
-    .leftSpaceToView(self.photoClassSubView,8)
-    .rightSpaceToView(self.photoClassSubView,8)
-    .topEqualToView(self.photoClassSubView)
-    .bottomEqualToView(self.photoClassSubView);
-    
-    
-    self.shareSelect = [[UIView alloc] init];
-    [self.shareSelect setBackgroundColor:[UIColor clearColor]];
-    [self.shareSelect addTarget:self action:@selector(shareViewSelected)];
-    [self.content addSubview:self.shareSelect];
-    self.shareSelect.sd_layout
-    .rightSpaceToView(self.content,0)
-    .topEqualToView(self.photoClass)
-    .heightIs(40)
-    .widthIs(50);
-    
-    self.share = [[UIImageView alloc] init];
-    [self.share setBackgroundColor:[UIColor clearColor]];
-    [self.share setContentMode:UIViewContentModeScaleAspectFit];
-    [self.share setImage:[UIImage imageNamed:@"ico_dynamic_more"]];
-    [self.shareSelect addSubview:self.share];
+    .leftSpaceToView(line3,5)
+    .topSpaceToView(self.photoClass,10)
+    .heightIs(25);
+
+    self.share = [[UILabel alloc] init];
+    [self.share setFont:Font(19)];
+    [self.share setText:@"..."];
+    [self.share addTarget:self action:@selector(shareViewSelected)];
+    self.share.textAlignment = NSTextAlignmentLeft;
+    [self.photoClass addSubview:self.share];
     self.share.sd_layout
-    .rightSpaceToView(self.shareSelect,11)
-    .topSpaceToView(self.shareSelect,5)
-    .widthIs(20)
+    .rightSpaceToView(self.photoClass,0)
+    .topSpaceToView(self.photoClass,10)
+    .widthIs(15)
     .heightIs(20);
 
+// editView
+    /*
+    _editView = [[UIView alloc]init];
+    [self.content addSubview:_editView];
+    _editView.sd_layout
+    .topEqualToView(_photoTitle)
+    .leftEqualToView(_content)
+    .rightEqualToView(_content)
+    .heightIs(300);
+    [_editView setHidden:YES];
+    
+    UIButton * btnCancel = [[UIButton alloc]init];
+    [_editView addSubview:btnCancel];
+    [btnCancel addTarget:self action:@selector(clearPhotoTitle)];
+    [btnCancel setBackgroundImage:[UIImage imageNamed:@"btn_close_grey"] forState:UIControlStateNormal];
+    btnCancel.sd_layout
+    .rightSpaceToView(_editView,15)
+    .topSpaceToView(_editView,10)
+    .widthIs(16)
+    .heightIs(16);
+    
+    UIView *eline1 = [[UIView alloc]init];
+    [eline1 setBackgroundColor:ColorHex(0xebebeb)];
+    [_editView addSubview:eline1];
+    eline1.sd_layout
+    .leftEqualToView(_editView)
+    .rightEqualToView(_editView)
+    .topEqualToView(_editView)
+    .heightIs(10);
+
+    self.reamrksText = [[UILabel alloc] init];
+    [self.reamrksText setText:@"备注:"];
+    [self.reamrksText setTextColor:ColorHex(0xebebeb)];
+    [self.reamrksText setFont:Font(15)];
+    [self.remarksView addSubview:self.reamrksText];
+    self.reamrksText.sd_layout
+    .leftSpaceToView(self.remarksView,2)
+    .topSpaceToView(self.remarksView,3)
+    .widthIs(40)
+    .heightIs(30);
+    
+    self.remarksContent = [[UITextView alloc] init];
+    self.remarksContent.scrollEnabled = NO;
+    self.remarksContent.editable = NO;
+    self.remarksContent.delegate = self;
+    self.remarksContent.contentInset = UIEdgeInsetsMake(2,0,2,0);
+    [self.remarksContent setBackgroundColor:[UIColor clearColor]];
+    [self.remarksContent setFont:Font(15)];
+    [self.remarksContent setTextColor:[UIColor darkGrayColor]];
+    [self.remarksView addSubview:self.remarksContent];
+    self.remarksContent.sd_layout
+    .leftSpaceToView(self.reamrksText,0)
+    .topSpaceToView(self.remarksView,0)
+    .rightSpaceToView(self.remarksView,0)
+    .heightIs(50);
+    
+    UIView *eline2 = [[UIView alloc]init];
+    [eline2 setBackgroundColor:ColorHex(0xebebeb)];
+    [_editView addSubview:eline2];
+    eline2.sd_layout
+    .leftSpaceToView(_editView,Clearance)
+    .rightSpaceToView(_editView,Clearance)
+    .topSpaceToView(_editView,Clearance)
+    .heightIs(1);
+    
+    UILabel *lab = [[UILabel alloc] init];
+    [lab setFont:Font(19)];
+    [self.share setText:@"..."];
+    [self.share addTarget:self action:@selector(shareViewSelected)];
+    self.share.textAlignment = NSTextAlignmentLeft;
+    [self.photoClass addSubview:self.share];
+    self.share.sd_layout
+    .rightSpaceToView(self.photoClass,0)
+    .topSpaceToView(self.photoClass,10)
+    .widthIs(15)
+    .heightIs(20);
+    
+    
+    
+    
+    */
+    
     self.foot = [[PhotoDetailsFooter alloc] init];
     self.foot.delegate = self;
     [self.content addSubview:self.foot];
@@ -332,7 +373,8 @@
     .rightEqualToView(self.content)
     .topSpaceToView(self.photoClass,5)
     .heightIs(400);
-    
+
+    /*
     if(self.persona){
         [self.recommendView setHidden:YES];
         [self.remarksView setHidden:YES];
@@ -348,10 +390,11 @@
         self.remarksView.sd_layout.topSpaceToView(self.prizeView,3);
         self.editView.sd_layout.heightIs(160);
     }
-    [self.remarksView updateLayout];
-    [self.editView updateLayout];
-    self.photoClass.sd_layout.topSpaceToView(self.editView,3);
-    [self.photoClass updateLayout];
+    */
+//    [self.remarksView updateLayout];
+//    [self.editView updateLayout];
+//    self.photoClass.sd_layout.topSpaceToView(self.line2,3);
+//    [self.photoClass updateLayout];
     
     
     self.shareView = GETALONESTORYBOARDPAGE(@"ShareCtr");
@@ -368,7 +411,31 @@
     .topEqualToView(self.view)
     .bottomEqualToView(self.view);
     [self.qrAlert setHidden:YES];
+
+    UIView * topView = [[UIView alloc] init];
+    [topView setBackgroundColor:[UIColor clearColor]];
+    [topView addTarget:self action:@selector(topViewSelected)];
+    [self.view addSubview:topView];
+    topView.sd_layout
+    .rightSpaceToView(self.view,10)
+    .bottomSpaceToView(self.view,140)
+    .widthIs(50)
+    .heightIs(50);
     
+    UIImageView * topImage = [[UIImageView alloc] init];
+    [topImage setContentMode:UIViewContentModeScaleAspectFit];
+    [topImage setCornerRadius:3];
+    [topImage setImage:[UIImage imageNamed:@"btn_top"]];
+    [topView addSubview:topImage];
+    topImage.sd_layout
+    .leftSpaceToView(topView,0)
+    .rightSpaceToView(topView,0)
+    .topSpaceToView(topView,0)
+    .bottomSpaceToView(topView,0);
+}
+
+- (void)topViewSelected{
+    [self.content setContentOffset:CGPointMake(0, 0) animated:YES];
 }
 
 - (BOOL) isEmpty:(NSString *) str {
@@ -392,86 +459,58 @@
             return false;
             
         }
-        
     }
-    
 }
 
 - (void)setPhotoDetailsContent:(DetailPhotoRequset *)data{
+    
+//    [self.icon sd_setImageWithURL:[NSURL URLWithString:[data.photoId]]];
+    self.icon.layer.cornerRadius = _icon.frame.size.width/2;
+    self.icon.layer.masksToBounds = TRUE;
+    
+    [self.name setText:data.name];
+    [self.date setText:[NSString stringWithFormat:@"%@ 上传",data.date]];
+    
     self.subclassID = data.subclassID;
     self.uid = data.userID;
     self.classifyID = data.classifyID;
     [self.photoTitle setText:data.name];
-
     
     if([self.uid isEqualToString:self.photosUserID]){
-        
-        [self.recommendView setHidden:NO];
-        [self.remarksView setHidden:NO];
         [self.edit setHidden:NO];
-        self.remarksView.sd_layout.heightIs(30);
-        self.remarksView.sd_layout.topSpaceToView(self.prizeView,3);
-        self.editView.sd_layout.heightIs(160);
-        
-        [self.photoPrize setHidden:NO];
-       
-        
+        [self.search setHidden:NO];
     }else{
-        
-        [self.recommendView setHidden:YES];
-        [self.remarksView setHidden:YES];
         [self.edit setHidden:YES];
-        self.remarksView.sd_layout.heightIs(1);
-        self.remarksView.sd_layout.topSpaceToView(self.prizeView,0);
-        self.editView.sd_layout.heightIs(115);
-        
-        if(data.showPrice){
-            [self.photoPrize setHidden:NO];
-        }else{
-            [self.photoPrize setHidden:YES];
-        }
+        [self.search setHidden:YES];
+        [self.remarksView setHidden:YES];
+        [self.line2 setHidden:YES];
+        self.photoClass.sd_layout.topSpaceToView(_photoTitle,5);
     }
     
-    
-    [self.remarksView updateLayout];
-    [self.editView updateLayout];
-    self.photoClass.sd_layout.topSpaceToView(self.editView,3);
     [self.photoClass updateLayout];
     self.photoTitle.sd_layout.heightIs([self heightForString:self.photoTitle andWidth:self.photoTitle.width]);
     [self.photoTitle updateLayout];
-    [self.photoPrize setText:data.price];
-    if([data.recommend isEqualToString:@"true"]){
-        [self.recommendSwitch setOn:YES animated:YES];
-    }else{
-        [self.recommendSwitch setOn:NO animated:YES];
-    }
-    
     
     if(data.classifyName && data.classifyName.length > 0){
-        [self.photoClassParent setText:data.classifyName];
-        [self.photoClassParentView setHidden:NO];
+        [self.photoClassParent setTitle:data.classifyName forState:UIControlStateNormal];
+        [self.photoClassParent setHidden:NO];
     }else{
-        [self.photoClassParentView setHidden:YES];
+        [self.photoClassParent setHidden:YES];
     }
     if(data.subclassName && data.subclassName.length > 0){
-        [self.photoClassSub setText:data.subclassName];
-        [self.photoClassSubView setHidden:NO];
+        [self.photoClassSub setTitle:data.subclassName forState:UIControlStateNormal];
+        [self.photoClassSub setHidden:NO];
     }else{
-        [self.photoClassSubView setHidden:YES];
+        [self.photoClassSub setHidden:YES];
     }
     
-    
     [self.foot setDateTitle:data.date];
-    [self.editView updateLayout];
-    self.editView.sd_layout.heightIs(self.remarksView.height+self.remarksView.top_sd);
-    [self.editView updateLayout];
-    
-    
     
     CGFloat photoClassMaxWidth = WindowWidth - 120;
-    CGSize parentSize = [self.photoClassParent.text sizeWithAttributes:[NSDictionary dictionaryWithObjectsAndKeys:self.photoClassParent.font,NSFontAttributeName,nil]];
+    CGSize parentSize = [self.photoClassParent.titleLabel.text sizeWithAttributes:[NSDictionary dictionaryWithObjectsAndKeys:self.photoClassParent.titleLabel.font,NSFontAttributeName,nil]];
     
-    CGSize subSize = [self.photoClassSub.text sizeWithAttributes:[NSDictionary dictionaryWithObjectsAndKeys:self.photoClassSub.font,NSFontAttributeName,nil]];
+    CGSize subSize = [self.photoClassSub.titleLabel.text sizeWithAttributes:[NSDictionary dictionaryWithObjectsAndKeys:self.photoClassSub.titleLabel.font,NSFontAttributeName,nil]];
+    
     if(parentSize.width > photoClassMaxWidth-16){
         parentSize.width = photoClassMaxWidth-16;
         subSize.width = 0;
@@ -481,13 +520,11 @@
             subSize.width = photoClassMaxWidth - parentSize.width - 16;
         }
     }
-
     
-    self.photoClassParentView.sd_layout.widthIs(parentSize.width+16);
-    self.photoClassSubView.sd_layout.widthIs(subSize.width+16);
-    [self.photoClassParentView updateLayout];
-    [self.photoClassSubView updateLayout];
-    
+    self.photoClassParent.sd_layout.widthIs(parentSize.width+16);
+    self.photoClassSub.sd_layout.widthIs(subSize.width+16);
+    [self.photoClassParent updateLayout];
+    [self.photoClassSub updateLayout];
 }
 
 - (float) heightForString:(UITextView *)textView andWidth:(float)width{
@@ -509,7 +546,7 @@
     
     SuperAlbumClassCtr * superClass = GETALONESTORYBOARDPAGE(@"SuperAlbumClassCtr");
     superClass.classifyId = self.classifyID;
-    superClass.pageName = self.photoClassParent.text;
+    superClass.pageName = self.photoClassParent.titleLabel.text;
     superClass.uid = self.uid;
     [self.navigationController pushViewController:superClass animated:YES];
     
@@ -518,21 +555,13 @@
     AlbumClassTabelCtr * classTable = GETALONESTORYBOARDPAGE(@"AlbumClassTabelCtr");
     classTable.uid = self.uid;
     classTable.subClassID = self.subclassID;
-    classTable.pageText = self.photoClassSub.text;
+    classTable.pageText = self.photoClassSub.titleLabel.text;
     [self.navigationController pushViewController:classTable animated:YES];
 }
 
 - (void)switchSelected:(UISwitch *)swt{
     NSString * recommend = @"";
-
-    if(self.recommendSwitch.on){
-        recommend = @"true";
-    }else{
-        recommend = @"false";
-    }
-    
     [self changePhotoDetails:@{@"name":self.photoTitle.text,
-                               @"price":self.photoPrize.text,
                                @"recommend":recommend,
                                @"description":self.remarksContent.text,
                                @"photo_id":self.photoId}];
@@ -540,67 +569,58 @@
 
 - (void)editSelected{
     
-    self.editStatu = !self.editStatu;
-    if(self.editStatu){
-        for(PhotoImagesModel * model in self.imageArray){
-            model.edit = YES;
-        }
-        [self.edit_icon setImage:[UIImage imageNamed:@"ico_confirm_black"]];
-        [self.head setStyle:self.imageArray];
-        self.photoTitle.editable = YES;
-        self.photoTitle.scrollEnabled = YES;
-        self.photoTitle.cornerRadius = 2;
-        self.photoTitle.borderColor = ColorHex(0XEEEEEE);
-        self.photoTitle.borderWidth = 1;
-        
-        self.prizeView.cornerRadius = 2;
-        self.prizeView.borderWidth = 1;
-        self.prizeView.borderColor = ColorHex(0XEEEEEE);
-        
-        self.remarksView.cornerRadius = 2;
-        self.remarksView.borderColor = ColorHex(0XEEEEEE);
-        self.remarksView.borderWidth = 1;
-        
-        self.remarksContent.scrollEnabled = YES;
-        self.remarksContent.editable = YES;
-    }else{
-        [self.edit_icon setImage:[UIImage imageNamed:@"btn_edit_black"]];
-        self.photoTitle.editable = NO;
-        self.photoTitle.scrollEnabled = NO;
-        self.photoTitle.borderWidth = 0;
-        self.prizeView.borderWidth = 0;
-        self.remarksView.borderWidth = 0;
+    [self.editHead setHidden:NO];
+    [self.foot setHidden:YES];
+    for(PhotoImagesModel * model in self.imageArray) {
+        model.edit = YES;
+    }
+    
+    PublishPhotoCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotoCtr");
+    pulish.imageArray = self.imageArray;
+    [self presentViewController:pulish animated:YES completion:nil];
+    
+    
+    /*
+    [self.head setStyle:self.imageArray];
+    self.remarksContent.scrollEnabled = YES;
+    self.remarksContent.editable = YES;
+     */
+}
+
+-(void)clearPhotoTitle {
+}
+
+#pragma mark - PhotoEditViewDelegate
+- (void)photosEditSelected:(NSInteger)type
+{
+    if (type == 1) {
         
         self.remarksContent.scrollEnabled = NO;
         self.remarksContent.editable = NO;
-        [self.photoPrize resignFirstResponder];
         for(PhotoImagesModel * model in self.imageArray){
             model.edit = NO;
         }
-        [self.head setStyle:self.imageArray];
+        [self.head setStyle:self.imageArray mode:NO];
         
         NSString * recommend = @"";
-        if(self.recommendSwitch.on){
-            recommend = @"true";
-        }else{
-            recommend = @"false";
-        }
-        
         NSString * remarksContentText = self.remarksContent.text;
         if(remarksContentText.length == 0){
             [self changePhotoDetails:@{@"name":self.photoTitle.text,
-                                       @"price":self.photoPrize.text,
                                        @"description":@" ",
                                        @"recommend":recommend,
                                        @"photo_id":self.photoId}];
         }else{
             [self changePhotoDetails:@{@"name":self.photoTitle.text,
-                                       @"price":self.photoPrize.text,
                                        @"recommend":recommend,
                                        @"description":self.remarksContent.text,
                                        @"photo_id":self.photoId}];
         }
+        
     }
+    else if (type == 2) {}
+    
+    [self.editHead setHidden:YES];
+    [self.foot setHidden:NO];
 }
 
 - (BOOL)isPureInt:(NSString*)string{
@@ -620,7 +640,7 @@
         [urlImages addObject:model.big];
     }
     
-      NSString * text = [NSString stringWithFormat:@"%@%@/photo/detail/%@",URLHead,self.uid,self.photoId];
+    NSString * text = [NSString stringWithFormat:@"%@%@/photo/detail/%@",URLHead,self.uid,self.photoId];
     
     //1、创建分享参数（必要）
     NSMutableDictionary *shareParams = [NSMutableDictionary dictionary];
@@ -629,8 +649,6 @@
                                         url:nil
                                       title:text
                                        type:SSDKContentTypeAuto];
-    
-    
     
     switch (type) {
         case 1: //微信好友
@@ -735,7 +753,6 @@
         }
             break;
     }
-    
 }
 
 #pragma mark - PhotoDetailsFooterDelegate
@@ -761,19 +778,22 @@
 
 #pragma makr - UITextFieldDelegate
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
+/*
     if (textField == self.photoPrize) {
         return self.editStatu;
     }
+  */
     return YES;
 }
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
-    
+   /*
     if(textField == self.photoPrize){
         if(![self isPureInt:string]){
             [self showToast:@"请输入正确的价格"];
             return NO;
         }
     }
+    */
     return YES;
 }
 
@@ -786,17 +806,15 @@
         textView.sd_layout.heightIs(size.height);
         [textView updateLayout];
     }else if(textView == self.remarksContent){
-        self.remarksView.sd_layout.heightIs(size.height);
-        [self.remarksView updateLayout];
+//        self.remarksView.sd_layout.heightIs(size.height);
+//        [self.remarksView updateLayout];
     }
     
     
-    self.editView.sd_layout.heightIs(self.remarksView.height+self.remarksView.top_sd);
-    [self.editView updateLayout];
+//    self.editView.sd_layout.heightIs(self.remarksView.height+self.remarksView.top_sd);
+//    [self.editView updateLayout];
     [self.content setContentSize:CGSizeMake(0, self.foot.top+self.foot.height)];
 }
-
-
 
 #pragma mark - PhotoDetailsHeadDelegate
 - (void)photoDetailsHeadSelectType:(NSInteger)type select:(NSInteger)indexPath{
@@ -833,9 +851,7 @@
 - (void)loadNetworkData{
     
     [self getDetailPhoto];
-    
     [self getPhotoImages];
-    
     [self getPhotoDescription];
 }
 
@@ -886,11 +902,8 @@
                 [weakSelef.remarksContent setText:requset.photoDesciption];
             }
             
-            
-            weakSelef.remarksView.sd_layout.heightIs([weakSelef heightForString:weakSelef.remarksContent andWidth:weakSelef.remarksContent.width]);
-            [weakSelef.remarksView updateLayout];
-            weakSelef.editView.sd_layout.heightIs(weakSelef.remarksView.height+weakSelef.remarksView.top_sd);
-            [weakSelef.editView updateLayout];
+//            weakSelef.editView.sd_layout.heightIs(weakSelef.remarksView.height+weakSelef.remarksView.top_sd);
+//            [weakSelef.editView updateLayout];
             [weakSelef.content setContentSize:CGSizeMake(0, weakSelef.foot.top+weakSelef.foot.height)];
             [weakSelef.content updateLayout];
         }
@@ -912,7 +925,7 @@
         if(requset.status == 0){
             [weakSelef.imageArray removeAllObjects];
             [weakSelef.imageArray addObjectsFromArray:requset.dataArray];
-            weakSelef.head.sd_layout.heightIs([weakSelef.head setStyle:weakSelef.imageArray]);
+            weakSelef.head.sd_layout.heightIs([weakSelef.head setStyle:weakSelef.imageArray mode:NO]);
             [weakSelef.head updateLayout];
             weakSelef.foot.sd_layout.heightIs([weakSelef.foot setStyle:weakSelef.imageArray]);
             [weakSelef.foot updateLayout];

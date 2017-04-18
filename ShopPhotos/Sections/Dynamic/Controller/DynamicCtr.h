@@ -10,4 +10,6 @@
 
 @interface DynamicCtr : BaseViewCtr
 
+@property (readwrite, nonatomic) BOOL isBackButton;
+
 @end

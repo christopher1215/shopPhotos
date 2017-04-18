@@ -42,7 +42,7 @@
         
         if(self.userID && self.userID.length > 0){
             UserModel * userModel = [[UserModel alloc] init];
-            userModel.userID = self.userID;
+            userModel.uid = self.userID;
             [self setValue:userModel WithKey:CacheUserModel];
         }
     } @catch (NSException *exception) {

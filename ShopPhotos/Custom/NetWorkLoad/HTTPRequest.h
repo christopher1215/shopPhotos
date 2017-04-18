@@ -18,7 +18,7 @@ typedef void(^Failure)(NSError *error);
 
 #pragma mark - 异步GET请求
 +(void)requestGetUrl:(NSString*)url
-          parametric:(NSDictionary*)dic 
+          parametric:(NSDictionary*)dic
               succed:(Success)succed
              failure:(Failure)failure;
 
@@ -28,6 +28,17 @@ typedef void(^Failure)(NSError *error);
            parametric:(NSDictionary*)dic
                succed:(Success)succed
               failure:(Failure)failure;
+
+#pragma mark - 异步PUT请求
++(void)requestPUTUrl:(NSString*)url
+          parametric:(NSDictionary*)dic
+              succed:(Success)succed
+             failure:(Failure)failure;
+#pragma mark - 异步DELETE请求
++(void)requestDELETEUrl:(NSString*)url
+             parametric:(NSDictionary*)dic
+                 succed:(Success)succed
+                failure:(Failure)failure;
 
 #pragma mark - 上传图片
 +(void)Manager:(NSString*)url

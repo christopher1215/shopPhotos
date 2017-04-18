@@ -10,16 +10,16 @@
 
 @interface ShareCtr ()
 @property (weak, nonatomic) IBOutlet UIView *content;
-@property (weak, nonatomic) IBOutlet UIImageView *close;
-@property (weak, nonatomic) IBOutlet UIView *wixin;
-@property (weak, nonatomic) IBOutlet UIView *qq;
-@property (weak, nonatomic) IBOutlet UIView *pyq;
-@property (weak, nonatomic) IBOutlet UIView *photoCopy;
-@property (weak, nonatomic) IBOutlet UIView *linkCopy;
-@property (weak, nonatomic) IBOutlet UIView *titleCopy;
-@property (weak, nonatomic) IBOutlet UIView *lookQR;
-@property (weak, nonatomic) IBOutlet UIView *favarite;
-@property (weak, nonatomic) IBOutlet UIView *download;
+@property (weak, nonatomic) IBOutlet UIButton *close;
+@property (weak, nonatomic) IBOutlet UIButton *wixin;
+@property (weak, nonatomic) IBOutlet UIButton *qq;
+@property (weak, nonatomic) IBOutlet UIButton *pyq;
+@property (weak, nonatomic) IBOutlet UIButton *photoCopy;
+@property (weak, nonatomic) IBOutlet UIButton *linkCopy;
+@property (weak, nonatomic) IBOutlet UIButton *titleCopy;
+@property (weak, nonatomic) IBOutlet UIButton *lookQR;
+@property (weak, nonatomic) IBOutlet UIButton *favorite;
+@property (weak, nonatomic) IBOutlet UIButton *download;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *alertOffset;
 
 @end
@@ -50,11 +50,8 @@
     [self.linkCopy addTarget:self action:@selector(linkCopySlected)];
     [self.titleCopy addTarget:self action:@selector(titleCopySelected)];
     [self.lookQR addTarget:self action:@selector(lookQRSelected)];
-    [self.favarite addTarget:self action:@selector(favariteSelected)];
+    [self.favorite addTarget:self action:@selector(favariteSelected)];
     [self.download addTarget:self action:@selector(downloadSelected)];
-    
-    
-    
 }
 
 - (void)weixinSelected{
@@ -128,8 +125,6 @@
     } completion:^(BOOL finished){
         [self.view setHidden:YES];
     }];
-    
 }
-
 
 @end

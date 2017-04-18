@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16B2657" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Publish Select-->
+        <scene sceneID="TOY-Bu-BlF">
+            <objects>
+                <viewController storyboardIdentifier="PublishSelect" id="EaO-dN-1lv" customClass="PublishSelect" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="uyF-Uw-PDG"/>
+                        <viewControllerLayoutGuide type="bottom" id="pUm-nY-dS2"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="wtv-eR-COt">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NyF-cx-VCh">
+                                <rect key="frame" x="0.0" y="612" width="375" height="55"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="55" id="O2j-dh-MIq"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="20"/>
+                                <state key="normal" title="取消">
+                                    <color key="titleColor" red="1" green="0.30302986570000001" blue="0.25383772059999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="cancelSelected:" destination="EaO-dN-1lv" eventType="touchUpInside" id="Tjf-tf-gdg"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JlV-FN-eBv">
+                                <rect key="frame" x="0.0" y="552" width="375" height="60"/>
+                                <color key="backgroundColor" red="0.83529411760000005" green="0.83529411760000005" blue="0.89019607840000003" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="60" id="8S4-XW-O2B"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
+                                <state key="normal" title="录制短视频">
+                                    <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
+                                        <real key="value" value="1"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
+                                        <color key="value" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="0.0"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="publishVideoSelected:" destination="EaO-dN-1lv" eventType="touchUpInside" id="ps7-r6-DT9"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mSr-7p-fY3">
+                                <rect key="frame" x="0.0" y="492" width="375" height="60"/>
+                                <color key="backgroundColor" red="0.83529411760000005" green="0.83529411760000005" blue="0.89019607840000003" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="60" id="eSt-Re-YFK"/>
+                                </constraints>
+                                <state key="normal" title="上传图片">
+                                    <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="publishPhotoSelected:" destination="EaO-dN-1lv" eventType="touchUpInside" id="aKQ-fj-moF"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="JlV-FN-eBv" firstAttribute="top" secondItem="mSr-7p-fY3" secondAttribute="bottom" id="2WD-J5-VfQ"/>
+                            <constraint firstAttribute="trailing" secondItem="NyF-cx-VCh" secondAttribute="trailing" id="AMx-dx-AR0"/>
+                            <constraint firstItem="pUm-nY-dS2" firstAttribute="top" secondItem="NyF-cx-VCh" secondAttribute="bottom" id="B4G-Id-6dx"/>
+                            <constraint firstAttribute="trailing" secondItem="JlV-FN-eBv" secondAttribute="trailing" id="NWv-2y-8Jw"/>
+                            <constraint firstItem="mSr-7p-fY3" firstAttribute="leading" secondItem="wtv-eR-COt" secondAttribute="leading" id="Pta-SM-i25"/>
+                            <constraint firstAttribute="trailing" secondItem="mSr-7p-fY3" secondAttribute="trailing" id="dJj-2p-wOt"/>
+                            <constraint firstItem="JlV-FN-eBv" firstAttribute="leading" secondItem="wtv-eR-COt" secondAttribute="leading" id="eVO-QB-p5W"/>
+                            <constraint firstItem="NyF-cx-VCh" firstAttribute="leading" secondItem="wtv-eR-COt" secondAttribute="leading" id="rib-iq-Tcq"/>
+                            <constraint firstItem="NyF-cx-VCh" firstAttribute="top" secondItem="JlV-FN-eBv" secondAttribute="bottom" id="zay-HT-7EJ"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="cancel" destination="NyF-cx-VCh" id="qrM-MK-gPd"/>
+                        <outlet property="publishPhoto" destination="mSr-7p-fY3" id="mjC-10-2X9"/>
+                        <outlet property="publishVideo" destination="JlV-FN-eBv" id="joC-Uc-3cM"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="oTF-2D-CCX" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-439" y="94"/>
+        </scene>
+    </scenes>
+</document>

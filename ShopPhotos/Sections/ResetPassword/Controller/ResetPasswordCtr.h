@@ -9,5 +9,6 @@
 #import "BaseViewCtr.h"
 
 @interface ResetPasswordCtr : BaseViewCtr
+@property (strong, nonatomic) NSString * fromType;
 
 @end

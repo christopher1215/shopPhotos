@@ -15,7 +15,9 @@
 @end
 
 @interface ShareCtr : BaseViewCtr
+
 @property (weak, nonatomic) id<ShareDelegate>delegate;
+
 - (void)showAlert;
 - (void)closeAlert;
 

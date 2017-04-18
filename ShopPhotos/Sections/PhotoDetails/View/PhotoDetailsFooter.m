@@ -33,7 +33,6 @@
     return self;
 }
 
-
 - (void)createAutoLayout{
     
     self.line = [[UILabel alloc] init];
@@ -46,15 +45,15 @@
     .heightIs(15);
     
     self.title = [[UILabel alloc] init];
-    [self.title setText:@"图片详情"];
-    [self.title setFont:Font(14)];
+    [self.title setText:@"详情"];
+    [self.title setFont:Font(20)];
     [self addSubview:self.title];
     
     self.title.sd_layout
     .leftSpaceToView(self,10)
     .topSpaceToView(self,15)
     .widthIs(100)
-    .heightIs(40);
+    .heightIs(50);
     
     self.date = [[UILabel alloc] init];
     [self.date setFont:Font(11)];
@@ -73,7 +72,7 @@
     self.images.sd_layout
     .leftSpaceToView(self,10)
     .rightSpaceToView(self,10)
-    .topSpaceToView(self,55)
+    .topSpaceToView(self,65)
     .heightIs(WindowWidth-20);
     
     self.footTitle = [[UILabel alloc] init];
@@ -123,6 +122,7 @@
         .rightEqualToView(imageView)
         .bottomEqualToView(imageView);
         
+        
         if(imageModel.isCover){
             UIImageView * cover = [[UIImageView alloc] init];
             [cover setBackgroundColor:[UIColor clearColor]];
@@ -139,14 +139,12 @@
     self.images.sd_layout.heightIs(imageArray.count * (WindowWidth-20));
     [self.images updateLayout];
     
-    
     return self.images.height+self.images.top + 30;
 }
 
 - (void)setDateTitle:(NSString *)date{
     [self.date setText:date];
 }
-
 
 - (void)imageSelected:(UITapGestureRecognizer *)tap{
     

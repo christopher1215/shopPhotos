@@ -22,6 +22,8 @@
 #import <WXApi.h>
 #import <IQKeyboardManager.h>
 #import "RequestErrorGrab.h"
+#import "GuideViewController.h"
+#import <CommonCrypto/CommonDigest.h>
 
 @interface AppDelegate ()
 
@@ -43,7 +45,7 @@
     
     [self pageJump];
     
-    self.updateToken =  [NSTimer scheduledTimerWithTimeInterval:300 target:self selector:@selector(updateTokenUse) userInfo:nil repeats:YES];
+    //    self.updateToken =  [NSTimer scheduledTimerWithTimeInterval:300 target:self selector:@selector(updateTokenUse) userInfo:nil repeats:YES];
     return YES;
 }
 
@@ -96,8 +98,6 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
-
-
 #pragma mark - 初始化QQ 微信
 - (void)initShareSDK{
     
@@ -118,7 +118,7 @@
         switch (platformType){
             case SSDKPlatformTypeWechat:
                 [appInfo SSDKSetupWeChatByAppId:@"wx86f699c5f590353b"
-                appSecret:@"43c01a63924019454bfc7e21380a5430"];
+                                      appSecret:@"43c01a63924019454bfc7e21380a5430"];
                 break;
             case SSDKPlatformTypeQQ:
                 [appInfo SSDKSetupQQByAppId:@"1105920910"
@@ -134,39 +134,70 @@
 #pragma mark -  获取Api
 - (void)getApi{
     
-    
-    NSURL *url = [NSURL URLWithString:UOOTUURL];
+    NSString *urlString = [NSString stringWithFormat:@"%@%@",UOOTUURL,[self getParameterString]];
+    NSURL *url = [NSURL URLWithString:urlString];
     NSURLRequest *request = [[NSURLRequest alloc]initWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:5];
-//    NSData *received = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
-//    NSData *received = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
+    //    NSData *received = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
+    //    NSData *received = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
     
     [[[NSURLSession sharedSession] dataTaskWithRequest:request
                                      completionHandler:^(NSData *received, NSURLResponse *response,
-                                                                                   NSError *error) {
-        // handle response
-     if(received){
-         NSDictionary * responseObject = [NSJSONSerialization JSONObjectWithData:received options:NSJSONReadingMutableContainers error:nil];
-         NSLog(@"%@",responseObject);
-         PublicDataAnalytic * publicData = [[PublicDataAnalytic alloc] init];
-         [publicData analyticInterface:responseObject];
-     }
-    }] resume];
+                                                         NSError *error) {
+                                         // handle response
+                                         if(received){
+                                             NSDictionary * responseObject = [NSJSONSerialization JSONObjectWithData:received options:NSJSONReadingMutableContainers error:nil];
+                                             NSLog(@"%@",responseObject);
+                                             PublicDataAnalytic * publicData = [[PublicDataAnalytic alloc] init];
+                                             [publicData analyticInterface:responseObject];
+                                         }
+                                     }] resume];
 }
-
+- (NSString *)getParameterString{
+    NSString *timestamps = TimeStamp;
+    NSString *ak = ACCESS_KEY;
+    NSString *dive = [self randomString:64];
+    NSString *equ = @"ios";
+    NSString *secret_key = SECRET_KEY;
+    NSString *sign = [self md5:[NSString stringWithFormat:@"%@%@%@%@",secret_key,dive,timestamps,equ]];
+    return [NSString stringWithFormat:@"?timestamps=%@&sign=%@&ak=%@&dive=%@&equ=%@",timestamps,sign,ak,dive,equ];
+}
+- (NSString *) md5:(NSString *) input
+{
+    const char *cStr = [input UTF8String];
+    unsigned char digest[CC_MD5_DIGEST_LENGTH];
+    CC_MD5( cStr, strlen(cStr), digest ); // This is the md5 call
+    
+    NSMutableString *output = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH * 2];
+    
+    for(int i = 0; i < CC_MD5_DIGEST_LENGTH; i++)
+        [output appendFormat:@"%02x", digest[i]];
+    
+    return  output;
+}
+- (NSString *)randomString:(int) len{
+    NSString *tmpChars = @"ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz";
+    NSInteger maxPos = tmpChars.length;
+    NSString  *pwd = @"";
+    for (int i = 0; i<len; i++) {
+        NSUInteger ind =floor(arc4random() % 10 * maxPos / 10);
+        NSString* tmp =[tmpChars substringWithRange:NSMakeRange(ind, 1)];
+        pwd= [NSString stringWithFormat:@"%@%@",pwd,tmp];
+    }
+    return pwd;
+}
 #pragma mark -  页面跳转
 - (void)pageJump{
-
-    if([self getValueWithKey:CacheUserModel]){
-        // 已登入
-        TabBarCtr * tabbar = [[TabBarCtr alloc] init];
-        BaseNavigationCtr * baseNaviga = [[BaseNavigationCtr alloc] initWithRootViewController:tabbar];
-        self.window.rootViewController = baseNaviga;
-        
-    }else{
-        LoginCtr * login = GETALONESTORYBOARDPAGE(@"LoginCtr");
-        BaseNavigationCtr * baseNaviga = [[BaseNavigationCtr alloc] initWithRootViewController:login];
-        self.window.rootViewController = baseNaviga;
-    }
+    GuideViewController *vc=[[GuideViewController alloc] initWithNibName:@"GuideViewController" bundle:nil];
+    BaseNavigationCtr * baseNaviga = [[BaseNavigationCtr alloc] initWithRootViewController:vc];
+    self.window.rootViewController = baseNaviga;
 }
-
+- (void)setStartViewController:(UIViewController*)vc {
+    self.window.rootViewController = [[BaseNavigationCtr alloc] initWithRootViewController:vc];
+    self.window.rootViewController.view.alpha = 0.0;
+    [self.window makeKeyAndVisible];
+    
+    [UIView animateWithDuration:0.5 animations:^{
+        self.window.rootViewController.view.alpha = 1.0;
+    }];
+}
 @end

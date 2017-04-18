@@ -14,6 +14,8 @@
 @protocol AlbumPhotoTableCellDelegate <NSObject>
 
 - (void)editSelected:(NSIndexPath *)indexPath;
+- (void)shareClicked:(NSIndexPath *)indexPath;
+
 
 @end
 

@@ -14,6 +14,8 @@
 #import "CommonDefine.h"
 #import "TabBarView.h"
 #import "PublishPhotosCtr.h"
+#import "PublishPhotoCtr.h"
+#import "PublishSelect.h"
 
 @interface TabBarCtr ()<TabBarViewDelegate>
 
@@ -48,7 +50,6 @@
         }
     }
 }
-
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -88,8 +89,9 @@
             break;
         case 2:
         {
-            PublishPhotosCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotosCtr");
-            [self.navigationController pushViewController:pulish animated:YES];
+            PublishSelect * pubSelect = GETALONESTORYBOARDPAGE(@"PublishSelect");
+            [self presentViewController:pubSelect animated:YES completion:nil];
+//            [self.navigationController pushViewController:pulish animated:YES];
         }
             break;
         case 3:

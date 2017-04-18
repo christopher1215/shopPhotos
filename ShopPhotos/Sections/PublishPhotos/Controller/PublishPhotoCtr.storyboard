@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16B2657" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Publish Photo Ctr-->
+        <scene sceneID="TmG-pi-vnQ">
+            <objects>
+                <viewController storyboardIdentifier="PublishPhotoCtr" id="d0n-Vn-sWv" customClass="PublishPhotoCtr" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Fb6-c0-94o"/>
+                        <viewControllerLayoutGuide type="bottom" id="KiL-Pc-zGO"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="SIU-to-LQV">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5OZ-sp-Qc8" userLabel="head">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="64"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="DQJ-CY-I2T" userLabel="seperate">
+                                        <rect key="frame" x="0.0" y="63" width="375" height="1"/>
+                                        <color key="backgroundColor" red="0.93257872500000005" green="0.93257872500000005" blue="0.93257872500000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="1" id="4Sg-DE-gOA"/>
+                                        </constraints>
+                                    </view>
+                                    <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BLa-ve-B8M">
+                                        <rect key="frame" x="331" y="38" width="34" height="15"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="15" id="MV4-h7-IKt"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
+                                        <state key="normal" title="上传">
+                                            <color key="titleColor" red="0.084288209769999997" green="0.58745339090000004" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </state>
+                                    </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="上传相册" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hbu-rB-RHt">
+                                        <rect key="frame" x="147" y="29" width="80" height="24"/>
+                                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="20"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JAP-Bo-0dW">
+                                        <rect key="frame" x="10" y="38" width="34" height="15"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="15" id="HGI-SA-E8P"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
+                                        <state key="normal" title="取消">
+                                            <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstItem="DQJ-CY-I2T" firstAttribute="top" secondItem="hbu-rB-RHt" secondAttribute="bottom" constant="10" id="34o-aE-xUg"/>
+                                    <constraint firstAttribute="trailing" secondItem="BLa-ve-B8M" secondAttribute="trailing" constant="10" id="3nZ-VE-S8L"/>
+                                    <constraint firstItem="JAP-Bo-0dW" firstAttribute="leading" secondItem="5OZ-sp-Qc8" secondAttribute="leading" constant="10" id="7Ec-f6-d8e"/>
+                                    <constraint firstAttribute="trailing" secondItem="DQJ-CY-I2T" secondAttribute="trailing" id="Abj-ax-CXt"/>
+                                    <constraint firstAttribute="height" constant="64" id="Crk-sF-GU3"/>
+                                    <constraint firstItem="DQJ-CY-I2T" firstAttribute="leading" secondItem="5OZ-sp-Qc8" secondAttribute="leading" id="LJz-77-RYn"/>
+                                    <constraint firstItem="DQJ-CY-I2T" firstAttribute="top" secondItem="BLa-ve-B8M" secondAttribute="bottom" constant="10" id="SLU-0R-J7s"/>
+                                    <constraint firstAttribute="bottom" secondItem="DQJ-CY-I2T" secondAttribute="bottom" id="UsH-le-hgU"/>
+                                    <constraint firstItem="DQJ-CY-I2T" firstAttribute="top" secondItem="JAP-Bo-0dW" secondAttribute="bottom" constant="10" id="YBS-Y1-Pyy"/>
+                                    <constraint firstItem="hbu-rB-RHt" firstAttribute="centerX" secondItem="5OZ-sp-Qc8" secondAttribute="centerX" id="uud-fy-Vs3"/>
+                                </constraints>
+                            </view>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5TY-l0-m2t" userLabel="content">
+                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                            </scrollView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="5OZ-sp-Qc8" firstAttribute="leading" secondItem="SIU-to-LQV" secondAttribute="leading" id="3jt-nm-lmL"/>
+                            <constraint firstItem="5TY-l0-m2t" firstAttribute="top" secondItem="5OZ-sp-Qc8" secondAttribute="bottom" id="4WE-o4-U4j"/>
+                            <constraint firstAttribute="trailing" secondItem="5TY-l0-m2t" secondAttribute="trailing" id="iTn-rd-eno"/>
+                            <constraint firstItem="KiL-Pc-zGO" firstAttribute="top" secondItem="5TY-l0-m2t" secondAttribute="bottom" id="nPu-m1-g3n"/>
+                            <constraint firstAttribute="trailing" secondItem="5OZ-sp-Qc8" secondAttribute="trailing" id="r9Y-Kh-Yyx"/>
+                            <constraint firstItem="5TY-l0-m2t" firstAttribute="leading" secondItem="SIU-to-LQV" secondAttribute="leading" id="v14-jV-WQD"/>
+                            <constraint firstItem="5OZ-sp-Qc8" firstAttribute="top" secondItem="SIU-to-LQV" secondAttribute="top" id="wic-w8-Lv5"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="btn_cancel" destination="JAP-Bo-0dW" id="yNv-li-c4X"/>
+                        <outlet property="btn_ok" destination="BLa-ve-B8M" id="edG-MG-loE"/>
+                        <outlet property="content" destination="5TY-l0-m2t" id="wq6-sO-rjb"/>
+                        <outlet property="mtitle" destination="hbu-rB-RHt" id="d1R-CN-cB2"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Fmj-sM-61w" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-39.200000000000003" y="123.68815592203899"/>
+        </scene>
+    </scenes>
+</document>

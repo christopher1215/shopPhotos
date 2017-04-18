@@ -8,13 +8,16 @@
 
 #import "BaseView.h"
 
+static NSString * CollectionTableCellID = @"CollectionTableCellID";
+
 @protocol CollectionTableViewDelegate  <NSObject>
 
 - (void)editSelected:(NSIndexPath *)indexPath;
-- (void)collctionSelected:(NSIndexPath *)indexPath;
+- (void)collectionSelected:(NSIndexPath *)indexPath;
 - (void)tableDidSelected:(NSIndexPath *)indexPath;
-- (void)collctionUserSelecte:(NSIndexPath *)indexPath;
-
+- (void)collectionUserSelecte:(NSIndexPath *)indexPath;
+- (void)shareClicked:(NSIndexPath *)indexPath;
+    
 @end
 
 @interface CollectionTableView : BaseView

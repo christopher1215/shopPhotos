@@ -18,5 +18,10 @@
 
 @property (weak, nonatomic) id<PhotosEditViewDelegate>delegate;
 @property (assign, nonatomic) BOOL allSelectStatus;
+
+@property (strong, nonatomic) UIButton * cancel;
+@property (strong, nonatomic) UILabel * title;
+@property (strong, nonatomic) UIButton * all;
+
 - (void)setSelectedCount:(NSInteger)count;
 @end

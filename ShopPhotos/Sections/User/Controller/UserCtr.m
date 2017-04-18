@@ -23,34 +23,15 @@
 #import "PhotosController.h"
 #import <TZImagePickerController.h>
 #import <TOCropViewController.h>
+#import "ErrMsgViewController.h"
 
-@interface UserCtr ()<UITableViewDelegate,UITextFieldDelegate,UserShareAlertDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,TZImagePickerControllerDelegate,TOCropViewControllerDelegate>
-@property (weak, nonatomic) IBOutlet UIImageView *edit;
-@property (weak, nonatomic) IBOutlet UITableView *table;
-@property (weak, nonatomic) IBOutlet UIView *head;
-@property (weak, nonatomic) IBOutlet UIImageView *icon;
-@property (weak, nonatomic) IBOutlet UIView *qrView;
-@property (weak, nonatomic) IBOutlet UILabel *nameText;
-@property (weak, nonatomic) IBOutlet UITextField *nameEdit;
-@property (weak, nonatomic) IBOutlet UILabel *signatureText;
-@property (weak, nonatomic) IBOutlet UITextField *signatureEdit;
-@property (weak, nonatomic) IBOutlet UILabel *qqText;
-@property (weak, nonatomic) IBOutlet UITextField *qqEidt;
-@property (weak, nonatomic) IBOutlet UILabel *chatText;
-@property (weak, nonatomic) IBOutlet UITextField *chatEdit;
-@property (weak, nonatomic) IBOutlet UILabel *phone;
-@property (weak, nonatomic) IBOutlet UITextField *phoenEdit;
-@property (weak, nonatomic) IBOutlet UILabel *locationText;
-@property (weak, nonatomic) IBOutlet UITextField *locationEdit;
-@property (weak, nonatomic) IBOutlet UILabel *homeText;
-@property (weak, nonatomic) IBOutlet UIImageView *home;
-@property (weak, nonatomic) IBOutlet UIView *feedback;
-@property (assign, nonatomic) BOOL changeStatu;
+#import "UserUpdateViewController.h"
+@interface UserCtr ()<UITableViewDelegate,UserShareAlertDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,TZImagePickerControllerDelegate,TOCropViewControllerDelegate>{
+}
 @property (strong, nonatomic) QRCodeAlert * qrAlert;
-@property (weak, nonatomic) IBOutlet UIButton *loginOut;
-@property (strong, nonatomic) NSString * iconURL;
-@property (strong, nonatomic) UITextField * tempTextField;
 @property (strong, nonatomic) UserShareAlert * shareAlert;
+@property (strong, nonatomic) ErrMsgViewController * popupErrVC;
+
 @end
 
 @implementation UserCtr
@@ -62,13 +43,13 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
     [self setup];
-    
 }
 
-
 - (void)setup{
+    
+    self.popupErrVC = [[ErrMsgViewController alloc] initWithNibName:@"ErrMsgViewController" bundle:nil];
+    
     
     self.table.delegate = self;
     self.table.separatorStyle = UITableViewCellSeparatorStyleNone;
@@ -77,7 +58,13 @@
     [self.qrView addTarget:self action:@selector(qrViewSelected)];
     [self.feedback addTarget:self action:@selector(feedbackSelected)];
     [self.loginOut addTarget:self action:@selector(loginoutSelected) forControlEvents:UIControlEventTouchUpInside];
-    [self.home addTarget:self action:@selector(homeSelected)];
+    [self.viewName addTarget:self action:@selector(nameSelected)];
+    [self.viewSign addTarget:self action:@selector(signSelected)];
+    [self.viewQQ addTarget:self action:@selector(qqSelected)];
+    [self.viewWechat addTarget:self action:@selector(wechatSelected)];
+    [self.viewPhone addTarget:self action:@selector(phoneSelected)];
+    [self.viewAddress addTarget:self action:@selector(addressSelected)];
+    [self.viewEmail addTarget:self action:@selector(emailSelected)];
     
     __weak __typeof(self)weakSelef = self;
     self.table.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
@@ -109,18 +96,6 @@
     [self.shareAlert setHidden:YES];
     
     [self.edit setImage:[UIImage imageNamed:@"btn_edit_black"]];
-    [self.nameEdit setHidden:YES];
-    [self.nameEdit setDelegate:self];
-    [self.signatureEdit setHidden:YES];
-    [self.signatureEdit setDelegate:self];
-    [self.qqEidt setHidden:YES];
-    [self.qqEidt setDelegate:self];
-    [self.chatEdit setHidden:YES];
-    [self.chatEdit setDelegate:self];
-    [self.phoenEdit setHidden:YES];
-    [self.phoenEdit setDelegate:self];
-    [self.locationEdit setHidden:YES];
-    [self.locationEdit setDelegate:self];
     
     [self.nameText setHidden:NO];
     [self.signatureText setHidden:NO];
@@ -129,18 +104,30 @@
     [self.phone setHidden:NO];
     [self.locationText setHidden:NO];
 }
+//- (void)initData{
+//    NSDictionary *dic = [self getValueWithKey:CacheUserModel];
+//    [self.icon sd_setImageWithURL:[NSURL URLWithString:model.icon]];
+//    self.iconURL = model.icon;
+//    [self.nameText setText:model.name];
+//    [self.signatureText setText:model.signature];
+//    [self.qqText setText:model.qq];
+//    [self.chatText setText:model.weixin];
+//    [self.phone setText:model.tel];
+//    [self.locationText setText:model.address];
+//    
+//    [self.nameEdit setText:model.name];
+//    [self.signatureEdit setText:model.signature];
+//    [self.qqEidt setText:model.qq];
+//    [self.chatEdit setText:model.weixin];
+//    [self.phoenEdit setText:model.tel];
+//    [self.locationEdit setText:model.address];
+//    [self.homeText setText:[NSString stringWithFormat:@"%@%@",URLHead,model.uid]];
+//}
 
 - (void)changeStatu:(BOOL)statu{
     
     if(statu){
         [self.edit setImage:[UIImage imageNamed:@"ico_confirm_black"]];
-        [self.nameEdit setHidden:NO];
-        [self.signatureEdit setHidden:NO];
-        [self.qqEidt setHidden:NO];
-        [self.chatEdit setHidden:NO];
-        [self.phoenEdit setHidden:NO];
-        [self.locationEdit setHidden:NO];
-        
         [self.nameText setHidden:YES];
         [self.signatureText setHidden:YES];
         [self.qqText setHidden:YES];
@@ -150,12 +137,6 @@
         
     }else{
         [self.edit setImage:[UIImage imageNamed:@"btn_edit_black"]];
-        [self.nameEdit setHidden:YES];
-        [self.signatureEdit setHidden:YES];
-        [self.qqEidt setHidden:YES];
-        [self.chatEdit setHidden:YES];
-        [self.phoenEdit setHidden:YES];
-        [self.locationEdit setHidden:YES];
         
         [self.nameText setHidden:NO];
         [self.signatureText setHidden:NO];
@@ -166,16 +147,17 @@
         
         
         
-        [self updateUserInfo:@{@"name":self.nameEdit.text,
-                               @"signature":self.signatureEdit.text,
-                               @"title":@"",
-                               @"tel":self.phoenEdit.text,
-                               @"qq":self.qqEidt.text,
-                               @"weixin":self.chatEdit.text,
-                               @"address":self.locationEdit.text}];
     }
 }
 
+- (IBAction)onUpdate:(id)sender {
+    [self updateUserInfo:@{@"name":self.nameText.text,
+                           @"signature":self.signatureText.text,
+                           @"qq":self.qqText.text,
+                           @"wechat":self.chatText.text,
+                           @"phone":self.phone.text,
+                           @"address":self.locationText.text}];
+}
 
 #pragma mark - OnClick
 - (void)editSelected{
@@ -213,6 +195,57 @@
     [self presentViewController:ipc animated:YES completion:nil];
 
 }
+- (void)nameSelected{
+    UserUpdateViewController *vc=[[UserUpdateViewController alloc] initWithNibName:@"UserUpdateViewController" bundle:nil];
+    vc.type = 0;
+    vc.parentVC = self;
+    [self.navigationController pushViewController:vc animated:YES];
+
+}
+- (void)signSelected{
+    UserUpdateViewController *vc=[[UserUpdateViewController alloc] initWithNibName:@"UserUpdateViewController" bundle:nil];
+    vc.type = 1;
+    vc.parentVC = self;
+    [self.navigationController pushViewController:vc animated:YES];
+    
+}
+
+- (void)qqSelected{
+    UserUpdateViewController *vc=[[UserUpdateViewController alloc] initWithNibName:@"UserUpdateViewController" bundle:nil];
+    vc.type = 2;
+    vc.parentVC = self;
+    [self.navigationController pushViewController:vc animated:YES];
+    
+}
+
+- (void)wechatSelected{
+    UserUpdateViewController *vc=[[UserUpdateViewController alloc] initWithNibName:@"UserUpdateViewController" bundle:nil];
+    vc.type = 3;
+    vc.parentVC = self;
+    [self.navigationController pushViewController:vc animated:YES];
+    
+}
+
+- (void)phoneSelected{
+    UserUpdateViewController *vc=[[UserUpdateViewController alloc] initWithNibName:@"UserUpdateViewController" bundle:nil];
+    vc.type = 4;
+    vc.parentVC = self;
+    [self.navigationController pushViewController:vc animated:YES];
+    
+}
+
+- (void)addressSelected{
+    UserUpdateViewController *vc=[[UserUpdateViewController alloc] initWithNibName:@"UserUpdateViewController" bundle:nil];
+    vc.type = 5;
+    vc.parentVC = self;
+    [self.navigationController pushViewController:vc animated:YES];
+    
+}
+
+- (void)emailSelected{
+
+    
+}
 
 #pragma mark -- <UIImagePickerControllerDelegate>--
 // 获取图片后的操作
@@ -227,9 +260,9 @@
     if(image){
         [self showLoad];
         NSData * file = UIImageJPEGRepresentation(image, 0.5);
-        NSDictionary * data = @{@"iconType":@"icon"};
+        NSDictionary * data = @{@"target":@"avatar"};
         __weak __typeof(self)weakSelef = self;
-        [HTTPRequest Manager:self.congfing.setIcon Method:nil dic:data file:file fileName:@"icon" requestSucced:^(id responseObject){
+        [HTTPRequest Manager:[NSString stringWithFormat:@"%@%@",self.congfing.updateUserImage,[self.appd getParameterString]] Method:nil dic:data file:file fileName:@"icon" requestSucced:^(id responseObject){
             
             BaseModel * model = [[BaseModel alloc] init];
             [model analyticInterface:responseObject];
@@ -266,22 +299,18 @@
     [self loadLoginOutData];
 }
 
-- (void)setStyle:(UserInfoModel *)model{
-    [self.icon sd_setImageWithURL:[NSURL URLWithString:model.icon]];
-    self.iconURL = model.icon;
+- (void)setStyle:(UserModel *)model{
+    [self.icon sd_setImageWithURL:[NSURL URLWithString:model.avatar]];
+    self.iconURL = model.avatar;
     [self.nameText setText:model.name];
+    self.lblNameHead.text = model.name;
+    self.lblUid.text = model.uid;
     [self.signatureText setText:model.signature];
     [self.qqText setText:model.qq];
-    [self.chatText setText:model.weixin];
-    [self.phone setText:model.tel];
+    [self.chatText setText:model.wechat];
+    [self.phone setText:model.phone];
     [self.locationText setText:model.address];
     
-    [self.nameEdit setText:model.name];
-    [self.signatureEdit setText:model.signature];
-    [self.qqEidt setText:model.qq];
-    [self.chatEdit setText:model.weixin];
-    [self.phoenEdit setText:model.tel];
-    [self.locationEdit setText:model.address];
     [self.homeText setText:[NSString stringWithFormat:@"%@%@",URLHead,model.uid]];
 }
 
@@ -321,53 +350,17 @@
 }
 
 
-#pragma mark - UITextFieldDelegate
-- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
-    
-    self.tempTextField = textField;
-    return YES;
-}
-- (BOOL)textFieldShouldReturn:(UITextField *)textField{
-    [self.view endEditing:YES];
-    return YES;
-}
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
-    
-    
-    if(textField == self.signatureEdit){
-        if(string.length > 0 && textField.text.length == 40){
-            [self showToast:@"个性签名不能超过40个字"];
-            return NO;
-        }
-    }
-    
-    if(textField == self.locationEdit){
-        if(string.length > 0 && textField.text.length == 40){
-            [self showToast:@"地址不能超过40个字"];
-            return NO;
-        }
-    }
-    
-    if(textField == self.phoenEdit){
-        if(string.length > 0 && textField.text.length == 11){
-            [self showToast:@"电话不能超过11个字"];
-            return NO;
-        }
-    }
-    return YES;
-}
 
 
 
 #pragma makr - AFNetworking网络加载
 - (void)loadNetworkData:(NSDictionary *)data{
-    
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.getUserInfo parametric:data succed:^(id responseObject){
+    [HTTPRequest requestGetUrl:[NSString stringWithFormat:@"%@%@",self.congfing.getUserInfo,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
         
-        NSLog(@"%@",responseObject);
+        NSLog(@"我的 getuserinfo%@",responseObject);
         
-        UserInfoModel * infoModel = [[UserInfoModel alloc] init];
+        UserModel * infoModel = [[UserModel alloc] init];
         [infoModel analyticInterface:responseObject];
         if(infoModel.status == 0){
             [weakSelef setStyle:infoModel];
@@ -385,7 +378,7 @@
 - (void)loadLoginOutData{
     [self showLoad];
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.appLogout parametric:nil succed:^(id responseObject){
+    [HTTPRequest requestDELETEUrl:[NSString stringWithFormat:@"%@%@",self.congfing.logout,[self.appd getParameterString]] parametric:nil succed:^(id responseObject){
         [weakSelef closeLoad];
         NSLog(@"%@",responseObject);
         [ShareSDK cancelAuthorize:SSDKPlatformTypeQQ];
@@ -407,20 +400,24 @@
 }
 
 - (void)updateUserInfo:(NSDictionary *)data{
-    
+    [self showLoad];
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.updateUserInfo parametric:data succed:^(id responseObject){
+    [HTTPRequest requestPUTUrl:[NSString stringWithFormat:@"%@%@",self.congfing.updateUserInfo,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+        [weakSelef closeLoad];
         
         NSLog(@"%@",responseObject);
         
         BaseModel * model = [[BaseModel alloc] init];
         [model analyticInterface:responseObject];
         if(model.status == 0){
-            [weakSelef showToast:@"修改成功"];
+            [_popupErrVC showInView:self animated:YES type:@"success" message:@"更新成功"];
             [weakSelef.table.mj_header beginRefreshing];
+        } else {
+            [_popupErrVC showInView:self animated:YES type:@"error" message:model.message];
         }
         
     } failure:^(NSError *error){
+        [weakSelef closeLoad];
         [weakSelef.table.mj_header endRefreshing];
     }];
 }

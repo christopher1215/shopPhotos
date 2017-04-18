@@ -19,7 +19,7 @@
 @property (strong, nonatomic) UILabel *text;
 @property (strong, nonatomic) UILabel *date;
 @property (strong, nonatomic) UIView * shareView;
-@property (strong, nonatomic) UIImageView *share;
+@property (strong, nonatomic) UILabel *share;
 @property (strong, nonatomic) UIView * line;
 @end
 
@@ -40,99 +40,154 @@
     
     self.content = [[UIView alloc] init];
     [self.contentView addSubview:self.content];
-    
-    self.icon = [[UIImageView alloc] init];
-    [self.icon addTarget:self action:@selector(iconSelected)];
-    [self.content addSubview:self.icon];
-    
-    self.name = [[UILabel alloc] init];
-    [self.name setTextColor:ColorHex(0XFF500D)];
-    [self.name setFont:[UIFont fontWithName:@"Helvetica-Bold" size:15]];
-    [self.name addTarget:self action:@selector(nameSelected)];
-    [self.content addSubview:self.name];
-    
-    self.images = [[UIScrollView alloc] init];
-    [self.content addSubview:self.images];
-
-    self.text = [[UILabel alloc] init];
-    [self.text setFont:Font(13)];
-    self.text.numberOfLines = 2;
-    [self.text setBackgroundColor:[UIColor clearColor]];
-    [self.content addSubview:self.text];
-    
-    self.date = [[UILabel alloc] init];
-    [self.date setFont:Font(12)];
-    [self.date setTextColor:ColorHex(0X808080)];
-    [self.content addSubview:self.date];
-    
-    self.shareView = [[UIView alloc] init];
-    [self.shareView setBackgroundColor:[UIColor clearColor]];
-    [self.shareView addTarget:self action:@selector(shareSelected)];
-    [self.contentView addSubview:self.shareView];
-    
-    self.share = [[UIImageView alloc] init];
-    [self.share setImage:[UIImage imageNamed:@"ico_dynamic_more"]];
-    [self.share setContentMode:UIViewContentModeScaleAspectFit];
-    [self.shareView addSubview:self.share];
-    
-    self.line = [[UIView alloc] init];
-    [self.line setBackgroundColor:ColorHex(0Xeeeeee)];
-    [self.contentView addSubview:self.line];
-    
     self.content.sd_layout
     .leftSpaceToView (self.contentView,20)
     .rightSpaceToView (self.contentView,20)
     .topSpaceToView(self.contentView,5)
     .bottomSpaceToView(self.contentView,20);
     
+    self.icon = [[UIImageView alloc] init];
+    [self.icon addTarget:self action:@selector(iconSelected)];
+    [self.content addSubview:self.icon];
     self.icon.sd_layout
     .leftEqualToView(self.content)
-    .topEqualToView(self.content)
-    .widthIs(35)
-    .heightIs(35);
+    .topSpaceToView(self.content,5)
+    .widthIs(42)
+    .heightIs(42);
     
+    self.name = [[UILabel alloc] init];
+    [self.name setTextColor:[UIColor blackColor]];
+    [self.name setFont:[UIFont fontWithName:@"Helvetica" size:15]];
+    [self.name addTarget:self action:@selector(nameSelected)];
+    [self.content addSubview:self.name];
     self.name.sd_layout
     .leftSpaceToView(self.icon,10)
-    .topEqualToView(self.content)
+    .topSpaceToView(self.content,5)
     .rightEqualToView(self.content)
-    .heightIs(35);
+    .heightIs(20);
+
+    self.date = [[UILabel alloc] init];
+    [self.date setFont:Font(13)];
+    [self.date setTextColor:ColorHex(0X808080)];
+    [self.content addSubview:self.date];
+    self.date.sd_layout
+    .leftSpaceToView(self.icon,10)
+    .topSpaceToView(self.name,5)
+    .rightSpaceToView(self.content,50)
+    .heightIs(18);
     
+    self.images = [[UIScrollView alloc] init];
+    [self.content addSubview:self.images];
     self.images.sd_layout
     .leftEqualToView(self.content)
     .topSpaceToView(self.icon,6)
     .rightEqualToView(self.content)
     .heightIs(100);
+
+    UILabel *morePhoto = [[UILabel alloc] init];
+    [morePhoto setText:@"更多"];
+    [morePhoto setTextColor:ColorHex(0x579bd5)];
+    [morePhoto setFont:Font(14)];
+    [morePhoto setBackgroundColor:[UIColor clearColor]];
+    [morePhoto setTextAlignment:NSTextAlignmentRight];
+    [self.content addSubview:morePhoto];
+    morePhoto.sd_layout
+    .rightEqualToView(self.content)
+    .topSpaceToView(self.images,5)
+    .heightIs(18);
     
+    self.text = [[UILabel alloc] init];
+    [self.text setFont:Font(15)];
+    self.text.numberOfLines = 2;
+    [self.text setTextColor:[UIColor darkGrayColor]];
+    [self.text setBackgroundColor:[UIColor clearColor]];
+    [self.content addSubview:self.text];
     self.text.sd_layout
     .leftEqualToView(self.content)
     .rightEqualToView(self.content)
-    .topSpaceToView(self.images,6)
+    .topSpaceToView(morePhoto,6)
     .heightIs(40);
+
+    UILabel *viewAllText = [[UILabel alloc] init];
+    [viewAllText setText:@"展开"];
+    [viewAllText setTextColor:ColorHex(0x579bd5)];
+    [viewAllText setFont:Font(14)];
+    [viewAllText setBackgroundColor:[UIColor clearColor]];
+    [viewAllText setTextAlignment:NSTextAlignmentRight];
+    [self.content addSubview:viewAllText];
+    viewAllText.sd_layout
+    .rightEqualToView(self.content)
+    .topSpaceToView(self.text,3)
+    .heightIs(18);
     
+    self.line = [[UIView alloc] init];
+    [self.line setBackgroundColor:ColorHex(0Xeeeeee)];
+    [self.content addSubview:self.line];
+    self.line.sd_layout
+    .leftEqualToView(self.content)
+    .rightEqualToView(self.content)
+    .topSpaceToView(viewAllText,10)
+    .heightIs(1);
+
+    self.shareView = [[UIView alloc] init];
+    [self.shareView setBackgroundColor:[UIColor clearColor]];
+    [self.content addSubview:_shareView];
     self.shareView.sd_layout
-    .rightSpaceToView(self.contentView,10)
-    .bottomSpaceToView(self.contentView,15)
-    .widthIs(50)
+    .topEqualToView(self.line)
+    .leftSpaceToView(self.content,0)
+    .rightSpaceToView(self.content,0)
     .heightIs(50);
     
+    UIButton *btn_message = [[UIButton alloc] init];
+    [btn_message setBackgroundColor:[UIColor clearColor]];
+    [btn_message setBackgroundImage:[UIImage imageNamed:@"ico_message"] forState:UIControlStateNormal];
+    [self.shareView addSubview:btn_message];
+    btn_message.sd_layout
+    .leftEqualToView(_shareView)
+    .topSpaceToView(_shareView,15)
+    .widthIs(16)
+    .heightIs(16);
     
+    UIButton *btn_favorite = [[UIButton alloc] init];
+    [btn_favorite setBackgroundColor:[UIColor clearColor]];
+    [btn_favorite setBackgroundImage:[UIImage imageNamed:@"btn_favorite"] forState:UIControlStateNormal];
+    [self.shareView addSubview:btn_favorite];
+    btn_favorite.sd_layout
+    .leftSpaceToView(btn_message,20)
+    .topSpaceToView(_shareView,15)
+    .widthIs(16)
+    .heightIs(16);
+    
+    UIButton *btn_pyq = [[UIButton alloc] init];
+    [btn_pyq setBackgroundColor:[UIColor clearColor]];
+    [btn_pyq setBackgroundImage:[UIImage imageNamed:@"btn_pyq_b"] forState:UIControlStateNormal];
+    [self.shareView addSubview:btn_pyq];
+    btn_pyq.sd_layout
+    .leftSpaceToView(btn_favorite,20)
+    .topSpaceToView(_shareView,15)
+    .widthIs(16)
+    .heightIs(16);
+    
+    self.share = [[UILabel alloc] init];
+    [self.share setFont:Font(19)];
+    [self.share setText:@"..."];
+    [self.share addTarget:self action:@selector(shareSelected)];
+    self.share.textAlignment = NSTextAlignmentCenter;
+    [self.shareView addSubview:self.share];
     self.share.sd_layout
-    .topSpaceToView(self.shareView,25)
-    .bottomSpaceToView(self.shareView,5)
-    .leftSpaceToView(self.shareView,15)
-    .rightSpaceToView(self.shareView,0);
+    .rightSpaceToView(self.shareView,2)
+    .topSpaceToView(self.shareView,15)
+    .widthIs(20)
+    .heightIs(20);
     
-    self.date.sd_layout
-    .leftEqualToView(self.content)
-    .topSpaceToView(self.text,3)
-    .rightSpaceToView(self.content,50)
-    .heightIs(30);
-    
-    self.line.sd_layout
+    UIView *seperate = [[UIView alloc] init];
+    [seperate setBackgroundColor:ColorHex(0Xeeeeee)];
+    [self.contentView addSubview:seperate];
+    seperate.sd_layout
     .leftEqualToView(self.contentView)
     .rightEqualToView(self.contentView)
-    .bottomEqualToView(self.contentView)
-    .heightIs(15);
+    .topSpaceToView(self.content,10)
+    .heightIs(10);
 }
 
 
@@ -141,28 +196,32 @@
 - (void)setModel:(DynamicModel *)model{
     
     [self.icon sd_setImageWithURL:[NSURL URLWithString:[model.user objectForKey:@"icon"]]];
+    self.icon.layer.cornerRadius = _icon.frame.size.width/2;
+    self.icon.layer.masksToBounds = TRUE;
     
     [self.name setText:[model.user objectForKey:@"name"]];
+    [self.date setText:[NSString stringWithFormat:@"%@ 上传",model.date]];
     
     //NSString *
+    /*
     if(!model.showPrice){
         //NSMutableAttributedString * attrText = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@",model.title]];
-        self.text.text = model.title ;
+        self.text.text = model.title;
     }else{
-        NSMutableAttributedString * attrText = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"¥%@  %@",model.price,model.title]];
+        NSMutableAttributedString * attrText = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@",model.title]];
         
         [attrText addAttribute:NSFontAttributeName
-                         value:[UIFont fontWithName:@"Helvetica-Bold" size:17]
+                         value:[UIFont fontWithName:@"Helvetica" size:18]
                          range:NSMakeRange(0, model.price.length+1)];
         [attrText addAttribute:NSForegroundColorAttributeName
-                         value:ColorHex(0XFF500D)
+                         value:[UIColor darkGrayColor]
                          range:NSMakeRange(0, model.price.length+1)];
         
         self.text.attributedText = attrText ;
-    }
+    }*/
     
-    
-    [self.date setText:[NSString stringWithFormat:@"%@  %@",model.date,model.descriptionText]];
+    self.text.text = model.title;
+    // ,model.descriptionText
     [self.images setBackgroundColor:[UIColor whiteColor]];
     [self showImages:model.images];
     
@@ -171,7 +230,6 @@
         [self.icon addTarget:self action:@selector(iconSelected)];
         [self.share addTarget:self action:@selector(shareSelected)];
     }
-    
 }
 
 - (void)showImages:(NSArray *)imageArray{
@@ -191,6 +249,8 @@
         DynamicImagesModel * model = [imageArray objectAtIndex:index];
         
         [image sd_setImageWithURL:[NSURL URLWithString:model.thumbnails]];
+        image.layer.cornerRadius = 5;
+        image.layer.masksToBounds = TRUE;
         image.sd_layout
         .leftSpaceToView(self.images,index*110)
         .topEqualToView(self.images)

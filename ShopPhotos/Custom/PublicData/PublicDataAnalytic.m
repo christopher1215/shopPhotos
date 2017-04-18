@@ -30,16 +30,36 @@
 
         NSDictionary *datas = [RequestErrorGrab getDicwitKey:@"data" toTarget:data];
         if(datas && datas.count > 0){
-           NSDictionary * app = [RequestErrorGrab getDicwitKey:@"app" toTarget:datas];
-            congfing.token = [RequestErrorGrab getStringwitKey:@"token" toTarget:app];
-            if(app && app.count > 0){
-                NSDictionary * api = [RequestErrorGrab getDicwitKey:@"api" toTarget:app];
+//           NSDictionary * app = [RequestErrorGrab getDicwitKey:@"app" toTarget:datas];
+//            congfing.token = [RequestErrorGrab getStringwitKey:@"token" toTarget:app];
+//            if(app && app.count > 0){
+                NSDictionary * api = [RequestErrorGrab getDicwitKey:@"api" toTarget:datas];
+                congfing.bindAccount = [RequestErrorGrab getStringwitKey:@"bindAccount" toTarget:api];
+                congfing.bindEmail1 = [RequestErrorGrab getStringwitKey:@"bindEmail1" toTarget:api];
+                congfing.bindEmail2 = [RequestErrorGrab getStringwitKey:@"bindEmail2" toTarget:api];
+                congfing.forgotPassword1 = [RequestErrorGrab getStringwitKey:@"forgotPassword1" toTarget:api];
+                congfing.forgotPassword2 = [RequestErrorGrab getStringwitKey:@"forgotPassword2" toTarget:api];
+                congfing.forgotPassword3 = [RequestErrorGrab getStringwitKey:@"forgotPassword3" toTarget:api];
+                congfing.getCaptcha = [RequestErrorGrab getStringwitKey:@"getCaptcha" toTarget:api];
+                congfing.login = [RequestErrorGrab getStringwitKey:@"login" toTarget:api];
+                congfing.logout = [RequestErrorGrab getStringwitKey:@"logout" toTarget:api];
+                congfing.register1 = [RequestErrorGrab getStringwitKey:@"register1" toTarget:api];
+                congfing.register2 = [RequestErrorGrab getStringwitKey:@"register2" toTarget:api];
+                congfing.register3 = [RequestErrorGrab getStringwitKey:@"register3" toTarget:api];
+                congfing.updatePassword = [RequestErrorGrab getStringwitKey:@"updatePassword" toTarget:api];
+                congfing.useQQLogin = [RequestErrorGrab getStringwitKey:@"useQQLogin" toTarget:api];
+                congfing.useWXLogin = [RequestErrorGrab getStringwitKey:@"useWXLogin" toTarget:api];
+                congfing.getUserInfo = [RequestErrorGrab getStringwitKey:@"getUserInfo" toTarget:api];
+                congfing.updateUserImage = [RequestErrorGrab getStringwitKey:@"updateUserImage" toTarget:api];
+                congfing.updateUserInfo = [RequestErrorGrab getStringwitKey:@"updateUserInfo" toTarget:api];
+                congfing.updateUserSetting = [RequestErrorGrab getStringwitKey:@"updateUserSetting" toTarget:api];
+            
                 congfing.appLogin = [RequestErrorGrab getStringwitKey:@"appLogin" toTarget:api];
+                congfing.captcha = [RequestErrorGrab getStringwitKey:@"captcha" toTarget:api];
                 congfing.authTel = [RequestErrorGrab getStringwitKey:@"authTel" toTarget:api];
                 congfing.registerUser  = [RequestErrorGrab getStringwitKey:@"registerUser" toTarget:api];
                 congfing.sendAuthCode = [RequestErrorGrab getStringwitKey:@"sendAuthCode" toTarget:api];
                 congfing.resetPassword2 = [RequestErrorGrab getStringwitKey:@"resetPassword2" toTarget:api];
-                congfing.getUserInfo = [RequestErrorGrab getStringwitKey:@"getUserInfo" toTarget:api];
                 congfing.getCount = [RequestErrorGrab getStringwitKey:@"getCount" toTarget:api];
                 congfing.getNewDynamics = [RequestErrorGrab getStringwitKey:@"getNewDynamics" toTarget:api];
                 congfing.publishedFeedback = [RequestErrorGrab getStringwitKey:@"publishedFeedback" toTarget:api];
@@ -82,7 +102,6 @@
                 congfing.handleImagesName = [RequestErrorGrab getStringwitKey:@"handleImagesName" toTarget:api];
                 congfing.mobileSavePhoto = [RequestErrorGrab getStringwitKey:@"mobileSavePhoto" toTarget:api];
            
-                congfing.updateUserInfo = [RequestErrorGrab getStringwitKey:@"updateUserInfo" toTarget:api];
                 congfing.getSubclasses = [RequestErrorGrab getStringwitKey:@"getSubclasses" toTarget:api];
                 congfing.isAllow = [RequestErrorGrab getStringwitKey:@"isAllow" toTarget:api];
                 congfing.hasCollectPhoto = [RequestErrorGrab getStringwitKey:@"hasCollectPhoto" toTarget:api];
@@ -97,8 +116,8 @@
                 congfing.updateToken = [RequestErrorGrab getStringwitKey:@"updateToken" toTarget:api];
                 congfing.sendCopyRequest = [RequestErrorGrab getStringwitKey:@"sendCopyRequest" toTarget:api];
                 
-            }
-            
+//            }
+//            
         }
 
         [self setValue:congfing WithKey:ShopPhotosApi];

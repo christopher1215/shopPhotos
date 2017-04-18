@@ -17,6 +17,8 @@ static NSString * CollectionTableCellID = @"CollectionTableCellID";
 - (void)editSelected:(NSIndexPath *)indexPath;
 - (void)collctionSelected:(NSIndexPath *)indexPath;
 - (void)collctionUserSelecte:(NSIndexPath *)indexPath;
+- (void)shareClicked:(NSIndexPath *)indexPath;
+
 @end
 
 @interface CollectionTableCell : UICollectionViewCell

@@ -8,20 +8,30 @@
 
 #import "ResetPasswordCtr.h"
 #import "ResetCheckView.h"
+#import "SetPasswordViewController.h"
+#import "ProvisionCtr.h"
+#import "RegisterViewController.h"
+#import "AppDelegate.h"
+#import "ErrMsgViewController.h"
 
-@interface ResetPasswordCtr ()<UIScrollViewDelegate,UITextFieldDelegate,ResetCheckViewDelegate>
+@interface ResetPasswordCtr ()<UITextFieldDelegate>{
+//    AppDelegate *appd;
+    ErrMsgViewController *popupErrVC;
+
+}
 
 @property (weak, nonatomic) IBOutlet UIView *back;
-@property (weak, nonatomic) IBOutlet UILabel *phoneCheck;
-@property (weak, nonatomic) IBOutlet UILabel *mailCheck;
-@property (weak, nonatomic) IBOutlet UIView * line;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *lineOffset;
-@property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
-@property (strong, nonatomic) ResetCheckView * phone;
-@property (strong, nonatomic) ResetCheckView * mail;
-@property (strong, nonatomic) UITextField * tempTextField;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *scrllOffset;
-@property (assign, nonatomic) CheckStyle sendType;
+@property (weak, nonatomic) IBOutlet UIView *contentView;
+@property (weak, nonatomic) IBOutlet UIButton *btnSMS;
+@property (weak, nonatomic) IBOutlet UIButton *btnNext;
+@property (weak, nonatomic) IBOutlet UITextField *txtPhone;
+@property (weak, nonatomic) IBOutlet UITextField *txtSms;
+@property (assign, nonatomic) NSInteger countdown;
+@property (strong, nonatomic) NSTimer * timer;
+@property (strong, nonatomic) NSString * timestamp;
+@property (weak, nonatomic) IBOutlet UIImageView *imgCaptcha;
+@property (weak, nonatomic) IBOutlet UITextField *txtCaptcha;
+@property (weak, nonatomic) IBOutlet UIView *viewLic;
 
 @end
 
@@ -34,55 +44,57 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+//    appd = (AppDelegate*)[UIApplication sharedApplication].delegate;
+    popupErrVC = [[ErrMsgViewController alloc] initWithNibName:@"ErrMsgViewController" bundle:nil];
     
     [self setup];
+    [self changeCaptcha:nil];
 }
+
 
 - (void)setup{
 
     
     [self.back addTarget:self action:@selector(backSelected)];
-    [self.phoneCheck addTarget:self action:@selector(phoneCheckSelected)];
-    [self.mailCheck addTarget:self action:@selector(mailCheckSelected)];
     
-    [self.scrollView setContentSize:CGSizeMake(WindowWidth*2,0)];
+    [_txtPhone addTarget:self action:@selector(textChanged:) forControlEvents:UIControlEventEditingChanged];
+    [_txtSms addTarget:self action:@selector(textChanged:) forControlEvents:UIControlEventEditingChanged];
+    [_txtCaptcha addTarget:self action:@selector(textChanged:) forControlEvents:UIControlEventEditingChanged];
+    _btnNext.cornerRadius = 3;
+    _btnSMS.cornerRadius = 3;
+    if ([_fromType isEqualToString:@"register"]) {
+        [_viewLic setHidden:NO];
+    } else if ([_fromType isEqualToString:@"resetPassword"]){
+        [_viewLic setHidden:YES];
+    }
+}
+- (void)getCaptcha{
+    NSString *urlStr = [NSString stringWithFormat:@"%@?timestamps=%@", self.congfing.getCaptcha, self.timestamp];
+    NSURL *url = [NSURL URLWithString:urlStr];
+    NSData *imageData = [NSData dataWithContentsOfURL:url];
+    UIImage *ret = [UIImage imageWithData:imageData];
+    [_imgCaptcha setImage:ret];
     
-    self.scrollView.delegate = self;
-    [self.scrollView addTarget:self action:@selector(scrollViewSelected)];
-    self.sendType = PhoneCheck;
-    
-    self.phone = [[ResetCheckView alloc] init];
-    self.phone.style = PhoneCheck;
-    self.phone.delegate = self;
-    self.phone.phone.enter.keyboardType = UIKeyboardTypeNumberPad;
-    self.phone.phoneCode.enter.keyboardType = UIKeyboardTypeNumberPad;
-    self.phone.phone.enter.delegate = self;
-    self.phone.phoneCode.enter.delegate = self;
-    self.phone.password.enter.delegate = self;
-    self.phone.againPassword.enter.delegate = self;
-    [self.scrollView addSubview:self.phone];
-    
-    self.mail = [[ResetCheckView alloc] init];
-    self.mail.style = MailCheck;
-    self.mail.phoneCode.enter.keyboardType = UIKeyboardTypeNumberPad;
-    self.mail.delegate = self;
-    self.mail.phone.enter.delegate = self;
-    self.mail.phoneCode.enter.delegate = self;
-    self.mail.password.enter.delegate = self;
-    self.mail.againPassword.enter.delegate = self;
-    [self.scrollView addSubview:self.mail];
-    
-    self.phone.sd_layout
-    .leftEqualToView(self.scrollView)
-    .topEqualToView(self.scrollView)
-    .bottomEqualToView(self.scrollView)
-    .widthIs(WindowWidth);
-    
-    self.mail.sd_layout
-    .leftSpaceToView(self.scrollView,WindowWidth)
-    .topEqualToView(self.scrollView)
-    .bottomEqualToView(self.scrollView)
-    .widthIs(WindowWidth);
+}
+-(void)textChanged:(UITextField *)textField
+{
+    if ([_txtPhone.text isEqualToString:@""] || [_txtCaptcha.text isEqualToString:@""]) {
+        [_btnSMS setEnabled:NO];
+        [_btnSMS setBackgroundColor:RGBACOLOR(212, 217, 226, 1)];
+    } else {
+        if (self.countdown <= 0) {
+            [_btnSMS setEnabled:YES];
+            [_btnSMS setBackgroundColor:RGBACOLOR(68, 148, 210, 1)];
+        }
+        
+    }
+    if ([_txtPhone.text isEqualToString:@""] || [_txtSms.text isEqualToString:@""]) {
+        [_btnNext setBackgroundColor:RGBACOLOR(212, 217, 226, 1)];
+        [_btnNext setEnabled:NO];
+    } else {
+        [_btnNext setEnabled:YES];
+        [_btnNext setBackgroundColor:RGBACOLOR(68, 148, 210, 1)];
+    }
 }
 
 #pragma mark - 返回
@@ -90,150 +102,25 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-#pragma mark - 手机验证
-- (void)phoneCheckSelected{
-
-    [self.scrollView setContentOffset:CGPointMake(0, 0) animated:YES];
-}
-
-#pragma mark - 邮箱验证
-- (void)mailCheckSelected{
-    [self.scrollView setContentOffset:CGPointMake(WindowWidth, 0) animated:YES];
-}
-
-#pragma 屏幕点击
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
-    [self.tempTextField resignFirstResponder];
-}
-
-- (void)scrollViewSelected{
-    [self.tempTextField resignFirstResponder];
-}
-
-- (BOOL)feedbackValidateEmail:(NSString *)email
-{
-    NSString *emailRegex = @"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}";
-    NSPredicate *emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailRegex];
-    return [emailTest evaluateWithObject:email];
-}
-
-
-#pragma mark - ResetCheckViewDelegate
-- (void)resetSendCode{
+- (IBAction)sendSms:(id)sender {
+    NSString * text = self.txtPhone.text;
     
-    NSString * text = self.mail.phone.enter.text;
+    [self.txtPhone setText:[text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]]];
     
-    [self.mail.phone.enter setText:[text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]]];
-    
-    if(self.sendType == PhoneCheck){
-        // 发送手机验证码
-        if(self.phone.phone.enter.text.length == 0){
-            [self showToast:@"请填写手机号码"];
-        }else{
-          [self sendCheckCode:@{@"channel":@"tel",
-                                @"tel":self.phone.phone.enter.text,
-                                @"email":self.phone.phone.enter.text}];
-        }
+    // 发送手机验证码
+    if(self.txtPhone.text.length == 0){
+        [self showToast:@"请填写手机号码"];
     }else{
-        if(self.mail.phone.enter.text.length == 0 || ![self feedbackValidateEmail:self.mail.phone.enter.text]){
-            [self showToast:@"邮箱填写不正确"];
-        }else{
-            // 发送邮箱验证码
-            [self sendCheckCode:@{@"channel":@"email",
-                                  @"email":self.mail.phone.enter.text,
-                                  @"tel":self.mail.phone.enter.text}];
-        }
+        [self sendCheckCode:@{
+                              @"target":self.txtPhone.text,
+                              @"captcha":self.txtCaptcha.text
+                              }];
     }
 }
+- (IBAction)changeCaptcha:(id)sender {
+    self.timestamp = TimeStamp;
+    [self getCaptcha];
 
-- (void)completeRetrievePassword{
-    
-    if(self.sendType == PhoneCheck){
-    
-        if(self.phone.phone.enter.text == 0){
-        
-            [self showToast:@"请填写手机号码"];
-            return;
-        }
-        
-        if(self.phone.phoneCode.enter.text == 0 || ![self feedbackValidateEmail:self.mail.phone.enter.text]){
-             [self showToast:@"邮箱填写不正确"];
-            return;
-        }
-        
-        if(self.phone.password.enter.text == 0){
-            [self showToast:@"请填写新的密码"];
-            return;
-        }
-        
-        if(![self.phone.password.enter.text isEqualToString:self.phone.againPassword.enter.text]){
-            [self showToast:@"两次密码填写不一致"];
-            return;
-        }
-        
-        [self retrievePassword:@{@"channel":@"tel",
-                                 @"tel":self.phone.phone.enter.text,
-                                 @"email":@"",
-                                 @"authCode":self.phone.phoneCode.enter.text,
-                                 @"password":self.phone.password.enter.text}];
-        
-    }else{
-    
-        if(self.mail.phone.enter.text == 0){
-            
-            [self showToast:@"请填写注册邮箱"];
-            return;
-        }
-        
-        if(self.mail.phoneCode.enter.text == 0){
-            [self showToast:@"请填写验证码"];
-            return;
-        }
-        
-        if(self.mail.password.enter.text == 0){
-            [self showToast:@"请填写新的密码"];
-            return;
-        }
-        
-        if(![self.mail.password.enter.text isEqualToString:self.mail.againPassword.enter.text]){
-            [self showToast:@"两次密码填写不一致"];
-            return;
-        }
-        
-        [self retrievePassword:@{@"channel":@"email",
-                                 @"tel":@"",
-                                 @"email":self.mail.phone.enter.text,
-                                 @"authCode":self.mail.phoneCode.enter.text,
-                                 @"password":self.mail.password.enter.text}];
-    }
-    
-    
-    
-}
-
-
-
-#pragma mark - UIScrollViewDelegate
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView{
-    
-    CGFloat offsetX = scrollView.contentOffset.x;
-    if(offsetX == 0){
-        [self.phoneCheck setTextColor:ColorHex(0XFF500D)];
-        [self.mailCheck setTextColor:ColorHex(0X000000)];
-        self.sendType = PhoneCheck;
-    }else if(offsetX == WindowWidth){
-        [self.phoneCheck setTextColor:ColorHex(0X000000)];
-        [self.mailCheck setTextColor:ColorHex(0XFF500D)];
-        self.sendType = MailCheck;
-    }
-    self.lineOffset.constant = (WindowWidth - 160) * (offsetX/WindowWidth);
-}
-
-#pragma mark - UITextFieldDelegate
-- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
-    
-    self.tempTextField = textField;
-    return YES;
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField{
@@ -243,50 +130,151 @@
 
 #pragma makr - AFNetworking网络加载
 - (void)sendCheckCode:(NSDictionary *)data{
+    if ([_fromType isEqualToString:@"register"]) {
+        [self sendCodeRegister:data];
+    } else {
+        [self sendCodeForgotPassword:data];
+    }
+
+}
+-(void)sendCodeRegister:(NSDictionary *)data{
     [self showLoad];
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.sendAuthCode parametric:data succed:^(id responseObject){
+    [HTTPRequest requestPOSTUrl:[NSString stringWithFormat:@"%@%@", self.congfing.register1,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
         [weakSelef closeLoad];
         NSLog(@"%@",responseObject);
         BaseModel * model = [[BaseModel alloc] init];
         [model analyticInterface:responseObject];
         if(model.status == 0){
             [weakSelef showToast:@"发送验证码成功"];
-            if(weakSelef.sendType == PhoneCheck){
-                [weakSelef.phone startCountdown];
-            }else{
-                [weakSelef.mail startCountdown];
-            }
+            [weakSelef startCountdown];
         }else{
-            [weakSelef showToast:model.message];
+            [popupErrVC showInView:self animated:YES type:@"error" message:model.message];
+            
+//            [weakSelef showToast:model.message];
+            [self changeCaptcha:nil];
         }
         
     } failure:^(NSError * error){
         [weakSelef showToast:NETWORKTIPS];
         [weakSelef closeLoad];
     }];
+    
 }
-
-- (void)retrievePassword:(NSDictionary *)data{
+-(void)sendCodeForgotPassword:(NSDictionary *)data{
     [self showLoad];
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.resetPassword2 parametric:data succed:^(id responseObject){
+    [HTTPRequest requestPUTUrl:[NSString stringWithFormat:@"%@%@", self.congfing.forgotPassword1,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
         [weakSelef closeLoad];
         NSLog(@"%@",responseObject);
         BaseModel * model = [[BaseModel alloc] init];
         [model analyticInterface:responseObject];
         if(model.status == 0){
-            [weakSelef showToast:@"找回密码成功"];
-            [weakSelef.navigationController popViewControllerAnimated:YES];
+            [weakSelef showToast:@"发送验证码成功"];
+            [weakSelef startCountdown];
         }else{
-            [weakSelef showToast:model.message];
+            [popupErrVC showInView:self animated:YES type:@"error" message:model.message];
+            //[weakSelef showToast:model.message];
+            [self changeCaptcha:nil];
         }
         
     } failure:^(NSError * error){
         [weakSelef showToast:NETWORKTIPS];
         [weakSelef closeLoad];
     }];
+    
+}
+- (void)startCountdown{
+    [self.btnSMS setUserInteractionEnabled:NO];
+    self.countdown = 60;
+    [_btnSMS setEnabled:NO];
+    [_btnSMS setBackgroundColor:RGBACOLOR(212, 217, 226, 1)];
+
+    self.timer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(sendCodeCountdown) userInfo:nil repeats:YES];
+    
 }
 
+- (void)sendCodeCountdown{
+    NSLog(@"123213");
+    self.countdown -- ;
+    if(self.countdown > 0){
+        NSString * title = [NSString stringWithFormat:@"%ld",self.countdown];
+        [self.btnSMS setTitle:title forState:UIControlStateNormal];
+    }else{
+        [self.btnSMS setTitle:@"获取验证码" forState:UIControlStateNormal];
+        [self.btnSMS setUserInteractionEnabled:YES];
+        [self.timer invalidate];
+        self.timer = nil;
+        [_btnSMS setEnabled:YES];
+        [_btnSMS setBackgroundColor:RGBACOLOR(68, 148, 210, 1)];
 
+    }
+}
+- (IBAction)onNext:(id)sender {
+    if ([_fromType isEqualToString:@"register"]) {
+        [self nextRegister];
+    } else {
+        [self nextForgotPassword];
+    }
+}
+- (void) nextForgotPassword{
+    NSDictionary * data = @{
+                            @"authCode":self.txtSms.text
+                            };
+    [self showLoad];
+    __weak __typeof(self)weakSelef = self;
+    [HTTPRequest requestPUTUrl:[NSString stringWithFormat:@"%@%@", self.congfing.forgotPassword2,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+        [weakSelef closeLoad];
+        NSLog(@"%@",responseObject);
+        BaseModel * model = [[BaseModel alloc] init];
+        [model analyticInterface:responseObject];
+        if(model.status == 0){
+            SetPasswordViewController *vc=[[SetPasswordViewController alloc] initWithNibName:@"SetPasswordViewController" bundle:nil];
+            vc.strPhone = _txtPhone.text;
+            vc.strAuthCode = _txtSms.text;
+            [self.navigationController pushViewController:vc animated:YES];
+        }else{
+            [popupErrVC showInView:self animated:YES type:@"error" message:model.message];
+
+//            [weakSelef showToast:model.message];
+        }
+        
+    } failure:^(NSError * error){
+        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef closeLoad];
+    }];
+    
+}
+- (void) nextRegister{
+    NSDictionary * data = @{
+                            @"authCode":self.txtSms.text
+                            };
+    [self showLoad];
+    __weak __typeof(self)weakSelef = self;
+    [HTTPRequest requestPOSTUrl:[NSString stringWithFormat:@"%@%@",self.congfing.register2,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+        [weakSelef closeLoad];
+        NSLog(@"%@",responseObject);
+        BaseModel * model = [[BaseModel alloc] init];
+        [model analyticInterface:responseObject];
+        if(model.status == 0){
+            RegisterViewController *vc=[[RegisterViewController alloc] initWithNibName:@"RegisterViewController" bundle:nil];
+            vc.strPhone = _txtPhone.text;
+            vc.strAuthCode = _txtSms.text;
+            [self.navigationController pushViewController:vc animated:YES];
+        }else{
+            [popupErrVC showInView:self animated:YES type:@"error" message:model.message];
+            
+//            [weakSelef showToast:model.message];
+        }
+        
+    } failure:^(NSError * error){
+        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef closeLoad];
+    }];
+    
+}
+- (IBAction)onViewLic:(id)sender {
+    ProvisionCtr * pro = GETALONESTORYBOARDPAGE(@"ProvisionCtr");
+    [self.navigationController pushViewController:pro animated:YES];
+}
 @end

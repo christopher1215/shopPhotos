@@ -12,6 +12,7 @@
 
 - (void)albumPhotoSelectPath:(NSInteger)indexPath;
 - (void)albumEditSelectPath:(NSInteger)indexPath;
+- (void)shareClicked:(NSIndexPath *)indexPath;
 
 @end
 

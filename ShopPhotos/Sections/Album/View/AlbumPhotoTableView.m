@@ -7,10 +7,11 @@
 //
 
 #import "AlbumPhotoTableView.h"
-#import "AlbumPhotoTableCell.h"
+//#import "AlbumPhotoTableCell.h"
+#import "StaticCollectionViewCell.h"
 #import <MJRefresh.h>
 
-@interface AlbumPhotoTableView ()<UICollectionViewDelegate,UICollectionViewDataSource,AlbumPhotoTableCellDelegate>
+@interface AlbumPhotoTableView ()<UICollectionViewDelegate,UICollectionViewDataSource,StaticCollectionViewCellDelegate>
 
 @property (strong, nonatomic) NSMutableArray * dataArray;
 
@@ -36,13 +37,15 @@
 
 - (void)createAutoLayout{
     
+    self.backgroundColor = [UIColor whiteColor];
+    
     UICollectionViewFlowLayout * layout = [[UICollectionViewFlowLayout alloc]init];
     layout.scrollDirection = UICollectionViewScrollDirectionVertical;
     self.photos = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:layout];
     self.photos.delegate=self;
     self.photos.dataSource=self;
-    [self.photos setBackgroundColor:ColorHex(0Xeeeeee)];
-    [self.photos registerClass:[AlbumPhotoTableCell class] forCellWithReuseIdentifier:@"AlbumPhotoTableCellID"];
+    [self.photos setBackgroundColor:ColorHex(0XFFFFFF)];
+    [self.photos registerClass:[StaticCollectionViewCell class] forCellWithReuseIdentifier:@"AlbumPhotoTableCellID"];
     [self addSubview:self.photos];
  
     
@@ -72,10 +75,11 @@
 }
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString * CellIdentifier = AlbumPhotoTableCellID;
-    AlbumPhotoTableCell * cell = [collectionView dequeueReusableCellWithReuseIdentifier:CellIdentifier forIndexPath:indexPath];
+    static NSString * CellIdentifier = @"AlbumPhotoTableCellID";
+    StaticCollectionViewCell * cell = [collectionView dequeueReusableCellWithReuseIdentifier:CellIdentifier forIndexPath:indexPath];
+    [cell createAutoLayout:FALSE cellType:1];
     cell.indexPath = indexPath;
-    cell.showPrice = self.showPrice;
+//    cell.showPrice = self.showPrice;
     if(!cell.delegate)cell.delegate = self;
     cell.model = [self.dataArray objectAtIndex:indexPath.row];
     return cell;
@@ -84,10 +88,10 @@
 #pragma mark --UICollectionViewDelegateFlowLayout
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    return CGSizeMake((WindowWidth-45)/2, 200);
+    return CGSizeMake((WindowWidth-15)/2, 200);
 }
 -(UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section{
-    return UIEdgeInsetsMake(10, 15, 10, 15);
+    return UIEdgeInsetsMake(5, 5, 5, 0);
 }
 
 #pragma mark --UICollectionViewDelegate
@@ -103,10 +107,24 @@
     return YES;
 }
 
+#pragma mark --AlbumPhotoTableCellDelegate
+
 - (void)editSelected:(NSIndexPath *)indexPath{
     
     if(self.delegate && [self.delegate respondsToSelector:@selector(albumEditSelectPath:)]){
         [self.delegate albumEditSelectPath:indexPath.row];
+    }
+}
+
+- (void)shareClicked:(NSIndexPath *)indexPath{
+    if(self.delegate && [self.delegate respondsToSelector:@selector(shareClicked:)]){
+        [self.delegate shareClicked:indexPath];
+    }
+}
+
+- (void)collectionSelected:(NSIndexPath *)indexPath{
+    if(self.delegate && [self.delegate respondsToSelector:@selector(albumPhotoSelectPath:)]){
+        [self.delegate albumPhotoSelectPath:indexPath.row];
     }
 }
 

@@ -32,8 +32,13 @@
 #define NotificationCenter [NSNotificationCenter defaultCenter]
 
 // 接口
-#define UOOTUURL @"https://m.uootu.com/get/app/index/initial/data/center/android"
-// 主题颜色
+//#define UOOTUURL @"https://www.uootu.com/_api/get/api"
+#define UOOTUURL @"https://uootu.com/_api/get/api"
+#define 	TimeStamp [NSString stringWithFormat:@"%0.0f",[[NSDate date] timeIntervalSince1970]]
+#define ACCESS_KEY  @"sKEEzGDjbAbWkad7wkk8yZdyJYbfFkCknbZhtwXZZDTCZCTxdHHZtxJxmxDtG7Kk"
+#define SECRET_KEY  @"k3BAW6AXN6tDtmrS2APXRpFMfH3CHjdXXmi3cFpaRCnWHnS2wMJyYydaRhD6beBG"
+
+// 主题
 #define IndigoColor [UIColor colorWithRed:0x3f/0xff green:0x92/0xff blue:0xfe/0xff alpha:1.0]
 
 #define ThemeColor [UIColor colorWithRed:1 green:84/255.0 blue:0/255.0 alpha:1.0]

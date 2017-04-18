@@ -1,4 +1,4 @@
-//
+ //
 //  LoginCtr.m
 //  ShopPhotos
 //
@@ -20,8 +20,13 @@
 #import "RequestUtil.h"
 #import "HTTPUserAgent.h"
 #import "WeChatLoginRequset.h"
+#import "AppDelegate.h"
+#import "ErrMsgViewController.h"
 
-@interface LoginCtr ()<UITextFieldDelegate>
+@interface LoginCtr ()<UITextFieldDelegate>{
+//    AppDelegate *appd;
+    ErrMsgViewController *popupErrVC;
+}
 @property (weak, nonatomic) IBOutlet UITextField *account;
 @property (weak, nonatomic) IBOutlet UITextField *password;
 @property (weak, nonatomic) IBOutlet UIButton *login;
@@ -30,6 +35,7 @@
 @property (weak, nonatomic) IBOutlet UIImageView *qqLogin;
 @property (weak, nonatomic) IBOutlet UIImageView *wechatLogin;
 @property (weak, nonatomic) IBOutlet UIView *lineView;
+@property (weak, nonatomic) IBOutlet UIButton *btnPassSec;
 
 @end
 
@@ -52,7 +58,8 @@
 - (void)viewDidLoad {
     
     [super viewDidLoad];
-    
+//    appd = (AppDelegate*)[UIApplication sharedApplication].delegate;
+    popupErrVC = [[ErrMsgViewController alloc] initWithNibName:@"ErrMsgViewController" bundle:nil];
     [self setup];
 }
 
@@ -85,7 +92,18 @@
     [self.wechatLogin addTarget:self action:@selector(wechatLoginSelected)];
     LogInLineView * line = [[LogInLineView alloc] initWithFrame:CGRectMake(0, 0, WindowWidth-60, 30)];
     [self.lineView addSubview:line];
+    [_password addTarget:self action:@selector(textChanged:) forControlEvents:UIControlEventEditingChanged];
+    [_account addTarget:self action:@selector(textChanged:) forControlEvents:UIControlEventEditingChanged];
+}
 
+- (IBAction)setPasswordSecret:(id)sender {
+    if (self.password.secureTextEntry == YES) {
+        self.password.secureTextEntry = NO;
+        [_btnPassSec setBackgroundImage:[UIImage imageNamed:@"showPass.png"] forState:UIControlStateNormal];
+    } else {
+        self.password.secureTextEntry = YES;
+        [_btnPassSec setBackgroundImage:[UIImage imageNamed:@"hidPass.png"] forState:UIControlStateNormal];
+    }
 }
 
 #pragma mark - 登入
@@ -94,7 +112,7 @@
     if(![self getValueWithKey:ShopPhotosApi]){
         __weak __typeof(self)weakSelef = self;
         [HTTPRequest requestGetUrl:UOOTUURL parametric:nil succed:^(id responseObject){
-            NSLog(@"%@",responseObject);
+            NSLog(@"login success: %@",responseObject);
             PublicDataAnalytic * publicData = [[PublicDataAnalytic alloc] init];
             [publicData analyticInterface:responseObject];
         } failure:^(NSError * error){
@@ -114,21 +132,23 @@
     }
     
     // 登入
-    [self loginLoadNetworkData:@{@"name":self.account.text,
-                                 @"password":self.password.text}];
-    
+    [self loginLoadNetworkData:@{@"name":self.account.text, @"password":self.password.text}];
 }
 
 #pragma mark - 忘记密码
 - (void)setPasswordSelected{
     ResetPasswordCtr * resetPassword = GETALONESTORYBOARDPAGE(@"ResetPasswordCtr");
+    resetPassword.fromType = @"resetPassword";
     [self.navigationController pushViewController:resetPassword animated:YES];
 }
 
 #pragma mark - 注册
 - (void)registeredSelected{
-    RegisteredCtr * registered = GETALONESTORYBOARDPAGE(@"RegisteredCtr");
-    [self.navigationController pushViewController:registered animated:YES];
+//    RegisteredCtr * registered = GETALONESTORYBOARDPAGE(@"RegisteredCtr");
+//    [self.navigationController pushViewController:registered animated:YES];
+    ResetPasswordCtr * resetPassword = GETALONESTORYBOARDPAGE(@"ResetPasswordCtr");
+    resetPassword.fromType = @"register";
+    [self.navigationController pushViewController:resetPassword animated:YES];
     
 }
 
@@ -165,7 +185,7 @@
     [self showLoad];
     [ShareSDK getUserInfo:SSDKPlatformTypeWechat onStateChanged:^(SSDKResponseState state, SSDKUser *user, NSError *error){
         if(state == SSDKResponseStateSuccess){
-            [weakSelef appWithWeChatLogin:@{@"user":user.rawData,@"isIos":@"true"}];
+            [weakSelef appWithWeChatLogin:@{@"nickname ":user.nickname,@"avatar":[user.rawData objectForKey:@"headimgurl"], @"authId":[user.rawData objectForKey:@"openid"]}];
         }else{
             [weakSelef showToast:@"微信登录失败"];
         }
@@ -183,6 +203,23 @@
     [textField resignFirstResponder];
     return YES;
 }
+-(void)textChanged:(UITextField *)textField
+{
+    if (_password == textField) {
+        if ([textField.text isEqualToString:@""]) {
+            [_btnPassSec setHidden:YES];
+        } else {
+            [_btnPassSec setHidden:NO];
+        }
+    }
+    if ([_password.text isEqualToString:@""] || [_account.text isEqualToString:@""]) {
+        [_login setBackgroundColor:RGBACOLOR(212, 217, 226, 1)];
+        [_login setEnabled:NO];
+    } else {
+        [_login setEnabled:YES];
+        [_login setBackgroundColor:RGBACOLOR(68, 148, 210, 1)];
+    }
+}
 
 
 #pragma makr - AFNetworking网络加载
@@ -190,25 +227,32 @@
 
     [self showLoad];
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.appLogin parametric:data succed:^(id responseObject){
+    [HTTPRequest requestPOSTUrl:[NSString stringWithFormat:@"%@%@",self.congfing.login,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
         [weakSelef closeLoad];
         LoginLoadModel * model = [[LoginLoadModel alloc] init];
         [model analyticInterface:responseObject];
         if(model.status == 0 || model.status == 200){
+            
             TabBarCtr * tabbar = [[TabBarCtr alloc] init];
             [weakSelef.navigationController pushViewController:tabbar animated:YES];
         }else{
-            [weakSelef showToast:model.message];
+            
+            [popupErrVC showInView:self animated:YES type:@"error" message:model.message];
+//            [weakSelef showToast:model.message];
         }
     } failure:^(NSError * error){
         [weakSelef showToast:NETWORKTIPS];
         [weakSelef closeLoad];
     }];
 }
+- (void)closePopupErr {
+    [popupErrVC removeAnimate];
+}
+
 - (void)appWithWeChatLogin:(NSDictionary *)data{
     [self showLoad];
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.appWithWeChatLogin parametric:data succed:^(id responseObject){
+    [HTTPRequest requestPOSTUrl:[NSString stringWithFormat:@"%@%@",self.congfing.useWXLogin,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
         [weakSelef closeLoad];
         NSLog(@"%@",responseObject);
         WeChatLoginRequset * requset = [[WeChatLoginRequset alloc] init];
@@ -242,7 +286,7 @@
     
     [self showLoad];
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.appWithQQLogin parametric:data  succed:^(id responseObject){
+    [HTTPRequest requestPOSTUrl:[NSString stringWithFormat:@"%@%@",self.congfing.useQQLogin,[self.appd getParameterString]] parametric:data  succed:^(id responseObject){
         [weakSelef closeLoad];
         NSLog(@"%@",responseObject);
         WeChatLoginRequset * requset = [[WeChatLoginRequset alloc] init];

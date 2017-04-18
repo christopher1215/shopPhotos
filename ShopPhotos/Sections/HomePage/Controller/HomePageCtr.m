@@ -29,6 +29,7 @@
 #import "DynamicCtr.h"
 
 @interface HomePageCtr ()<MoreAlertDelegate,AddFriendAlertDelegate>
+@property (weak, nonatomic) IBOutlet UIView *firstGuidView;
 @property (weak, nonatomic) IBOutlet UIView *mainView;
 @property (weak, nonatomic) IBOutlet UIImageView *headImage;
 @property (weak, nonatomic) IBOutlet UITableView *table;
@@ -66,6 +67,10 @@
     [self loadNetworkData:@{@"uid":self.photosUserID}];
     [self loadNetworkCount];
 }
+- (void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
+    [self.view bringSubviewToFront:self.firstGuidView];
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -74,9 +79,10 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
+    
     self.mainView.height = WindowHeight - 60;
     self.mainView.backgroundColor = [UIColor clearColor];
+    self.firstGuidView.layer.cornerRadius = 5;
     [self setup];
 }
 
@@ -129,9 +135,19 @@
         [weakSelef loadNetworkData:@{@"uid":weakSelef.photosUserID}];
         [weakSelef loadNetworkCount];
     }];
+    if ([[[NSUserDefaults standardUserDefaults] getValueWithKey:@"isFirst"] isEqualToString:@"noFirst"]) {
+        [self.firstGuidView setHidden:YES];
+    } else {
+        [self.firstGuidView setHidden:NO];
+        [[NSUserDefaults standardUserDefaults] setObject:@"noFirst" forKey:@"isFirst"];
+    }
+    
 }
 
 
+- (IBAction)hideFirstGuide:(id)sender {
+    [self.firstGuidView setHidden:YES];
+}
 #pragma mark - OnClick
 - (void)moreSelected{
     [self.moreAlert showAlert];
@@ -203,7 +219,7 @@
 
 - (void)dynamicSelected{
     DynamicCtr * dynamic = GETALONESTORYBOARDPAGE(@"DynamicCtr");
-//    dynamic.uid = self.photosUserID;
+    //    dynamic.uid = self.photosUserID;
     [self.navigationController pushViewController:dynamic animated:YES];
 }
 
@@ -250,12 +266,11 @@
 }
 
 #pragma mark - 修改样式
-- (void)setStyle:(UserInfoModel *)model{
+- (void)setStyle:(UserModel *)model{
     
-    [self.head sd_setImageWithURL:[NSURL URLWithString:model.icon]];
-    [self.icon sd_setImageWithURL:[NSURL URLWithString:model.icon]];
-    [self.headImage sd_setImageWithURL:[NSURL URLWithString:model.icon]];
-    self.iconURL = model.icon;
+    [self.head sd_setImageWithURL:[NSURL URLWithString:model.bg_image]];
+    [self.headImage sd_setImageWithURL:[NSURL URLWithString:model.bg_image]];
+    self.iconURL = model.avatar;
     [self.name setText:model.name];
     
     if(model.uid && model.uid.length > 0){
@@ -304,9 +319,9 @@
         [self.qqText setTextAlignment:NSTextAlignmentLeft];
     }
     
-    if(model.weixin && model.weixin.length >0){
+    if(model.wechat && model.wechat.length >0){
         
-        NSString * qqs = model.weixin;
+        NSString * qqs = model.wechat;
         if(qqs.length >11){
             qqs = [qqs substringToIndex:11];
             NSString * qqr = [NSString stringWithFormat:@"%@..",qqs];
@@ -318,8 +333,8 @@
         chatIocn.bounds = CGRectMake(0, -3, 15, 13);
         NSAttributedString *chatIocnStr = [NSAttributedString attributedStringWithAttachment:chatIocn];
         [chatText insertAttributedString:chatIocnStr atIndex:0];
-//        [self.chatText setAttributedText:chatText];
-//        [self.chatText setTextAlignment:NSTextAlignmentCenter];
+        //        [self.chatText setAttributedText:chatText];
+        //        [self.chatText setTextAlignment:NSTextAlignmentCenter];
     }else{
         NSMutableAttributedString * chatText = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@""]];
         NSTextAttachment * chatIocn = [[NSTextAttachment alloc] init];
@@ -327,8 +342,8 @@
         chatIocn.bounds = CGRectMake(5, -3, 15, 13);
         NSAttributedString *chatIocnStr = [NSAttributedString attributedStringWithAttachment:chatIocn];
         [chatText insertAttributedString:chatIocnStr atIndex:0];
-//        [self.chatText setAttributedText:chatText];
-//        [self.chatText setTextAlignment:NSTextAlignmentLeft];
+        //        [self.chatText setAttributedText:chatText];
+        //        [self.chatText setTextAlignment:NSTextAlignmentLeft];
     }
     
     NSString * sign = @"";
@@ -346,21 +361,24 @@
 #pragma makr - AFNetworking网络加载
 - (void)loadNetworkData:(NSDictionary *)data{
     if(self.uidText.text.length == 0)[self showLoad];
+    
+    NSLog(@"%@, %@ %@",[data objectForKey:@"uid"],self.congfing.getUserInfo,[self.appd getParameterString]);
+    
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.getUserInfo parametric:data succed:^(id responseObject){
+    [HTTPRequest requestGetUrl:[NSString stringWithFormat:@"%@%@",self.congfing.getUserInfo,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
         [weakSelef closeLoad];
         NSLog(@"1  %@",responseObject);
-        [weakSelef.table.mj_header endRefreshing];
-        UserInfoModel * infoModel = [[UserInfoModel alloc] init];
+        UserModel * infoModel = [[UserModel alloc] init];
         [infoModel analyticInterface:responseObject];
         if(infoModel.status == 0){
             [weakSelef setStyle:infoModel];
-            if(infoModel.config && infoModel.config.count > 0){
-                weakSelef.settingConfig = infoModel.config;
+            if(infoModel.settings && infoModel.settings.count > 0){
+                weakSelef.settingConfig = infoModel.settings;
             }
         }else{
             [self showToast:infoModel.message];
         }
+        [weakSelef.table.mj_header endRefreshing];
     } failure:^(NSError *error){
         [weakSelef closeLoad];
         [weakSelef showToast:NETWORKTIPS];
@@ -369,14 +387,14 @@
 }
 
 - (void)loadNetworkCount{
-//    __weak __typeof(self)weakSelef = self;
+    //    __weak __typeof(self)weakSelef = self;
     [HTTPRequest requestPOSTUrl:self.congfing.getCount parametric:nil succed:^(id responseObject){
         NSLog(@"2  %@",responseObject);
         HomePageCountModel * model = [[HomePageCountModel alloc] init];
         [model analyticInterface:responseObject];
         if(model.status == 0){
-//            [weakSelef.keep setText:[NSString stringWithFormat:@"%@\n收藏",model.collectsCount]];
-//            [weakSelef.message setText:[NSString stringWithFormat:@"%@\n消息",model.noticesCount]];
+            //            [weakSelef.keep setText:[NSString stringWithFormat:@"%@\n收藏",model.collectsCount]];
+            //            [weakSelef.message setText:[NSString stringWithFormat:@"%@\n消息",model.noticesCount]];
         }
     } failure:nil];
 }

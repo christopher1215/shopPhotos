@@ -9,6 +9,7 @@
 #import "HTTPUserAgent.h"
 #import "DeviceInfo.h"
 #import <sys/utsname.h>
+#import "LoginLoadModel.h"
 #import "UserModel.h"
 #import "CongfingURL.h"
 #import "NSObject+StoreValue.h"
@@ -38,7 +39,7 @@
     NSString * systemVersionCode = [self getSystemVersionCode];
     NSString * uuid = [[DeviceInfo alloc] init].UUID;
     NSString * iso = [[DeviceInfo alloc] init].systemVersion;
-   
+    
     if(systemVersion && systemVersion.length > 0){
         [userAgent appendFormat:@"version/%@ ",[self getSystemVersion]];
     }
@@ -61,10 +62,10 @@
 
 - (NSString *)getToken{
     
-    CongfingURL * cogfing = [self getValueWithKey:ShopPhotosApi];
-    if(cogfing){
-        if(cogfing.token && cogfing.token.length > 0){
-            return cogfing.token;
+    NSString *token = [self getValueWithKey:@"authToken"];
+    if(token){
+        if(token && token.length > 0){
+            return token;
         }
     }
     return @"";
@@ -87,7 +88,7 @@
     struct utsname system;
     uname(&system);
     NSString *platform = [NSString stringWithCString:system.machine encoding:NSASCIIStringEncoding];
- 
+    
     if ([platform isEqualToString:@"iPhone3,1"]) return @"iPhone 4";
     if ([platform isEqualToString:@"iPhone3,2"]) return @"iPhone 4";
     if ([platform isEqualToString:@"iPhone3,3"]) return @"iPhone 4";

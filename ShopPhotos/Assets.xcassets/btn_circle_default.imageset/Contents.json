@@ -2,11 +2,12 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "btn_circle_default.png",
+      "filename" : "相册编辑-空心.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
+      "filename" : "相册编辑-空心@2x.png",
       "scale" : "2x"
     },
     {

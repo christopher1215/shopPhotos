@@ -13,11 +13,34 @@
 
 @interface CongfingURL : NSObject
 
+//----------------------tcg-------------------------//
+@property (strong, nonatomic) NSString * bindAccount;
+@property (strong, nonatomic) NSString * bindEmail1;
+@property (strong, nonatomic) NSString * bindEmail2;
+@property (strong, nonatomic) NSString * forgotPassword1;
+@property (strong, nonatomic) NSString * forgotPassword2;
+@property (strong, nonatomic) NSString * forgotPassword3;
+@property (strong, nonatomic) NSString * login;
+@property (strong, nonatomic) NSString * logout;
+@property (strong, nonatomic) NSString * getCaptcha;
+@property (strong, nonatomic) NSString * register1;
+@property (strong, nonatomic) NSString * register2;
+@property (strong, nonatomic) NSString * register3;
+@property (strong, nonatomic) NSString * updatePassword;
+@property (strong, nonatomic) NSString * useQQLogin;
+@property (strong, nonatomic) NSString * useWXLogin;
+// 获取用户信息
+@property (strong, nonatomic) NSString * getUserInfo;
+@property (strong, nonatomic) NSString * updateUserImage;
+@property (strong, nonatomic) NSString * updateUserSetting;
+@property (strong, nonatomic) NSString * updateUserInfo;
 
+//----------------------tcg-------------------------//
 @property (strong, nonatomic) NSString * token;
 // 用户登入
 @property (strong, nonatomic) NSString * appLogin;
 // 发送验证码 验证验证码
+@property (strong, nonatomic) NSString * captcha;
 @property (strong, nonatomic) NSString * authTel;
 // 注册
 @property (strong, nonatomic) NSString * registerUser;
@@ -25,8 +48,6 @@
 @property (strong, nonatomic) NSString * sendAuthCode;
 // 忘记密码 找回密码
 @property (strong, nonatomic) NSString * resetPassword2;
-// 获取用户信息
-@property (strong, nonatomic) NSString * getUserInfo;
 // 获取消息 收藏 数量
 @property (strong, nonatomic) NSString * getCount;
 // 获取用户动态
@@ -162,7 +183,6 @@
 @property (strong, nonatomic) NSString * updatePrice;
 @property (strong, nonatomic) NSString * updateSubclasses;
 @property (strong, nonatomic) NSString * updateSubclassification;
-@property (strong, nonatomic) NSString * updateUserInfo;
 @property (strong, nonatomic) NSString * uploadToken;
 @property (strong, nonatomic) NSString * weChatAuth;
 @property (strong, nonatomic) NSString * webLogin;

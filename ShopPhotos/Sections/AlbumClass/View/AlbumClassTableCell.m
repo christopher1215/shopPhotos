@@ -12,8 +12,8 @@
 
 @property (strong, nonatomic) UILabel * title;
 @property (strong, nonatomic) UIView * line;
-@property (strong, nonatomic) UIView * changView;
-@property (strong, nonatomic) UIView * deleteView;
+//@property (strong, nonatomic) UIView * changView;
+//@property (strong, nonatomic) UIView * deleteView;
 
 @end
 
@@ -23,98 +23,120 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        [self createAutoLayout];
+//        [self createAutoLayout];
     }
     
     return self;
 }
 
-- (void)createAutoLayout{
+- (void)createAutoLayout:(BOOL)isSubClass {
     
-    [self setBackgroundColor:ColorHex(0XEEEEEE)];
-    [self.contentView setBackgroundColor:ColorHex(0Xeeeeee)];
+    [self setBackgroundColor:ColorHex(0xf5f5f5)];
+    [self.contentView setBackgroundColor:ColorHex(0xf5f5f5)];
     
-    self.title = [[UILabel alloc] init];
-    [self.title setFont:Font(13)];
-    [self.title setBackgroundColor:[UIColor clearColor]];
-    [self.contentView addSubview:self.title];
+    int space = 50;
+    if (isSubClass == TRUE) {
+        space = self.frame.size.width/4;
+    }
     
-    self.changView = [[UIView alloc] init];
-    [self.changView addTarget:self action:@selector(changSelected)];
-    [self.contentView addSubview:self.changView];
+    UIView *editView = [[UIView alloc] init];
+    [editView setBackgroundColor:[UIColor clearColor]];
+    [self addSubview:editView];
+    editView.sd_layout
+    .centerYEqualToView(self)
+    .leftSpaceToView(self,space)
+    .widthIs(30)
+    .heightIs(35);
     
-    UIImageView * change = [[UIImageView alloc] init];
-    [change setContentMode:UIViewContentModeScaleAspectFit];
-    [change setImage:[UIImage imageNamed:@"btn_edit_black"]];
-    [self.changView addSubview:change];
+    UIButton *btn_edit = [[UIButton alloc]init];
+    [btn_edit setBackgroundImage:[UIImage imageNamed:@"ico_edit2"] forState:UIControlStateNormal];
+    [editView addSubview:btn_edit];
+    btn_edit.sd_layout
+    .centerXEqualToView(editView)
+    .topEqualToView(editView)
+    .widthIs(16)
+    .heightIs(17);
     
-    self.deleteView = [[UIView alloc] init];
-    [self.deleteView addTarget:self action:@selector(deleteSelected)];
-    [self.contentView addSubview:self.deleteView];
-    
-    UIImageView *deleteBtn = [[UIImageView alloc] init];
-    [deleteBtn setContentMode:UIViewContentModeScaleAspectFit];
-    [deleteBtn setImage:[UIImage imageNamed:@"btn_delete"]];
-    [self.deleteView addSubview:deleteBtn];
-    
-    self.line = [[UIView alloc] init];
-    [self.contentView addSubview:self.line];
-    [self.line setBackgroundColor:ColorHex(0Xdedede)];
-    
-    self.title.sd_layout
-    .leftSpaceToView(self.contentView,40)
-    .rightSpaceToView(self.contentView,120)
-    .topSpaceToView(self.contentView,0)
-    .bottomSpaceToView(self.contentView,0);
+    UILabel *lab_edit = [[UILabel alloc] init];
+    [lab_edit setText:@"编辑"];
+    [lab_edit setTextColor:[UIColor darkGrayColor]];
+    [lab_edit setFont:Font(13)];
+    [lab_edit setTextAlignment:NSTextAlignmentCenter];
+    [editView addSubview:lab_edit];
+    lab_edit.sd_layout
+    .bottomEqualToView(editView)
+    .widthIs(30)
+    .heightIs(14);
 
-    self.deleteView.sd_layout
-    .rightSpaceToView(self.contentView,10)
-    .topEqualToView(self.contentView)
-    .bottomEqualToView(self.contentView)
-    .widthIs(50);
+    if (isSubClass == FALSE) {
+        UIView *addView = [[UIView alloc] init];
+        [addView setBackgroundColor:[UIColor clearColor]];
+        [self addSubview:addView];
+        addView.sd_layout
+        .centerXEqualToView(self)
+        .centerYEqualToView(self)
+        .widthIs(70)
+        .heightIs(35);
+        
+        UIButton *btn_add = [[UIButton alloc]init];
+        [btn_add setBackgroundImage:[UIImage imageNamed:@"ico_add"] forState:UIControlStateNormal];
+        [addView addSubview:btn_add];
+        btn_add.sd_layout
+        .centerXEqualToView(addView)
+        .topEqualToView(addView)
+        .widthIs(17)
+        .heightIs(17);
+        
+        UILabel *lab_add = [[UILabel alloc] init];
+        [lab_add setText:@"添加子分类"];
+        [lab_add setTextColor:[UIColor darkGrayColor]];
+        [lab_add setFont:Font(13)];
+        [lab_add setTextAlignment:NSTextAlignmentCenter];
+        [addView addSubview:lab_add];
+        lab_add.sd_layout
+        .bottomEqualToView(addView)
+        .widthIs(70)
+        .heightIs(14);
+    }
+    else {
+    }
     
-    deleteBtn.sd_layout
-    .leftSpaceToView(self.deleteView,15)
-    .rightSpaceToView(self.deleteView,15)
-    .topSpaceToView(self.deleteView,15)
-    .bottomSpaceToView(self.deleteView,15);
+    UIView *delView = [[UIView alloc] init];
+    [delView setBackgroundColor:[UIColor clearColor]];
+    [self addSubview:delView];
+    delView.sd_layout
+    .centerYEqualToView(self)
+    .rightSpaceToView(self,space)
+    .widthIs(30)
+    .heightIs(35);
     
-    self.changView.sd_layout
-    .rightSpaceToView(self.deleteView,10)
-    .topEqualToView(self.contentView)
-    .bottomEqualToView(self.contentView)
-    .widthIs(50);
+    UIButton *btn_del = [[UIButton alloc]init];
+    [btn_del setBackgroundImage:[UIImage imageNamed:@"ico_delete"] forState:UIControlStateNormal];
+    [delView addSubview:btn_del];
+    btn_del.sd_layout
+    .centerXEqualToView(delView)
+    .topEqualToView(delView)
+    .widthIs(16)
+    .heightIs(17);
     
-    change.sd_layout
-    .leftSpaceToView(self.changView,15)
-    .rightSpaceToView(self.changView,15)
-    .topSpaceToView(self.changView,15)
-    .bottomSpaceToView(self.changView,15);
-    
-    self.line.sd_layout
-    .leftEqualToView(self.contentView)
-    .rightEqualToView(self.contentView)
-    .bottomEqualToView(self.contentView)
-    .heightIs(1);
-    
+    UILabel *lab_del = [[UILabel alloc] init];
+    [lab_del setText:@"删除"];
+    [lab_del setTextColor:[UIColor darkGrayColor]];
+    [lab_del setTextAlignment:NSTextAlignmentCenter];
+    [lab_del setFont:Font(13)];
+    [delView addSubview:lab_del];
+    lab_del.sd_layout
+    .bottomEqualToView(delView)
+    .widthIs(30)
+    .heightIs(14);
 }
 
-- (void)setModel:(AlbumClassTableSubModel *)model{
+- (void)setModel:(AlbumClassTableSubModel *)model {
     
     [self.title setText:model.name];
-    
-    if(model.edit){
-    
-        [self.changView setHidden:NO];
-        [self.deleteView setHidden:NO];
-        
-    }else{
-        [self.changView setHidden:YES];
-        [self.deleteView setHidden:YES];
-    }
 }
 
-- (void)changSelected{
+- (void)changSelected {
 
     if(self.delegate && [self.delegate respondsToSelector:@selector(albumClassTableSelectType:selectPath:)]){
         [self.delegate albumClassTableSelectType:1 selectPath:self.indexPath];
@@ -126,6 +148,5 @@
         [self.delegate albumClassTableSelectType:2 selectPath:self.indexPath];
     }
 }
-
 
 @end

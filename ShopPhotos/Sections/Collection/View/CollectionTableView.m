@@ -7,9 +7,11 @@
 //
 
 #import "CollectionTableView.h"
-#import "CollectionTableCell.h"
+//#import "CollectionTableCell.h"
+#import "StaticCollectionViewCell.h"
 
-@interface CollectionTableView ()<UICollectionViewDelegate,UICollectionViewDataSource,CollectionTableCellDelegate>
+
+@interface CollectionTableView ()<UICollectionViewDelegate,UICollectionViewDataSource,StaticCollectionViewCellDelegate>
 @property (strong, nonatomic) NSMutableArray * dataArray;
 @end
 
@@ -32,14 +34,14 @@
 
 - (void)createAutoLayout{
     
-    
     UICollectionViewFlowLayout * layout = [[UICollectionViewFlowLayout alloc]init];
     layout.scrollDirection = UICollectionViewScrollDirectionVertical;
     self.table = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:layout];
     self.table.delegate=self;
     self.table.dataSource=self;
-    [self.table setBackgroundColor:ColorHex(0Xeeeeee)];
-    [self.table registerClass:[CollectionTableCell class] forCellWithReuseIdentifier:CollectionTableCellID];
+    [self.table setBackgroundColor:ColorHex(0xFFFFFF)];
+//    [self.table registerClass:[CollectionTableCell class] forCellWithReuseIdentifier:CollectionTableCellID];
+    [self.table registerClass:[StaticCollectionViewCell class] forCellWithReuseIdentifier:CollectionTableCellID];
     [self addSubview:self.table];
     
     self.table.sd_layout
@@ -47,14 +49,12 @@
     .rightEqualToView(self)
     .topSpaceToView(self,0)
     .bottomEqualToView(self);
-    
 }
 
 - (void)loadData:(NSArray *)dataArray{
     [self.dataArray removeAllObjects];
     [self.dataArray addObjectsFromArray:dataArray];
     [self.table reloadData];
-    
 }
 - (void)loadMoreData:(NSArray *)dataArray{
     
@@ -68,7 +68,8 @@
 }
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath{
    
-    CollectionTableCell * cell = [collectionView dequeueReusableCellWithReuseIdentifier:CollectionTableCellID forIndexPath:indexPath];
+    StaticCollectionViewCell * cell = [collectionView dequeueReusableCellWithReuseIdentifier:CollectionTableCellID forIndexPath:indexPath];
+    [cell createAutoLayout:FALSE cellType:2];
     cell.model = [self.dataArray objectAtIndex:indexPath.row];
     cell.indexPath = indexPath;
     if(!cell.delegate)cell.delegate = self;
@@ -78,10 +79,10 @@
 #pragma mark --UICollectionViewDelegateFlowLayout
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath{
     
-    return CGSizeMake((WindowWidth-20)/2, 235);
+    return CGSizeMake((WindowWidth-20)/2, 210);
 }
 -(UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section{
-    return UIEdgeInsetsMake(10, 5, 10, 5);
+    return UIEdgeInsetsMake(10, 5, 5, 5);
 }
 
 #pragma mark --UICollectionViewDelegate
@@ -102,13 +103,19 @@
 }
 - (void)collctionSelected:(NSIndexPath *)indexPath{
     if(self.delegate && [self.delegate respondsToSelector:@selector(collctionSelected:)]){
-        [self.delegate collctionSelected:indexPath];
+        [self.delegate collectionSelected:indexPath];
     }
 }
 
 - (void)collctionUserSelecte:(NSIndexPath *)indexPath{
     if(self.delegate && [self.delegate respondsToSelector:@selector(collctionUserSelecte:)]){
-        [self.delegate collctionUserSelecte:indexPath];
+        [self.delegate collectionUserSelecte:indexPath];
+    }
+}
+
+- (void)shareClicked:(NSIndexPath *)indexPath{
+    if(self.delegate && [self.delegate respondsToSelector:@selector(shareClicked:)]){
+        [self.delegate shareClicked:indexPath];
     }
 }
 

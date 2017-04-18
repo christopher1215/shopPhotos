@@ -7,10 +7,10 @@
 //
 
 #import "BaseView.h"
-#import "UserInfoModel.h"
+#import "UserModel.h"
 
 @interface QRCodeAlert : BaseView
-@property (strong, nonatomic) UserInfoModel * model;
+@property (strong, nonatomic) UserModel * model;
 - (void)showAlert;
 - (void)closeAlert;
 

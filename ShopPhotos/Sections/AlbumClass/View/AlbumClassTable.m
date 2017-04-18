@@ -50,77 +50,73 @@
         .rightEqualToView(self)
         .topEqualToView(self)
         .bottomEqualToView(self);
+        
+        _isEditMode = NO;
+        _isAllSelect = NO;
     }
     return self;
 }
 
 #pragma makr - UITableViewDataSource
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
-    
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return self.dataArray.count;
 }
 
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     
-    if(self.dataArray.count > 0){
+    if(self.dataArray.count > 0) {
         AlbumClassTableModel * model = [self.dataArray objectAtIndex:section];
-        if(model.open){
-            return model.dataArray.count;
+        if(model.open) {
+//            return model.dataArray.count;
+            return 1;
         }else{
             return 0;
         }
-    }else{
+    } else{
         return 0;
     }
-    
-    
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     AlbumClassTableModel * model = [self.dataArray objectAtIndex:indexPath.section];
     AlbumClassTableSubModel * subModel = [model.dataArray objectAtIndex:indexPath.row];
     
     AlbumClassTableCell *cell = [tableView dequeueReusableCellWithIdentifier:AlbumClassTableCellID];
     cell.indexPath = indexPath;
-    if(!cell.delegate)cell.delegate = self;
+    [cell createAutoLayout:FALSE];
+    
+    if(!cell.delegate) cell.delegate = self;
     cell.model = subModel;
+    
     return cell;
 }
 
-
 #pragma mark - UITableViewDelegate
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    return 50;
+    return 55;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
     
     if(self.dataArray.count > 0){
-        return 50;
+        return 55;
     }
     return 0;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
     
-    if(self.dataArray.count > 0){
-    
+    if(self.dataArray.count > 0) {
         AlbumClassTableModel * model = [self.dataArray objectAtIndex:section];
         AlbumClassTableHead * head = [[AlbumClassTableHead alloc] init];
+        [head creteAutoLayout:_isEditMode selected:_isAllSelect];
         head.indexPath = section;
         head.tag = section;
         head.delegate = self;
         [head addTarget:self action:@selector(tableViewHeadSelected:)];
         head.sd_layout.heightIs(50);
-        head.title.text = model.name;
-        if(model.edit){
-            [head.change setHidden:NO];
-            [head.deleteBtn setHidden:NO];
-        }else{
-            [head.change setHidden:YES];
-            [head.deleteBtn setHidden:YES];
-        }
+        head.title.text = [NSString stringWithFormat:@"%@(%lu)",model.name,(unsigned long)model.dataArray.count] ;
+        
         if(model.open){
             [head openOption];
         }else{
@@ -128,29 +124,29 @@
         }
         
         return head;
-    }else{
+    } else {
         return nil;
     }
 }
 
 - (void)tableViewHeadSelected:(UITapGestureRecognizer *)tap{
     
+    /*
     NSInteger section = tap.view.tag;
     AlbumClassTableModel * model = [self.dataArray objectAtIndex:section];
     model.open = !model.open;
+
    // NSIndexPath * indexPath = [NSIndexPath indexPathForRow:0 inSection:section];
-    
    // NSIndexSet *indexSet=[[NSIndexSet alloc]initWithIndex:section];
-    //[self.table reloadSections:indexSet withRowAnimation:UITableViewRowAnimationAutomatic];
+   //[self.table reloadSections:indexSet withRowAnimation:UITableViewRowAnimationAutomatic];
     
     [self.table reloadData];
     if(model.open){
         NSIndexPath * dayOne = [NSIndexPath indexPathForRow:0 inSection:section];
-        [self.self.table scrollToRowAtIndexPath:dayOne atScrollPosition:UITableViewScrollPositionTop animated:YES];
+        [self.table scrollToRowAtIndexPath:dayOne atScrollPosition:UITableViewScrollPositionTop animated:YES];
     }
-    
+     */
 }
-
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     
@@ -164,19 +160,31 @@
     if(self.albumDelegage && [self.albumDelegage respondsToSelector:@selector(albumClassTableSelectType:selectPath:)]){
         [self.albumDelegage albumClassTableSelectType:type selectPath:indexPath];
     }
-    
-    
 }
 
 #pragma mark - AlbumClassTableHeadDelegate
 - (void)albmClassTableHeadSelectType:(NSInteger)type slectedPath:(NSInteger)indexPath{
     
+    AlbumClassTableModel * model = [self.dataArray objectAtIndex:indexPath];
+    model.open = !model.open;
+    
+    // NSIndexPath * indexPath = [NSIndexPath indexPathForRow:0 inSection:section];
+    // NSIndexSet *indexSet=[[NSIndexSet alloc]initWithIndex:section];
+    //[self.table reloadSections:indexSet withRowAnimation:UITableViewRowAnimationAutomatic];
+    
+    [self.table reloadData];
+    if(model.open){
+        NSIndexPath * dayOne = [NSIndexPath indexPathForRow:0 inSection:indexPath];
+        [self.table scrollToRowAtIndexPath:dayOne atScrollPosition:UITableViewScrollPositionTop animated:YES];
+    }
+    /*
     if(self.albumDelegage && [self.albumDelegage respondsToSelector:@selector(albmClassTableHeadSelectType:slectedPath:)]){
         [self.albumDelegage albmClassTableHeadSelectType:type slectedPath:indexPath];
     }
-    
-    
-    
+     */
+}
+
+- (void)albmClassTableHeadSelectCheck:(BOOL)type slectedPath:(NSInteger)indexPath {
 }
 
 @end

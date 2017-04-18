@@ -14,82 +14,88 @@
 {
     self = [super init];
     if (self) {
-        [self creteAutoLayout];
+//        [self creteAutoLayout];
     }
     return self;
 }
 
-- (void)creteAutoLayout{
+- (void)creteAutoLayout:(BOOL) isCheckBox selected:(BOOL) isChecked{
     [self setBackgroundColor:[UIColor whiteColor]];
+    _isChecked = isCheckBox;
+    
+    if (isCheckBox == YES) {
+        self.checkBox = [[UIImageView alloc] init];
+        if (isChecked ==YES) {
+            [self.checkBox setImage:[UIImage imageNamed:@"btn_circle_selected"]];
+        }
+        else {
+            [self.checkBox setImage:[UIImage imageNamed:@"btn_circle_default"]];
+        }
+        [self.checkBox setContentMode:UIViewContentModeScaleAspectFit];
+        [self.checkBox addTarget:self action:@selector(checkBoxSelected)];
+        [self addSubview:self.checkBox];
+    }
+    
+    self.folder = [[UIImageView alloc] init];
+    [self.folder setImage:[UIImage imageNamed:@"ico_photo_folder"]];
+    [self.folder setContentMode:UIViewContentModeScaleAspectFit];
+    [self addSubview:self.folder];
+
     self.icon = [[UIImageView alloc] init];
     [self.icon setImage:[UIImage imageNamed:@"ico_triangle"]];
     [self.icon setContentMode:UIViewContentModeScaleAspectFit];
-    [self.icon setBackgroundColor:[UIColor whiteColor]];
+    [self.icon addTarget:self action:@selector(toolSelected)];
     [self addSubview:self.icon];
     
     self.title = [[UILabel alloc] init];
-    [self.title setTextColor:ThemeColor];
-    [self.title setFont:Font(13)];
+    [self.title setTextColor:[UIColor blackColor]];
+    [self.title setFont:Font(17)];
     [self addSubview:self.title];
-    
-    self.change = [[UIView alloc] init];
-    [self.change addTarget:self action:@selector(changSelected)];
-    [self addSubview:self.change];
-    
-    UIImageView * changIcon = [[UIImageView alloc] init];
-    [changIcon setContentMode:UIViewContentModeScaleAspectFit];
-    [changIcon setImage:[UIImage imageNamed:@"btn_edit_black"]];
-    [self.change addSubview:changIcon];
-    
-    self.deleteBtn = [[UIView alloc] init];
-    [self.deleteBtn addTarget:self action:@selector(deleteSelected)];
-    [self addSubview:self.deleteBtn];
-    
-    UIImageView * deleteIcon = [[UIImageView alloc] init];
-    [deleteIcon setContentMode:UIViewContentModeScaleAspectFit];
-    [deleteIcon setImage:[UIImage imageNamed:@"btn_delete"]];
-    [self.deleteBtn addSubview:deleteIcon];
-    
     
     UIView * line = [[UIView alloc] init];
     [line setBackgroundColor:ColorHex(0Xeeeeee)];
     [self addSubview:line];
-    
+
+    if (isCheckBox == YES) {
+        self.checkBox.sd_layout
+        .leftSpaceToView(self,15)
+        .centerYEqualToView(self)
+        .widthIs(20)
+        .heightIs(20);
+        
+        self.folder.sd_layout
+        .leftSpaceToView(_checkBox,15)
+        .topSpaceToView(self,18)
+        .bottomSpaceToView(self,18)
+        .widthIs(26)
+        .heightIs(22);
+        
+        self.title.sd_layout
+        .leftSpaceToView(_folder,10)
+        .topSpaceToView(self,0)
+        .bottomSpaceToView(self,0)
+        .rightSpaceToView(self,40);
+    }
+    else {
+        self.folder.sd_layout
+        .leftSpaceToView(self,15)
+        .topSpaceToView(self,18)
+        .bottomSpaceToView(self,18)
+        .widthIs(26)
+        .heightIs(22);
+        
+        self.title.sd_layout
+        .leftSpaceToView(self.folder,10)
+        .topSpaceToView(self,0)
+        .bottomSpaceToView(self,0)
+        .rightSpaceToView(self,40);
+    }
+
     self.icon.sd_layout
-    .leftSpaceToView(self,10)
+    .rightSpaceToView(self,15)
     .topSpaceToView(self,18)
     .bottomSpaceToView(self,18)
     .widthIs(14);
-    
-    self.deleteBtn.sd_layout
-    .rightSpaceToView(self,10)
-    .topEqualToView(self)
-    .bottomEqualToView(self)
-    .widthIs(50);
-    
-    deleteIcon.sd_layout
-    .leftSpaceToView(self.deleteBtn,15)
-    .rightSpaceToView(self.deleteBtn,15)
-    .topSpaceToView(self.deleteBtn,15)
-    .bottomSpaceToView(self.deleteBtn,15);
-    
-    self.change.sd_layout
-    .rightSpaceToView(self.deleteBtn,10)
-    .topEqualToView(self)
-    .bottomEqualToView(self)
-    .widthIs(50);
-
-    changIcon.sd_layout
-    .leftSpaceToView(self.change,15)
-    .rightSpaceToView(self.change,15)
-    .bottomSpaceToView(self.change,15)
-    .topSpaceToView(self.change,15);
-    
-    self.title.sd_layout
-    .leftSpaceToView(self.icon,10)
-    .topSpaceToView(self,0)
-    .bottomSpaceToView(self,0)
-    .rightSpaceToView(self,120);
     
     line.sd_layout
     .leftEqualToView(self)
@@ -98,25 +104,45 @@
     .heightIs(1);
 }
 
-- (void)changSelected{
-    
+- (void)toolSelected {
     if(self.delegate && [self.delegate respondsToSelector:@selector(albmClassTableHeadSelectType:slectedPath:)]){
         [self.delegate albmClassTableHeadSelectType:1 slectedPath:self.indexPath];
     }
-    
 }
 
-- (void)deleteSelected{
+- (void)checkBoxSelected {
+    _isChecked = !_isChecked;
+    
+    if (_isChecked == YES) {
+        [self.checkBox setImage:[UIImage imageNamed:@"btn_circle_selected"]];
+    }
+    else {
+        [self.checkBox setImage:[UIImage imageNamed:@"btn_circle_default"]];
+    }
+    
     if(self.delegate && [self.delegate respondsToSelector:@selector(albmClassTableHeadSelectType:slectedPath:)]){
-        [self.delegate albmClassTableHeadSelectType:2 slectedPath:self.indexPath];
+        [self.delegate albmClassTableHeadSelectCheck:_isChecked slectedPath:self.indexPath];
     }
 }
 
-- (void)openOption{
+- (void)openOption {
     [self.icon setImage:[UIImage imageNamed:@"ico_triangle_top"]];
+    [self.folder setImage:[UIImage imageNamed:@"ico_opened_folder"]];
 }
 
-- (void)closeOption{
+- (void)closeOption {
     [self.icon setImage:[UIImage imageNamed:@"ico_triangle"]];
+    [self.folder setImage:[UIImage imageNamed:@"ico_photo_folder"]];
 }
+
+- (void)check {
+    [self.checkBox setImage:[UIImage imageNamed:@"btn_circle_selected"]];
+}
+
+- (void)unCheck {
+    [self.checkBox setImage:[UIImage imageNamed:@"btn_circle_default"]];
+}
+
+
+
 @end

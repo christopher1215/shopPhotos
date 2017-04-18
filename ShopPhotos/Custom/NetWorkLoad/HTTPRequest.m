@@ -16,6 +16,7 @@
 
 #define RequestGet  @"GET"
 #define RequestPost @"Post"
+#define RequestPut  @"Put"
 
 
 @implementation HTTPRequest
@@ -25,43 +26,86 @@ static const NSUInteger kDefaultTimeoutInterval = 5;
 
 #pragma mark - 异步GET请求
 + (void)requestGetUrl:(NSString*)url
-          parametric:(NSDictionary*)dic
-              succed:(Success)succed
-             failure:(Failure)failure{
+           parametric:(NSDictionary*)dic
+               succed:(Success)succed
+              failure:(Failure)failure{
     
     NSMutableDictionary * data = [NSMutableDictionary dictionaryWithDictionary:dic];
-    NSString * token = [[HTTPUserAgent getHTTPUserAgent] getToken];
-    if(token && token.length > 0){
-        [data setValue:[[HTTPUserAgent getHTTPUserAgent] getToken] forKey:@"_token"];
-    }
+    //    NSString * token = [[HTTPUserAgent getHTTPUserAgent] getToken];
+    //    if(token && token.length > 0){
+    //        [data setValue:[NSString stringWithFormat:@"Bearer %@", [[HTTPUserAgent getHTTPUserAgent] getToken]] forKey:@"Authorization"];
+    //    }
     [HTTPRequest Manager:url Method:RequestGet dic:data requestSucced:^(id responseObject) {
-       
+        
         if(succed)succed(responseObject);
-
+        
     } requestfailure:^(NSError *error) {
         
-       if(failure)failure(error);
+        if(failure)failure(error);
         
     }];
 }
 
 #pragma mark - 异步POST请求
 + (void)requestPOSTUrl:(NSString*)url
-           parametric:(NSDictionary*)dic
-               succed:(Success)succed
-              failure:(Failure)failure{
+            parametric:(NSDictionary*)dic
+                succed:(Success)succed
+               failure:(Failure)failure{
     
     NSMutableDictionary * data = [NSMutableDictionary dictionaryWithDictionary:dic];
-    NSString * token = [[HTTPUserAgent getHTTPUserAgent] getToken];
-    if(token && token.length > 0){
-        [data setValue:[[HTTPUserAgent getHTTPUserAgent] getToken] forKey:@"_token"];
-    }
     
     NSLog(@"--- > %@",data);
     
     [HTTPRequest Manager:url Method:RequestPost dic:data requestSucced:^(id responseObject) {
         
-       if(succed)succed(responseObject);
+        if(succed)succed(responseObject);
+        
+    } requestfailure:^(NSError *error) {
+        
+        if(failure)failure(error);
+    }];
+}
+
++ (void)requestPUTUrl:(NSString*)url
+           parametric:(NSDictionary*)dic
+               succed:(Success)succed
+              failure:(Failure)failure{
+    
+    NSMutableDictionary * data = [NSMutableDictionary dictionaryWithDictionary:dic];
+    //    NSString * token = [[HTTPUserAgent getHTTPUserAgent] getToken];
+    //    if(token && token.length > 0){
+    //        [data setValue:[NSString stringWithFormat:@"Bearer %@", [[HTTPUserAgent getHTTPUserAgent] getToken]] forKey:@"Authorization"];
+    //    }
+    [data setValue:@"put" forKey:@"_method"];
+    
+    NSLog(@"--- > %@",data);
+    
+    [HTTPRequest Manager:url Method:RequestPost dic:data requestSucced:^(id responseObject) {
+        
+        if(succed)succed(responseObject);
+        
+    } requestfailure:^(NSError *error) {
+        
+        if(failure)failure(error);
+    }];
+}
++ (void)requestDELETEUrl:(NSString*)url
+              parametric:(NSDictionary*)dic
+                  succed:(Success)succed
+                 failure:(Failure)failure{
+    
+    NSMutableDictionary * data = [NSMutableDictionary dictionaryWithDictionary:dic];
+    //    NSString * token = [[HTTPUserAgent getHTTPUserAgent] getToken];
+    //    if(token && token.length > 0){
+    //        [data setValue:[NSString stringWithFormat:@"Bearer %@", [[HTTPUserAgent getHTTPUserAgent] getToken]] forKey:@"Authorization"];
+    //    }
+    [data setValue:@"delete" forKey:@"_method"];
+    
+    NSLog(@"--- > %@",data);
+    
+    [HTTPRequest Manager:url Method:RequestPost dic:data requestSucced:^(id responseObject) {
+        
+        if(succed)succed(responseObject);
         
     } requestfailure:^(NSError *error) {
         
@@ -71,10 +115,10 @@ static const NSUInteger kDefaultTimeoutInterval = 5;
 
 #pragma mark - 网络请求
 + (void)Manager:(NSString*)url
-        Method:(NSString*)Method
-           dic:(NSDictionary*)dic
- requestSucced:(Success)Succed
-requestfailure:(Failure)failure{
+         Method:(NSString*)Method
+            dic:(NSDictionary*)dic
+  requestSucced:(Success)Succed
+ requestfailure:(Failure)failure{
     
     //[RequestUtil loadCookies];
     AFHTTPSessionManager * manager = [AFHTTPSessionManager manager];
@@ -82,11 +126,16 @@ requestfailure:(Failure)failure{
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     [manager setSecurityPolicy:[self customSecurityPolicy]];
     [manager.requestSerializer setValue:[[HTTPUserAgent getHTTPUserAgent] getUserAgent] forHTTPHeaderField:ADDCNUSERAGENTKEY];
+    NSString * token = [[HTTPUserAgent getHTTPUserAgent] getToken];
+    if(token && token.length > 0){
+        [manager.requestSerializer setValue:[NSString stringWithFormat:@"Bearer %@", [[HTTPUserAgent getHTTPUserAgent] getToken]] forHTTPHeaderField:@"Authorization"];
+    }
+    
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:ContentType, nil];
     
     
     if ([Method isEqualToString:RequestGet]) {
-
+        
         [manager GET:url parameters:dic progress:^(NSProgress * _Nonnull downloadProgress) {
             
         } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
@@ -115,13 +164,13 @@ requestfailure:(Failure)failure{
 }
 
 + (void)Manager:(NSString*)url
-        Method:(NSString*)Method
-           dic:(NSDictionary*)dic
-          file:(NSData *)data
-      fileName:(NSString *)fileName
- requestSucced:(Success)Succed
-requestfailure:(Failure)failure{
-
+         Method:(NSString*)Method
+            dic:(NSDictionary*)dic
+           file:(NSData *)data
+       fileName:(NSString *)fileName
+  requestSucced:(Success)Succed
+ requestfailure:(Failure)failure{
+    
     NSMutableDictionary * postData = [NSMutableDictionary dictionaryWithDictionary:dic];
     [postData setValue:[[HTTPUserAgent getHTTPUserAgent] getToken] forKey:@"_token"];
     

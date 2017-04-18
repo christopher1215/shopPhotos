@@ -32,34 +32,46 @@
     
     
     self.alert = [[UIView alloc] init];
-//    [self.alert setBackgroundColor:ColorHex(0X26252a)];
-    [self.alert setBackgroundColor:ColorHexA(0Xffffff,0.7)];
+    [self.alert setBackgroundColor:ColorHex(0x484848)];
     [self.alert addTarget:self action:nil];
     [self addSubview:self.alert];
     
+    self.alertWidth = 120;
+    self.alertHeight = 90;
     
     NSArray * titleArray;
     if(mode == OptionModel){
 //        titleArray = @[@"上传相册",@"扫一扫",@"添加用户"];
         titleArray = @[@"上传相册",@"添加用户"];
-        self.alertWidth = 120;
-        self.alertHeight = 90;
-        
+        [self.alert setBackgroundColor:ColorHexA(0Xffffff,0.7)];
+        self.alert.sd_layout
+        .rightSpaceToView(self,10)
+        .topSpaceToView(self,64)
+        .widthIs(self.alertWidth)
+        .heightIs(self.alertHeight);
     }else if(mode == PhotosModel){
         titleArray = @[@"编辑",@"上传相册"];
-        self.alertWidth = 120;
-        self.alertHeight = 90;
+        self.alert.sd_layout
+        .rightSpaceToView(self,10)
+        .topSpaceToView(self,64)
+        .widthIs(self.alertWidth)
+        .heightIs(self.alertHeight);
+        
     }else if(mode == PhotosClassModel){
         titleArray = @[@"编辑",@"新建分类"];
-        self.alertWidth = 120;
-        self.alertHeight = 90;
+        self.alert.sd_layout
+        .rightSpaceToView(self,10)
+        .topSpaceToView(self,64)
+        .widthIs(self.alertWidth)
+        .heightIs(self.alertHeight);
+    }else if (mode == SortOrder){
+        titleArray = @[@"按文件名称",@"按创建日期"];
+        self.alert.sd_layout
+        .leftSpaceToView(self,10)
+        .topSpaceToView(self,100)
+        .widthIs(self.alertWidth)
+        .heightIs(self.alertHeight);
     }
-    
-    self.alert.sd_layout
-    .rightSpaceToView(self,10)
-    .topSpaceToView(self,64)
-    .widthIs(self.alertWidth)
-    .heightIs(self.alertHeight);
     
     if(!titleArray) return;
     
@@ -69,7 +81,12 @@
         [button setBackgroundColor:[UIColor clearColor]];
         [button setTitle:[titleArray objectAtIndex:index] forState:UIControlStateNormal];
         [button.titleLabel setFont:[UIFont systemFontOfSize:15]];
-        [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        if(mode == OptionModel){
+            [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        }
+        else {
+            [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        }
         button.tag = index;
         [button addTarget:self action:@selector(itemSelected:) forControlEvents:UIControlEventTouchUpInside];
         [self.alert addSubview:button];
@@ -81,7 +98,12 @@
         .heightIs(39.5);
         if(index != titleArray.count - 1){
             UIView * line = [[UIView alloc] init];
-            [line setBackgroundColor:[UIColor blackColor]];
+            if(mode == OptionModel){
+                [line setBackgroundColor:[UIColor blackColor]];
+            }
+            else {
+                [line setBackgroundColor:[UIColor whiteColor]];
+            }
             [self.alert addSubview:line];
             
             line.sd_layout
@@ -95,15 +117,37 @@
 
 - (void)setStyle{
 
-    CGFloat viewWidth = 120;
-    CGFloat viewHeight = 130;
-    CGPoint point1 = CGPointMake(0, 10);
-    CGPoint point2 = CGPointMake(viewWidth-20, 10);
-    CGPoint point3 = CGPointMake(viewWidth-25,0);
-    CGPoint point4 = CGPointMake(viewWidth-30, 10);
-    CGPoint point5 = CGPointMake(viewWidth, 10);
-    CGPoint point6 = CGPointMake(viewWidth, viewHeight);
-    CGPoint point7 = CGPointMake(0, viewHeight);
+    CGFloat viewWidth = _alertWidth;
+    CGFloat viewHeight = _alertHeight;
+    CGPoint point1,point2,point3,point4,point5,point6,point7,point8,point9,point10,point11,center1,center2,center3,center4;
+
+    int cornerRadius = 5;
+    int tHeight = 5;
+    int tWidth = 10;
+    
+    point1 = CGPointMake(cornerRadius, tHeight);
+    if (_mode == SortOrder) {
+        point2 = CGPointMake(cornerRadius+5,tHeight);
+        point3 = CGPointMake(cornerRadius+5+tWidth/2,0);
+        point4 = CGPointMake(cornerRadius+5+tWidth,tHeight);
+    }
+    else {
+        point2 = CGPointMake(viewWidth-tWidth-cornerRadius-5,tHeight);
+        point3 = CGPointMake(viewWidth-tWidth/2-cornerRadius-5,0);
+        point4 = CGPointMake(viewWidth-cornerRadius-5,tHeight);
+    }
+    
+    point5 = CGPointMake(viewWidth-cornerRadius, tHeight);
+    point6 = CGPointMake(viewWidth, cornerRadius+tHeight);
+    point7 = CGPointMake(viewWidth, viewHeight-cornerRadius);
+    point8 = CGPointMake(viewWidth-cornerRadius, viewHeight);
+    point9 = CGPointMake(cornerRadius, viewHeight);
+    point10 = CGPointMake(0, viewHeight-cornerRadius);
+    point11 = CGPointMake(0, cornerRadius+tHeight);
+    center1 = CGPointMake(cornerRadius, tHeight+cornerRadius);
+    center2 = CGPointMake(viewWidth-cornerRadius, tHeight+cornerRadius);
+    center3 = CGPointMake(viewWidth-cornerRadius, viewHeight-cornerRadius);
+    center4 = CGPointMake(cornerRadius, viewHeight-cornerRadius);
     
     UIBezierPath *path = [UIBezierPath bezierPath];
     [path moveToPoint:point1];
@@ -111,15 +155,18 @@
     [path addLineToPoint:point3];
     [path addLineToPoint:point4];
     [path addLineToPoint:point5];
-    [path addLineToPoint:point6];
+    [path addArcWithCenter:center2 radius:cornerRadius startAngle:M_PI/2 endAngle:0 clockwise:YES];
     [path addLineToPoint:point7];
+    [path addArcWithCenter:center3 radius:cornerRadius startAngle:0 endAngle:M_PI/2 clockwise:YES];
+    [path addLineToPoint:point9];
+    [path addArcWithCenter:center4 radius:cornerRadius startAngle:M_PI*3/2 endAngle:M_PI clockwise:YES];
+    [path addLineToPoint:point11];
+    [path addArcWithCenter:center1 radius:cornerRadius startAngle:M_PI endAngle:M_PI/2 clockwise:YES];
     [path closePath];
     CAShapeLayer *layer = [CAShapeLayer layer];
     layer.path = path.CGPath;
     self.alert.layer.mask = layer;
-    self.alert.layer.cornerRadius = 3;
 }
-
 
 - (void)showAlert{
     
@@ -166,7 +213,6 @@
     [UIView animateWithDuration:0.2 animations:^{
         [self setAlpha:0];
     }];
-    
 }
 
 - (void)itemSelected:(UIButton *)button{
@@ -178,7 +224,6 @@
 //            [button setTitle:@"编辑" forState:UIControlStateNormal];
 //        }
 //    }
-    
     
     if(self.delegate && [self.delegate respondsToSelector:@selector(moreAlertSelected:)]){
         [self.delegate moreAlertSelected:button.tag];

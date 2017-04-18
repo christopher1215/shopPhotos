@@ -19,8 +19,12 @@
 @end
 
 @interface AlbumClassTableCell : BaseViewCell
+
 @property (strong, nonatomic) NSIndexPath * indexPath;
 @property (assign, nonatomic) BOOL showPrice;
 @property (weak, nonatomic) id<AlbumClassTableCellDelegate>delegate;
 @property (strong, nonatomic) AlbumClassTableSubModel * model;
+
+- (void)createAutoLayout:(BOOL)isSubClass;
+
 @end

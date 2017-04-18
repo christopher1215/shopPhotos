@@ -11,7 +11,7 @@
 #import "SharedItem.h"
 
 @interface ShareContentSelectCtr ()<UICollectionViewDelegate,UICollectionViewDataSource>
-@property (weak, nonatomic) IBOutlet UIView *back;
+@property (weak, nonatomic) IBOutlet UIButton *back;
 @property (weak, nonatomic) IBOutlet UIButton *cancel;
 @property (weak, nonatomic) IBOutlet UILabel *pageTitle;
 @property (strong, nonatomic)UICollectionView * photos;

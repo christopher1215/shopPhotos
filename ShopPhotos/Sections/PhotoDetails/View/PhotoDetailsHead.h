@@ -13,11 +13,12 @@
 @protocol PhotoDetailsHeadDelegate <NSObject>
 
 - (void)photoDetailsHeadSelectType:(NSInteger)type select:(NSInteger)indexPath;
+- (void)photoDetailsHeadAddImage:(UIImageView *)image select:(NSInteger)indexPath;
 
 @end
 
 @interface PhotoDetailsHead : BaseView
 @property (weak, nonatomic)id<PhotoDetailsHeadDelegate>delegate;
-- (CGFloat)setStyle:(NSArray *)imageArray;
+- (CGFloat)setStyle:(NSArray *)imageArray mode:(BOOL) isEditMode;
 
 @end

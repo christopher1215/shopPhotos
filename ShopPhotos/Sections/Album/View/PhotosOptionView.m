@@ -73,7 +73,6 @@
     if(self.delegate && [self.delegate respondsToSelector:@selector(photosOptionSelected:)]){
         [self.delegate photosOptionSelected:1];
     }
-    
 }
 
 - (void)deleteSelected{

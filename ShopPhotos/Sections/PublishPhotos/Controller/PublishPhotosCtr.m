@@ -104,16 +104,10 @@
     
 }
 
-
-
-
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
     [self setup];
-    
     [self createAutoLayout];
-    
     [self loadNetworkData:@{@"uid":self.uid}];
 }
 
