@@ -58,9 +58,9 @@
                         if(images && images.count > 0){
                             for(NSDictionary * image in images){
                                 DynamicImagesModel * imageModel = [[DynamicImagesModel alloc] init];
-                                imageModel.big = [RequestErrorGrab getStringwitKey:@"big" toTarget:image];
-                                imageModel.thumbnails = [RequestErrorGrab getStringwitKey:@"thumbnails" toTarget:image];
-                                imageModel.imageID = [RequestErrorGrab getIntegetKey:@"id" toTarget:image];
+                                imageModel.bigImageUrl = [RequestErrorGrab getStringwitKey:@"bigImageUrl" toTarget:image];
+                                imageModel.thumbnailUrl = [RequestErrorGrab getStringwitKey:@"thumbnailUrl" toTarget:image];
+                                imageModel.Id = [RequestErrorGrab getIntegetKey:@"id" toTarget:image];
                                 [model.images addObject:imageModel];
                             }
                         }

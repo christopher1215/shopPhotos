@@ -15,5 +15,6 @@
 @property (assign, nonatomic) short type;
 @property (weak, nonatomic) IBOutlet UIView *back;
 @property (strong, nonatomic) UserCtr *parentVC;
+@property (strong, nonatomic) NSString *value;
 
 @end

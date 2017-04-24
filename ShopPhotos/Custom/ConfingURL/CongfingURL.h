@@ -55,11 +55,11 @@
 // 用户反馈提交
 @property (strong, nonatomic) NSString * publishedFeedback;
 // 获取用户相册分类、子分类
-@property (strong, nonatomic) NSString * getPhotoClassifies;
+@property (strong, nonatomic) NSString * getClassifies;
 // 被谁允许复制，被谁关注，允许谁复制，关注了谁 列表
 @property (strong, nonatomic) NSString * getUsers;
 // 获取用户相册
-@property (strong, nonatomic) NSString * getPhotos;
+@property (strong, nonatomic) NSString * getUserPhotos;
 // 获取用户推荐相册
 @property (strong, nonatomic) NSString * getRecommendPhotos;
 // 批量更新相册的属性
@@ -81,11 +81,14 @@
 // 修改设置
 @property (strong, nonatomic) NSString * handleChangeConfig;
 // 删除子分类
-@property (strong, nonatomic) NSString * deleteSubclassifications;
+@property (strong, nonatomic) NSString * deleteSubclasses;
+@property (strong, nonatomic) NSString * deleteSubclass;
 // 删除分类
 @property (strong, nonatomic) NSString * deleteClassify;
+@property (strong, nonatomic) NSString * deleteClassifies;
 // 批量创建分类
-@property (strong, nonatomic) NSString * createClassifies;
+@property (strong, nonatomic) NSString * createClassify;
+@property (strong, nonatomic) NSString * createSubclass;
 // 取消特别关注
 @property (strong, nonatomic) NSString * cancelStarUser;
 // 添加特别关注
@@ -93,7 +96,7 @@
 // 取消关注
 @property (strong, nonatomic) NSString * cancelConcern;
 // 获取相册详情
-@property (strong, nonatomic) NSString * getDetailPhoto;
+@property (strong, nonatomic) NSString * getPhoto;
 // 获取相册所有图片
 @property (strong, nonatomic) NSString * getPhotoImages;
 // 获取相册备注
@@ -117,7 +120,15 @@
 // 图片识别搜索
 @property (strong, nonatomic) NSString * withImageSearch;
 // 创建相册
-@property (strong, nonatomic) NSString * createPhoto;
+@property (strong, nonatomic) NSString * createPhoto1;
+@property (strong, nonatomic) NSString * createPhoto2;
+@property (strong, nonatomic) NSString * createPhoto3;
+@property (strong, nonatomic) NSString * addImageToPhoto1;
+@property (strong, nonatomic) NSString * addImageToPhoto2;
+@property (strong, nonatomic) NSString * addImageToPhoto3;
+@property (strong, nonatomic) NSString * createVideo1;
+@property (strong, nonatomic) NSString * createVideo2;
+@property (strong, nonatomic) NSString * createVideo3;
 // 上传文件名
 @property (strong, nonatomic) NSString * handleImagesName;
 // 上传图片
@@ -181,7 +192,7 @@
 @property (strong, nonatomic) NSString * updateClassify;
 @property (strong, nonatomic) NSString * updatePhotoName;
 @property (strong, nonatomic) NSString * updatePrice;
-@property (strong, nonatomic) NSString * updateSubclasses;
+@property (strong, nonatomic) NSString * updateSubclass;
 @property (strong, nonatomic) NSString * updateSubclassification;
 @property (strong, nonatomic) NSString * uploadToken;
 @property (strong, nonatomic) NSString * weChatAuth;

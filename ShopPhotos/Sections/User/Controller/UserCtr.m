@@ -26,6 +26,8 @@
 #import "ErrMsgViewController.h"
 
 #import "UserUpdateViewController.h"
+#import "BindEmailViewController.h"
+
 @interface UserCtr ()<UITableViewDelegate,UserShareAlertDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,TZImagePickerControllerDelegate,TOCropViewControllerDelegate>{
 }
 @property (strong, nonatomic) QRCodeAlert * qrAlert;
@@ -49,7 +51,7 @@
 - (void)setup{
     
     self.popupErrVC = [[ErrMsgViewController alloc] initWithNibName:@"ErrMsgViewController" bundle:nil];
-    
+    self.firstFlag = YES;
     
     self.table.delegate = self;
     self.table.separatorStyle = UITableViewCellSeparatorStyleNone;
@@ -71,7 +73,7 @@
         
         [weakSelef loadNetworkData:@{@"uid":weakSelef.photosUserID}];
     }];
-    [self.table.mj_header beginRefreshing];
+//    [self.table.mj_header beginRefreshing];
     
     [self.edit addTarget:self action:@selector(editSelected)];
     
@@ -103,6 +105,14 @@
     [self.chatText setHidden:NO];
     [self.phone setHidden:NO];
     [self.locationText setHidden:NO];
+}
+-(void)viewWillAppear:(BOOL)animated{
+    if (self.firstFlag) {
+        [self.table.mj_header beginRefreshing];
+        self.firstFlag = YES;
+    }
+    
+
 }
 //- (void)initData{
 //    NSDictionary *dic = [self getValueWithKey:CacheUserModel];
@@ -199,6 +209,7 @@
     UserUpdateViewController *vc=[[UserUpdateViewController alloc] initWithNibName:@"UserUpdateViewController" bundle:nil];
     vc.type = 0;
     vc.parentVC = self;
+    vc.value = _nameText.text;
     [self.navigationController pushViewController:vc animated:YES];
 
 }
@@ -206,6 +217,7 @@
     UserUpdateViewController *vc=[[UserUpdateViewController alloc] initWithNibName:@"UserUpdateViewController" bundle:nil];
     vc.type = 1;
     vc.parentVC = self;
+    vc.value = _signatureText.text;
     [self.navigationController pushViewController:vc animated:YES];
     
 }
@@ -214,6 +226,7 @@
     UserUpdateViewController *vc=[[UserUpdateViewController alloc] initWithNibName:@"UserUpdateViewController" bundle:nil];
     vc.type = 2;
     vc.parentVC = self;
+    vc.value = _qqText.text;
     [self.navigationController pushViewController:vc animated:YES];
     
 }
@@ -222,6 +235,7 @@
     UserUpdateViewController *vc=[[UserUpdateViewController alloc] initWithNibName:@"UserUpdateViewController" bundle:nil];
     vc.type = 3;
     vc.parentVC = self;
+    vc.value = _chatText.text;
     [self.navigationController pushViewController:vc animated:YES];
     
 }
@@ -230,6 +244,8 @@
     UserUpdateViewController *vc=[[UserUpdateViewController alloc] initWithNibName:@"UserUpdateViewController" bundle:nil];
     vc.type = 4;
     vc.parentVC = self;
+    vc.value = _phone.text;
+
     [self.navigationController pushViewController:vc animated:YES];
     
 }
@@ -238,13 +254,15 @@
     UserUpdateViewController *vc=[[UserUpdateViewController alloc] initWithNibName:@"UserUpdateViewController" bundle:nil];
     vc.type = 5;
     vc.parentVC = self;
+    vc.value = _locationText.text;
+
     [self.navigationController pushViewController:vc animated:YES];
     
 }
 
 - (void)emailSelected{
-
-    
+    BindEmailViewController *vc=[[BindEmailViewController alloc] initWithNibName:@"BindEmailViewController" bundle:nil];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 #pragma mark -- <UIImagePickerControllerDelegate>--
@@ -260,9 +278,12 @@
     if(image){
         [self showLoad];
         NSData * file = UIImageJPEGRepresentation(image, 0.5);
-        NSDictionary * data = @{@"target":@"avatar"};
+        
+        NSDictionary * data = @{@"_method":@"put",@"target":@"avatar"};
         __weak __typeof(self)weakSelef = self;
-        [HTTPRequest Manager:[NSString stringWithFormat:@"%@%@",self.congfing.updateUserImage,[self.appd getParameterString]] Method:nil dic:data file:file fileName:@"icon" requestSucced:^(id responseObject){
+        [HTTPRequest Manager:[NSString stringWithFormat:@"%@%@",self.congfing.updateUserImage,[self.appd getParameterString]] Method:nil dic:data file:file fileName:@"image" requestSucced:^(id responseObject){
+            [weakSelef closeLoad];
+            NSLog(@"%@",responseObject);
             
             BaseModel * model = [[BaseModel alloc] init];
             [model analyticInterface:responseObject];
@@ -273,12 +294,30 @@
             }else{
                 [self showToast:model.message];
             }
-            [weakSelef closeLoad];
         } requestfailure:^(NSError * error){
             [weakSelef closeLoad];
             NSLog(@"%@",error.userInfo);
             [self showToast:@"修改失败"];
         }];
+        
+//        [HTTPRequest requestPUTUrl:[NSString stringWithFormat:@"%@%@",self.congfing.updateUserImage,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+//            [weakSelef closeLoad];
+//            NSLog(@"%@",responseObject);
+//            
+//            BaseModel * model = [[BaseModel alloc] init];
+//            [model analyticInterface:responseObject];
+//            if(model.status == 0){
+//                [weakSelef showToast:@"修改成功"];
+//                [self loadNetworkData:@{@"uid":weakSelef.photosUserID}];
+//                
+//            }else{
+//                [self showToast:model.message];
+//            }
+//        } failure:^(NSError * error){
+//            [weakSelef closeLoad];
+//            NSLog(@"%@",error.userInfo);
+//            [self showToast:@"修改失败"];
+//        }];
     }
     
 }
@@ -300,7 +339,7 @@
 }
 
 - (void)setStyle:(UserModel *)model{
-    [self.icon sd_setImageWithURL:[NSURL URLWithString:model.avatar]];
+    [self.icon sd_setImageWithURL:[NSURL URLWithString:model.avatar] placeholderImage:[UIImage imageNamed:@"default-avatar.png"]];
     self.iconURL = model.avatar;
     [self.nameText setText:model.name];
     self.lblNameHead.text = model.name;
@@ -310,7 +349,7 @@
     [self.chatText setText:model.wechat];
     [self.phone setText:model.phone];
     [self.locationText setText:model.address];
-    
+    [self.emailText setText:model.email];
     [self.homeText setText:[NSString stringWithFormat:@"%@%@",URLHead,model.uid]];
 }
 
@@ -356,7 +395,7 @@
 #pragma makr - AFNetworking网络加载
 - (void)loadNetworkData:(NSDictionary *)data{
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestGetUrl:[NSString stringWithFormat:@"%@%@",self.congfing.getUserInfo,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+    [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",self.congfing.getUserInfo,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
         
         NSLog(@"我的 getuserinfo%@",responseObject);
         
@@ -421,4 +460,8 @@
         [weakSelef.table.mj_header endRefreshing];
     }];
 }
+- (void)closePopupErr {
+    [_popupErrVC removeAnimate];
+}
+
 @end

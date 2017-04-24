@@ -13,6 +13,8 @@
 #import "MessageRequset.h"
 #import "MessageEditOption.h"
 #import "MessageMinCell.h"
+#import "DetailMessageCtr.h"
+#import "DetailMessageMinCtr.h"
 
 @interface MessageCtr ()<UITableViewDelegate,UITableViewDataSource,MessageEditOptionDelegate>
 @property (weak, nonatomic) IBOutlet UIButton *back;
@@ -32,6 +34,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *btn_add;
 @property (weak, nonatomic) IBOutlet UIButton *btn_search;
 @property (weak, nonatomic) IBOutlet UILabel *backText;
+@property (assign, nonatomic) BOOL isEdit;
+@property (assign, nonatomic) BOOL isEditMin;
 
 
 @end
@@ -61,7 +65,8 @@
 }
 
 - (void)setup{
-    
+    self.isEdit = NO;
+    self.isEditMin = NO;
     self.backText.text = @"";
     [self.back setTitle:self.str_from forState:UIControlStateNormal];
     
@@ -90,6 +95,8 @@
     self.tableMin.separatorStyle = UITableViewCellSeparatorStyleNone;
     [self.tableMin registerClass:[MessageMinCell class] forCellReuseIdentifier:MessageMinCellID];
     [self.view addSubview:self.tableMin];
+    UILongPressGestureRecognizer * longPressGrMin = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(tableLongPressSelectedMin)];
+    [self.tableMin addGestureRecognizer:longPressGrMin];
     [self.tableMin setHidden:YES];
     
     self.tableMin.sd_layout
@@ -145,6 +152,7 @@
     }else{
         [self.table reloadData];
     }
+    [self setTableEditStyleMin:NO];
 }
 
 - (void)mineSelected{
@@ -166,6 +174,7 @@
     }else{
         [self.tableMin reloadData];
     }
+    [self setTableEditStyle:NO];
 }
 
 #pragma mark - UITableViewDataSource
@@ -196,41 +205,76 @@
 #pragma mark - UITableViewDelegate
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     
-    if(tableView == self.table){
-        MessageModel *   model = [self.systemArray objectAtIndex:indexPath.row];
-        return [tableView cellHeightForIndexPath:indexPath model:model keyPath:@"model" cellClass:[MessageCell class] contentViewWidth:WindowWidth];
-    }else{
+//    if(tableView == self.table){
+//        MessageModel *   model = [self.systemArray objectAtIndex:indexPath.row];
+//        return [tableView cellHeightForIndexPath:indexPath model:model keyPath:@"model" cellClass:[MessageCell class] contentViewWidth:WindowWidth];
+//    }else{
         return 80;
-    }
+//    }
     
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     
     if(tableView == self.table){
-        MessageModel *   model = [self.systemArray objectAtIndex:indexPath.row];
-        model.editSelect = !model.editSelect;
-        [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObjects:indexPath, nil] withRowAnimation:UITableViewRowAnimationNone];
-        NSInteger index = 0;
-        for(MessageModel * model in self.systemArray){
-            if(model.editSelect){
-                index++;
+        MessageModel * model = [self.systemArray objectAtIndex:indexPath.row];
+        if (self.isEdit) {
+            model.editSelect = !model.editSelect;
+            [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObjects:indexPath, nil] withRowAnimation:UITableViewRowAnimationNone];
+            NSInteger index = 0;
+            for(MessageModel * model in self.systemArray){
+                if(model.editSelect){
+                    index++;
+                }
             }
+            [self.editOtion setDeleteCount:index];
+            if(index == self.systemArray.count){
+                self.editOtion.allSelect = YES;
+            }else{
+                self.editOtion.allSelect = NO;
+            }
+        } else {
+            DetailMessageCtr * detailMsg = [[UIStoryboard storyboardWithName:@"MessageCtr" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"DetailMessageCtr"];
+            detailMsg.atitle = model.title;
+            detailMsg.content = model.content;
+            detailMsg.avatar = model.avatar;
+            detailMsg.type = model.type;
+            detailMsg.date = model.date;
+            [self.navigationController pushViewController:detailMsg animated:YES];
         }
-        [self.editOtion setDeleteCount:index];
-        if(index == self.systemArray.count){
-            self.editOtion.allSelect = YES;
-        }else{
-            self.editOtion.allSelect = NO;
+    } else if(tableView == self.tableMin){
+        MessageModel * model = [self.requsetArray objectAtIndex:indexPath.row];
+        if (self.isEditMin) {
+            model.editSelect = !model.editSelect;
+            [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObjects:indexPath, nil] withRowAnimation:UITableViewRowAnimationNone];
+            NSInteger index = 0;
+            for(MessageModel * model in self.requsetArray){
+                if(model.editSelect){
+                    index++;
+                }
+            }
+            [self.editOtion setDeleteCount:index];
+            if(index == self.requsetArray.count){
+                self.editOtion.allSelect = YES;
+            }else{
+                self.editOtion.allSelect = NO;
+            }
+        } else {
+            DetailMessageMinCtr * detailMsg = [[UIStoryboard storyboardWithName:@"MessageCtr" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"DetailMessageMinCtr"];
+            detailMsg.atitle = model.title;
+            detailMsg.content = model.content;
+            detailMsg.avatar = model.avatar;
+            detailMsg.type = model.type;
+            detailMsg.date = model.date;
+            [self.navigationController pushViewController:detailMsg animated:YES];
         }
     }
-    
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
     if(tableView == self.table){
         return NO;
     }else{
-        return YES;
+        return NO;
     }
    
 }
@@ -250,13 +294,13 @@
     UITableViewRowAction *
     refuse = [UITableViewRowAction rowActionWithStyle:(UITableViewRowActionStyleDestructive) title:@"拒绝" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath) {
         NSLog(@"拒绝");
-        NSDictionary * data = @{@"notice_ids":[NSString stringWithFormat:@"%ld",model.itmeID]};
+        NSDictionary * data = @{@"noticesId":[NSString stringWithFormat:@"%ld",model.itemID]};
         [weakSelef deleteNotice:data];
     }];
     
     UITableViewRowAction * agree = [UITableViewRowAction rowActionWithStyle:(UITableViewRowActionStyleDestructive) title:@"同意" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath) {
         
-        NSDictionary * data = @{@"uid":uid,@"notice_ids":[NSString stringWithFormat:@"%ld",model.itmeID]};
+        NSDictionary * data = @{@"uid":uid,@"notice_ids":[NSString stringWithFormat:@"%ld",model.itemID]};
         [weakSelef allowUserCopy:data];
     }];
     
@@ -273,6 +317,7 @@
 }
 
 - (void)setTableEditStyle:(BOOL)edit{
+    self.isEdit = edit;
 
     if(!edit)[self.editOtion setDeleteCount:0];
     
@@ -292,62 +337,133 @@
     [self.table updateLayout];
     
 }
+- (void)tableLongPressSelectedMin{
+    [self setTableEditStyleMin:YES];
+}
+- (void)setTableEditStyleMin:(BOOL)edit{
+    self.isEditMin = edit;
+    if(!edit)[self.editOtion setDeleteCount:0];
+    
+    for(MessageModel * model in self.requsetArray){
+        if(model.edit == edit)return;
+        model.edit = edit;
+        if(!edit)model.editSelect = NO;
+        
+    }
+    [self.tableMin reloadData];
+    [self.editOtion setHidden:!edit];
+    if(edit){
+        self.tableMin.sd_layout.bottomSpaceToView(self.view,44);
+    }else{
+        self.tableMin.sd_layout.bottomSpaceToView(self.view,0);
+    }
+    [self.tableMin updateLayout];
+    
+}
 
 #pragma mark - MessageEditOptionDelegate
 - (void)messageEditOptionSelected:(NSInteger)type{
+    if(self.type == 1){
     
-    if(type == 1){
-        NSLog(@"全选");
-        if(self.editOtion.allSelect){
-            for(MessageModel * model in self.systemArray){
-                model.edit = YES;
-                model.editSelect = NO;
-            }
-             [self.editOtion setDeleteCount:0];
-        }else{
-            for(MessageModel * model in self.systemArray){
-                model.edit = YES;
-                model.editSelect = YES;
-            }
-             [self.editOtion setDeleteCount:self.systemArray.count];
-        }
-        self.editOtion.allSelect = !self.editOtion.allSelect;
-        [self.table reloadData];
-       
-        
-    }else if(type == 2){
-        NSLog(@"删除");
-        NSInteger selectCount = 0;
-        NSMutableString * deleteID = [NSMutableString string];
-        for(MessageModel * model in self.systemArray){
-            if(model.editSelect){
-                selectCount++;
-                if(selectCount > 1){
-                    [deleteID appendString:[NSString stringWithFormat:@"*%ld",model.itmeID]];
-                }else{
-                    [deleteID appendString:[NSString stringWithFormat:@"%ld",model.itmeID]];
+        if(type == 1){
+            NSLog(@"全选");
+            if(self.editOtion.allSelect){
+                for(MessageModel * model in self.systemArray){
+                    model.edit = YES;
+                    model.editSelect = NO;
                 }
+                 [self.editOtion setDeleteCount:0];
+            }else{
+                for(MessageModel * model in self.systemArray){
+                    model.edit = YES;
+                    model.editSelect = YES;
+                }
+                 [self.editOtion setDeleteCount:self.systemArray.count];
             }
-        
+            self.editOtion.allSelect = !self.editOtion.allSelect;
+            [self.table reloadData];
+           
+            
+        }else if(type == 2){
+            NSLog(@"删除");
+            int selectCount = 0;
+            NSMutableDictionary * data = [NSMutableDictionary new];
+            for(MessageModel * model in self.systemArray){
+                if(model.editSelect){
+                    [data setValue:[NSString stringWithFormat:@"%ld", model.itemID] forKey:[NSString stringWithFormat:@"noticesId[%d]", selectCount]];
+                    selectCount++;
+                }
+                
+            }
+            if(selectCount == 0) {
+    //            ShowAlert(@"当前未选中哦！");
+                SPAlert(@"当前未选中哦！",self);
+                return;
+            }
+            __weak __typeof(self)weakSelef = self;
+            NSString * msg = [NSString stringWithFormat:@"确定删除%ld项",selectCount];
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:msg preferredStyle:UIAlertControllerStyleAlert];
+            [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action){
+                [weakSelef deleteNotice:data];
+            }]];
+            [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+            [self presentViewController:alert animated:YES completion:nil];
+            
+        }else if(type == 3){
+            NSLog(@"取消");
+                [self setTableEditStyle:NO];
+            
         }
-        if(selectCount == 0) {
-//            ShowAlert(@"当前未选中哦！");
-            SPAlert(@"当前未选中哦！",self);
-            return;
+    } else if(self.type == 2){
+        if(type == 1){
+            NSLog(@"全选");
+            if(self.editOtion.allSelect){
+                for(MessageModel * model in self.requsetArray){
+                    model.edit = YES;
+                    model.editSelect = NO;
+                }
+                [self.editOtion setDeleteCount:0];
+            }else{
+                for(MessageModel * model in self.requsetArray){
+                    model.edit = YES;
+                    model.editSelect = YES;
+                }
+                [self.editOtion setDeleteCount:self.requsetArray.count];
+            }
+            self.editOtion.allSelect = !self.editOtion.allSelect;
+            [self.tableMin reloadData];
+            
+            
+        }else if(type == 2){
+            NSLog(@"删除");
+            int selectCount = 0;
+            NSMutableDictionary * data = [NSMutableDictionary new];
+            for(MessageModel * model in self.requsetArray){
+                if(model.editSelect){
+                    [data setValue:[NSString stringWithFormat:@"%ld", model.itemID] forKey:[NSString stringWithFormat:@"noticesId[%d]", selectCount]];
+                    selectCount++;
+                }
+                
+            }
+            if(selectCount == 0) {
+                //            ShowAlert(@"当前未选中哦！");
+                SPAlert(@"当前未选中哦！",self);
+                return;
+            }
+            __weak __typeof(self)weakSelef = self;
+            NSString * msg = [NSString stringWithFormat:@"确定删除%ld项",selectCount];
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:msg preferredStyle:UIAlertControllerStyleAlert];
+            [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action){
+                [weakSelef deleteNotice:data];
+            }]];
+            [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+            [self presentViewController:alert animated:YES completion:nil];
+            
+        }else if(type == 3){
+            NSLog(@"取消");
+            [self setTableEditStyleMin:NO];
+            
         }
-        NSDictionary * data = @{@"notice_ids":deleteID};
-        __weak __typeof(self)weakSelef = self;
-        NSString * msg = [NSString stringWithFormat:@"确定删除%ld项",selectCount];
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:msg preferredStyle:UIAlertControllerStyleAlert];
-        [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action){
-            [weakSelef deleteNotice:data];
-        }]];
-        [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
-        [self presentViewController:alert animated:YES completion:nil];
-        
-    }else if(type == 3){
-        NSLog(@"取消");
-        [self setTableEditStyle:NO];
     }
 }
 
@@ -365,10 +481,10 @@
     
     NSDictionary * data = @{@"page":[NSString stringWithFormat:@"%ld",self.pageIndex],
                             @"pageSize":@"20",
-                            @"noticeType":type};
+                            @"type":type};
     
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.getNotices parametric:data succed:^(id responseObject){
+    [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",self.congfing.getNotices,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
         [weakSelef.tableMin.mj_header endRefreshing];
         [weakSelef.table.mj_header endRefreshing];
         MessageRequset * requset = [[MessageRequset alloc] init];
@@ -429,7 +545,7 @@
                             @"noticeType":type};
     
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.getNotices parametric:data succed:^(id responseObject){
+    [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",self.congfing.getNotices,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
         [weakSelef.table.mj_footer endRefreshing];
         [weakSelef.tableMin.mj_footer endRefreshing];
         MessageRequset * requset = [[MessageRequset alloc] init];
@@ -470,7 +586,7 @@
 - (void)deleteNotice:(NSDictionary *)data{
     
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.deleteNotices parametric:data succed:^(id responseObject){
+    [HTTPRequest requestDELETEUrl:[NSString stringWithFormat:@"%@%@",self.congfing.deleteNotices,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
         
         NSLog(@"%@",responseObject);
         BaseModel * model = [[BaseModel alloc] init];
@@ -490,7 +606,7 @@
 - (void)allowUserCopy:(NSDictionary *)data{
     //@{@"uid":uid,@"notice_ids":[NSString stringWithFormat:@"%ld",model.itmeID]}
     NSDictionary * allowData = @{@"uid":[data objectForKey:@"uid"]};
-    NSDictionary * deleteData = @{@"notice_ids":[data objectForKey:@"notice_ids"]};
+    NSDictionary * deleteData = @{@"noticesId":[data objectForKey:@"notice_ids"]};
     
     
     NSLog(@"%@",data);

@@ -237,19 +237,15 @@
     }
 }
 
-- (void)setModel:(AlbumPhotosMdel *)model{
+- (void)setModel:(AlbumPhotosModel *)model{
     
     if(!model)return;
     
-    [self.icon sd_setImageWithURL:[NSURL URLWithString:model.big]];
-    [self.title setText:model.name];
-    [self.prize setText:[NSString stringWithFormat:@"￥%@",model.price]];
+//    [self.icon sd_setImageWithURL:[NSURL URLWithString:model.big]];
+    [self.title setText:model.title];
     
-    if(model.showPrice == 1){
-        [self.prize setHidden:NO];
-    }else{
-        [self.prize setHidden:YES];
-    }
+    [self.prize setHidden:YES];
+    
     if(model.user && model.user.count > 0){
         NSString * userIcon = [model.user objectForKey:@"icon"];
         NSString * userName = [model.user objectForKey:@"name"];

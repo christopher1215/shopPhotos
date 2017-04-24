@@ -20,8 +20,8 @@
 #import "FeedbackCtr.h"
 
 @interface SettingCtr (){
-//    AppDelegate *appd;
-
+    //    AppDelegate *appd;
+    
 }
 @property (weak, nonatomic) IBOutlet UIView *back;
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
@@ -44,14 +44,14 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-//    appd = (AppDelegate*)[UIApplication sharedApplication].delegate;
+    //    appd = (AppDelegate*)[UIApplication sharedApplication].delegate;
     [self setup];
     
     [self loadNetworkData:@{@"uid":self.uid}];
 }
 
 - (void)setup{
-
+    
     CacheFileOption * cache = [[CacheFileOption alloc] init];
     [self.dataSize setText:[NSString stringWithFormat:@"%.2fM",[cache getCacheSize]]];
     [self.back addTarget:self action:@selector(backSelected)];
@@ -73,38 +73,29 @@
         allowCoyp = @"0";
     }
     
-    NSString * showPrize = @"0";
-    if(self.showPrize.on){
-        showPrize = @"1";
-    }else{
-        showPrize = @"0";
-    }
+    //    NSString * showPrize = @"0";
+    //    if(self.showPrize.on){
+    //        showPrize = @"1";
+    //    }else{
+    //        showPrize = @"0";
+    //    }
     
-    return @{@"allowCopy":allowCoyp,
-             @"photoStyle":@"10",
-             @"showPrice":showPrize,
-             @"watermark":@"1"};
+    return @{@"allowCopy":allowCoyp};
     
 }
 
-- (void)setStyle:(UserInfoModel *)model{
-    if(model.config && model.config.count > 0){
+- (void)setStyle:(UserModel *)model{
+    if(model.settings && model.settings.count > 0){
         
-        NSNumber * allowCopy = [model.config objectForKey:@"allowCopy"];
-        NSNumber * showPrice = [model.config objectForKey:@"showPrice"];
+        NSNumber * allowCopy = [model.settings objectForKey:@"allowCopy"];
         if([allowCopy integerValue] == 1){
             [self.switchCopy setOn:YES animated:YES];
         }else{
-             [self.switchCopy setOn:NO animated:YES];
+            [self.switchCopy setOn:NO animated:YES];
         }
         
-        if([showPrice integerValue] == 1){
-            [self.showPrize setOn:YES animated:YES];
-        }else{
-             [self.showPrize setOn:NO animated:YES];
-        }
     }
-
+    
 }
 
 #pragma mark - OnClick
@@ -123,9 +114,9 @@
 - (void)resetPassworkSelected{
     ReSetPwdCtr * reSetpwd = GETALONESTORYBOARDPAGE(@"ReSetPwdCtr");
     [self.navigationController pushViewController:reSetpwd animated:YES];
-//    ResetPasswordCtr * resetPassword = GETALONESTORYBOARDPAGE(@"ResetPasswordCtr");
-//    resetPassword.fromType = @"resetPassword";
-//    [self.navigationController pushViewController:resetPassword animated:YES];
+    //    ResetPasswordCtr * resetPassword = GETALONESTORYBOARDPAGE(@"ResetPasswordCtr");
+    //    resetPassword.fromType = @"resetPassword";
+    //    [self.navigationController pushViewController:resetPassword animated:YES];
 }
 
 - (void)checkUpdataSelected{
@@ -172,10 +163,10 @@
     
     [self showLoad];
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.getUserInfo parametric:data succed:^(id responseObject){
+    [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",self.congfing.getUserInfo,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
         [weakSelef closeLoad];
         NSLog(@"%@",responseObject);
-        UserInfoModel * infoModel = [[UserInfoModel alloc] init];
+        UserModel * infoModel = [[UserModel alloc] init];
         [infoModel analyticInterface:responseObject];
         if(infoModel.status == 0){
             [weakSelef setStyle:infoModel];
@@ -192,7 +183,7 @@
     NSLog(@"data -- %@",data);
     [self showLoad];
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.handleChangeConfig parametric:data succed:^(id responseObject){
+    [HTTPRequest requestPUTUrl:[NSString stringWithFormat:@"%@%@",self.congfing.updateUserSetting,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
         [weakSelef closeLoad];
         NSLog(@"%@",responseObject);
         BaseModel * model = [[BaseModel alloc] init];
@@ -202,9 +193,11 @@
         }else{
             [weakSelef showToast:model.message];
         }
+        [self loadNetworkData:@{@"uid":self.uid}];
     } failure:^(NSError *error){
         [weakSelef closeLoad];
         [weakSelef showToast:NETWORKTIPS];
+        [self loadNetworkData:@{@"uid":self.uid}];
     }];
 }
 

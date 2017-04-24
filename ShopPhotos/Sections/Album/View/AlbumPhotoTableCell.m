@@ -155,12 +155,12 @@
     [self.selectView setHidden:YES];
 }
 
-- (void)setModel:(AlbumPhotosMdel *)model{
+- (void)setModel:(AlbumPhotosModel *)model{
     
     if(!model)return;
     
     [self.icon sd_setImageWithURL:[NSURL URLWithString:model.cover]];
-    [self.title setText:model.name];
+    [self.title setText:model.title];
 //    [self.prize setText:[NSString stringWithFormat:@"￥%@",model.price]];
     
     if(model.openEdit){

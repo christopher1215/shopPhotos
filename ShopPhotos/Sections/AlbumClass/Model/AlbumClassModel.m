@@ -24,43 +24,41 @@
         if(json && json.count > 0){
             
             NSArray * classifies = [RequestErrorGrab getArrwitKey:@"classifies" toTarget:json];
-            NSArray * subclassifications = [RequestErrorGrab getArrwitKey:@"subclassifications" toTarget:json];
+            NSArray * subclasses = [RequestErrorGrab getArrwitKey:@"subclasses" toTarget:json];
+            
             
             if(classifies && classifies.count > 0){
-                
                 for(NSDictionary * classifie in classifies){
-                    
                     AlbumClassTableModel * model = [[AlbumClassTableModel alloc] init];
                     model.dataArray = [NSMutableArray array];
-                    model.classID = [RequestErrorGrab getIntegetKey:@"id" toTarget:classifie];
+                    model.Id = [RequestErrorGrab getIntegetKey:@"id" toTarget:classifie];
                     model.name = [RequestErrorGrab getStringwitKey:@"name" toTarget:classifie];
+                    model.subclassCount = [RequestErrorGrab getIntegetKey:@"subclassCounts" toTarget:classifie];
                     [self.dataArray addObject:model];
                 }
             }
-         
-            // --
-            if(subclassifications && subclassifications.count){
-                
-                for(NSDictionary * subclassification in subclassifications){
-                    
+           
+            if(subclasses && subclasses.count){
+                for(NSDictionary * subclass in subclasses){
+//                    NSDictionary *subclass = [subarray objectAtIndex:0];
                     AlbumClassTableSubModel * subModel = [[AlbumClassTableSubModel alloc] init];
-                    subModel.classID = [RequestErrorGrab getIntegetKey:@"classify_id" toTarget:subclassification];
-                    //[RequestErrorGrab getStringwitKey:@"classify_id" toTarget:subclassification];
-                    subModel.subClassID = [RequestErrorGrab getIntegetKey:@"id" toTarget:subclassification];
-                    //[RequestErrorGrab getStringwitKey:@"id" toTarget:subclassification];
-                    subModel.cover = [RequestErrorGrab getStringwitKey:@"cover" toTarget:subclassification];
-                    subModel.name = [RequestErrorGrab getStringwitKey:@"name" toTarget:subclassification];
-                    
-                    for(AlbumClassTableModel * model in self.dataArray){
-                        if(subModel.classID == model.classID){
-                             [model.dataArray addObject:subModel];
+                    subModel.classfiyId = [RequestErrorGrab getIntegetKey:@"classfiyId" toTarget:subclass];
+                    subModel.Id = [RequestErrorGrab getIntegetKey:@"id" toTarget:subclass];
+                    subModel.photoCount = [RequestErrorGrab getIntegetKey:@"photoCounts" toTarget:subclass];
+                    subModel.cover = [RequestErrorGrab getStringwitKey:@"cover" toTarget:subclass];
+                    subModel.name = [RequestErrorGrab getStringwitKey:@"name" toTarget:subclass];
+                    if (classifies && classifies.count > 0) {
+                        for(AlbumClassTableModel * model in self.dataArray){
+                            if(subModel.classfiyId == model.Id){
+                                 [model.dataArray addObject:subModel];
+                            }
                         }
-//                        if([subModel.classID isEqualToString:model.classID]){
-//                            [model.dataArray addObject:subModel];
-//                        }
+                    }
+                    else {
+                        [self.dataArray addObject:subModel];
                     }
                 }
-            }  
+            }
         }
     } @catch (NSException *exception) {
         

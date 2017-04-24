@@ -11,29 +11,28 @@
 
 @implementation PhotoImagesRequset
 
-- (void)analyticInterface:(NSDictionary *)data{
+- (void)analyticInterface:(NSArray *)data {
     
     @try {
         
-        self.status = [RequestErrorGrab getIntegetKey:@"code" toTarget:data];
-        self.message = [RequestErrorGrab getStringwitKey:@"message" toTarget:data];
+//        self.status = [RequestErrorGrab getIntegetKey:@"code" toTarget:data];
+//        self.message = [RequestErrorGrab getStringwitKey:@"message" toTarget:data];
         self.dataArray = [NSMutableArray array];
-        NSArray * json = [RequestErrorGrab getArrwitKey:@"data" toTarget:data];
-        if(json && json.count > 0){
-            for(NSDictionary * images in json){
+//        NSArray * json = [RequestErrorGrab getArrwitKey:@"data" toTarget:data];
+        if(data && data.count > 0){
+            for(NSDictionary * images in data){
                 PhotoImagesModel * model = [[PhotoImagesModel alloc] init];
-                model.imageID = [NSString stringWithFormat:@"%ld",[RequestErrorGrab getIntegetKey:@"id" toTarget:images]];
-                model.imageLink_id = [NSString stringWithFormat:@"%ld",[RequestErrorGrab getIntegetKey:@"imageLink_id" toTarget:images]];
-                model.thumbnails = [RequestErrorGrab getStringwitKey:@"thumbnails" toTarget:images];
-                model.big = [RequestErrorGrab getStringwitKey:@"big" toTarget:images];
-                model.source = [RequestErrorGrab getStringwitKey:@"source" toTarget:images];
+                model.Id = [NSString stringWithFormat:@"%ld",[RequestErrorGrab getIntegetKey:@"id" toTarget:images]];
+//                model.imageLink_id = [NSString stringWithFormat:@"%ld",[RequestErrorGrab getIntegetKey:@"imageLink_id" toTarget:images]];
+                model.thumbnailUrl = [RequestErrorGrab getStringwitKey:@"thumbnailUrl" toTarget:images];
+                model.bigImageUrl = [RequestErrorGrab getStringwitKey:@"bigImageUrl" toTarget:images];
+                model.srcUrl = [RequestErrorGrab getStringwitKey:@"srcUrl" toTarget:images];
                 model.isCover = [RequestErrorGrab getBooLwitKey:@"isCover" toTarget:images];
                 if (model.isCover) {
                     [self.dataArray insertObject:model atIndex:0];
                 }else{
                     [self.dataArray addObject:model];
                 }
-                
             }
         }
         

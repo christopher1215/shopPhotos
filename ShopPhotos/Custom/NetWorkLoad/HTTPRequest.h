@@ -17,7 +17,7 @@ typedef void(^Failure)(NSError *error);
 
 
 #pragma mark - 异步GET请求
-+(void)requestGetUrl:(NSString*)url
++(void)requestGETUrl:(NSString*)url
           parametric:(NSDictionary*)dic
               succed:(Success)succed
              failure:(Failure)failure;

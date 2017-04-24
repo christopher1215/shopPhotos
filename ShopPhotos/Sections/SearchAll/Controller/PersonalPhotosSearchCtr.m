@@ -10,7 +10,7 @@
 #import "AlbumPhotoTableView.h"
 #import <MJRefresh.h>
 #import "AlbumPhotosRequset.h"
-#import "AlbumPhotosMdel.h"
+#import "AlbumPhotosModel.h"
 #import "PhotoDetailsCtr.h"
 
 @interface PersonalPhotosSearchCtr ()<AlbumPhotoTableViewDelegate>
@@ -81,9 +81,9 @@
 #pragma mark - AlbumPhotoTableViewDelegate
 - (void)albumPhotoSelectPath:(NSInteger)indexPath{
     
-    AlbumPhotosMdel * model = [self.dataArray objectAtIndex:indexPath];
+    AlbumPhotosModel * model = [self.dataArray objectAtIndex:indexPath];
     PhotoDetailsCtr * photoDetails = GETALONESTORYBOARDPAGE(@"PhotoDetailsCtr");
-    photoDetails.photoId = model.photosID;
+    photoDetails.photoId = model.Id;
     [self.navigationController pushViewController:photoDetails animated:YES];
     
     
@@ -101,7 +101,7 @@
                             @"pageSize":@"30",
                             @"keyWord":self.searchText.text};
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.getPhotos parametric:data succed:^(id responseObject){
+    [HTTPRequest requestPOSTUrl:self.congfing.getUserPhotos parametric:data succed:^(id responseObject){
         [weakSelef closeLoad];
         NSLog(@"%@",responseObject);
         [weakSelef.table.photos.mj_header endRefreshing];
@@ -144,7 +144,7 @@
                             @"keyWord":self.searchText.text};
     
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.getPhotos parametric:data succed:^(id responseObject){
+    [HTTPRequest requestPOSTUrl:self.congfing.getUserPhotos parametric:data succed:^(id responseObject){
         NSLog(@"%@",responseObject);
         [weakSelef closeLoad];
         [weakSelef.table.photos.mj_header endRefreshing];

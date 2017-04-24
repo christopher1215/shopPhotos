@@ -11,14 +11,14 @@
 
 @protocol AlbumClassTableHeadDelegate <NSObject>
 
-- (void)albmClassTableHeadSelectType:(NSInteger)type slectedPath:(NSInteger)indexPath;
-- (void)albmClassTableHeadSelectCheck:(BOOL)type slectedPath:(NSInteger)indexPath;
+- (void)albumClassTableHeadShowRow:(NSInteger)index;
+- (void)albumClassTableHeadSelectCheck:(BOOL)isChecked selectedPath:(NSInteger)index;
 
 @end
 
 @interface AlbumClassTableHead : BaseView
 @property (weak, nonatomic) id<AlbumClassTableHeadDelegate>delegate;
-@property (assign, nonatomic) NSInteger indexPath;
+@property (assign, nonatomic) NSInteger section;
 @property (strong, nonatomic) UIImageView * icon;
 @property (strong, nonatomic) UIImageView * folder;
 @property (strong, nonatomic) UIImageView * checkBox;
@@ -29,8 +29,5 @@
 
 - (void)openOption;
 - (void)closeOption;
-
-- (void)check;
-- (void)unCheck;
 
 @end

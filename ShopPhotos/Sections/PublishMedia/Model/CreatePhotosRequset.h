@@ -10,6 +10,6 @@
 
 @interface CreatePhotosRequset : BaseModel
 
-@property (strong, nonatomic) NSString * photosID;
-
+@property (strong, nonatomic) NSString * qiniuToken;
+@property (strong, nonatomic) NSMutableArray * imagesName;
 @end

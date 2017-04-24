@@ -39,7 +39,6 @@
 @property (strong, nonatomic) NSMutableArray * likeMineDataArray;
 
 @property (strong, nonatomic) MoreAlert * moreAlert;
-
 @end
 
 @implementation AttentionCtr
@@ -222,7 +221,7 @@
     [self.view endEditing:YES];
     CGFloat offsetX = scrollView.contentOffset.x;
     if(offsetX == 0){
-        [self.like setTextColor:ColorHex(0XFF500D)];
+        [self.like setTextColor:ThemeColor];
         [self.likeMine setTextColor:ColorHex(0X000000)];
         self.userType = likeType;
         if(self.likeDataArray.count > 0){
@@ -233,7 +232,7 @@
         
     }else if(offsetX == WindowWidth){
         [self.like setTextColor:ColorHex(0X000000)];
-        [self.likeMine setTextColor:ColorHex(0XFF500D)];
+        [self.likeMine setTextColor:ThemeColor];
         self.userType = likeMineType;
         
         if(self.likeMineDataArray.count > 0){
@@ -247,7 +246,7 @@
     self.likeList.search.text = @"";
     [self.likeList.search resignFirstResponder];
     [self.likeMineList.search resignFirstResponder];
-    self.lineOffset.constant = (WindowWidth - 180) * (offsetX/WindowWidth);
+    self.lineOffset.constant = (90) * (offsetX/WindowWidth);
 }
 
 

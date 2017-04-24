@@ -217,15 +217,15 @@
     }
 }
 
-- (void)setModel:(AlbumPhotosMdel *)model{
+- (void)setModel:(AlbumPhotosModel *)model{
     
     if(!model)return;
     
-    [self.photo sd_setImageWithURL:[NSURL URLWithString:model.big]];
-    [self.title setText:model.name];
+    [self.photo sd_setImageWithURL:[NSURL URLWithString:model.cover]];
+    [self.title setText:model.title];
     
     if(model.user && model.user.count > 0){
-        NSString * userIcon = [model.user objectForKey:@"icon"];
+        NSString * userIcon = [model.user objectForKey:@"avatar"];
         NSString * userName = [model.user objectForKey:@"name"];
         
         if(userIcon) [self.userIcon sd_setImageWithURL:[NSURL URLWithString:userIcon]];

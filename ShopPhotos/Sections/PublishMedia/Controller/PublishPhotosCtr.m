@@ -510,7 +510,7 @@
             [imageIcon setImage:image];;
         }else{
             DynamicImagesModel * model  = obj;
-            [imageIcon sd_setImageWithURL:[NSURL URLWithString:model.big]];
+            [imageIcon sd_setImageWithURL:[NSURL URLWithString:model.bigImageUrl]];
         }
         index++;
     }
@@ -648,12 +648,12 @@
          AlbumClassTableModel * model = [self.dataArray objectAtIndex:self.fatherClassSelectIndex];
         if(model && model.dataArray.count > 0){
             AlbumClassTableSubModel * subModel = [model.dataArray objectAtIndex:0];
-            if(!subModel.severData){
+//            if(!subModel.severData){
                 AlbumClassTableSubModel * m = [[AlbumClassTableSubModel alloc] init];
                 m.name = @"创建子分类";
-                m.severData = YES;
+//                m.severData = YES;
                 [model.dataArray insertObject:m atIndex:0];
-            }
+//            }
             [self.classAlert showSubAlert:model.dataArray];
         }
     }
@@ -742,12 +742,12 @@
     
     if(self.fatherClassSelectIndex != 0){
         AlbumClassTableModel * model = [self.dataArray objectAtIndex:self.fatherClassSelectIndex];
-        classify_id = [NSString stringWithFormat:@"%ld",model.classID];
+        classify_id = [NSString stringWithFormat:@"%ld",model.Id];
     }
     if(self.subClassSelectIndex != 0){
         AlbumClassTableModel * model = [self.dataArray objectAtIndex:self.fatherClassSelectIndex];
         AlbumClassTableSubModel * subModel = [model.dataArray objectAtIndex:self.subClassSelectIndex];
-        subclassification_id = [NSString stringWithFormat:@"%ld",(long)subModel.subClassID];
+        subclassification_id = [NSString stringWithFormat:@"%ld",(long)subModel.classfiyId];
     }
     NSString * recommendText = self.recommendSwh.on?@"true":@"false";
     [postData setValue:recommendText forKey:recommendSwhKey];
@@ -889,7 +889,7 @@
     [self showLoad];
     CongfingURL * congfing = [self getValueWithKey:ShopPhotosApi];
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:congfing.getPhotoClassifies parametric:data succed:^(id responseObject){
+    [HTTPRequest requestPOSTUrl:congfing.getClassifies parametric:data succed:^(id responseObject){
         [weakSelef closeLoad];
         NSLog(@"%@",responseObject);
         AlbumClassModel * model = [[AlbumClassModel alloc] init];

@@ -128,4 +128,6 @@
     }
 }
 
+- (void)collectionUserSelecte:(NSIndexPath *)indexPath {}
+
 @end

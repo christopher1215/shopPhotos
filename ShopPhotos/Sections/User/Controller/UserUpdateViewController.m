@@ -18,6 +18,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     [self.back addTarget:self action:@selector(backSelected)];
+    self.txtValue.text = _value;
     switch (_type) {
         case 0:
             self.lblTitle.text = @"用户名";
@@ -76,6 +77,7 @@
         default:
             break;
     }
+    _parentVC.firstFlag = NO;
     [self.navigationController popViewControllerAnimated:YES];
 }
 #pragma mark - UITextFieldDelegate

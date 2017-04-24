@@ -16,39 +16,36 @@
     
     @try {
         
-        //NSLog(<#NSString * _Nonnull format, ...#>)
-        
-        
-//        if(obj){
-//            NSLog(NSStringFromClass([obj class]));
-//        }
-        
         self.status = [RequestErrorGrab getIntegetKey:@"code" toTarget:data];
         self.message = [RequestErrorGrab getStringwitKey:@"message" toTarget:data];
         if(self.status)return;
-        
-        id obj  = [data objectForKey:@"data"];
-        if(obj){
-            if([obj isKindOfClass:[NSNumber class]]){
-                self.userID = [NSString stringWithFormat:@"%ld",[RequestErrorGrab getIntegetKey:@"data" toTarget:data]];
-            }else{
-                self.userID = [RequestErrorGrab getStringwitKey:@"data" toTarget:data];
+        NSDictionary * result = [RequestErrorGrab getDicwitKey:@"data" toTarget:data];
+        if(result && result.count > 0){
+            self.authToken = [RequestErrorGrab getStringwitKey:@"authToken" toTarget:result];
+            [self setValue:self.authToken WithKey:@"authToken"];
+            self.imToken = [RequestErrorGrab getStringwitKey:@"imToken" toTarget:result];
+            NSDictionary * user = [RequestErrorGrab getDicwitKey:@"user" toTarget:result];
+            if(user && user.count > 0){
+                UserModel * userModel = [[UserModel alloc] init];
+                
+                userModel.uid = [RequestErrorGrab getStringwitKey:@"uid" toTarget:user];
+                userModel.address = [RequestErrorGrab getStringwitKey:@"address" toTarget:user];
+                userModel.avatar = [RequestErrorGrab getStringwitKey:@"avatar" toTarget:user];
+                userModel.bg_image = [RequestErrorGrab getStringwitKey:@"bg_image" toTarget:user];
+                userModel.name = [RequestErrorGrab getStringwitKey:@"name" toTarget:user];
+                userModel.phone = [RequestErrorGrab getStringwitKey:@"phone" toTarget:user];
+                userModel.qq = [RequestErrorGrab getStringwitKey:@"qq" toTarget:user];
+                userModel.settings = [RequestErrorGrab getDicwitKey:@"settings" toTarget:user];
+                userModel.signature = [RequestErrorGrab getStringwitKey:@"signature" toTarget:user];
+                userModel.wechat = [RequestErrorGrab getStringwitKey:@"wechat" toTarget:user];
+                userModel.email = [RequestErrorGrab getStringwitKey:@"email" toTarget:user];
+                
+                [self setValue:userModel WithKey:CacheUserModel];
             }
-            
-        }
-        
-        
-        
-        
-        if(self.userID && self.userID.length > 0){
-            UserModel * userModel = [[UserModel alloc] init];
-            userModel.uid = self.userID;
-            [self setValue:userModel WithKey:CacheUserModel];
         }
     } @catch (NSException *exception) {
         self.status = 1;
         self.message = NETWORKTIPS;
-    }
-}
+    }}
 
 @end

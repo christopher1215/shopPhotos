@@ -11,7 +11,7 @@
 #import "SetPasswordViewController.h"
 #import "ProvisionCtr.h"
 #import "RegisterViewController.h"
-#import "AppDelegate.h"
+//#import "AppDelegate.h"
 #import "ErrMsgViewController.h"
 
 @interface ResetPasswordCtr ()<UITextFieldDelegate>{
@@ -273,6 +273,10 @@
     }];
     
 }
+- (void)closePopupErr {
+    [popupErrVC removeAnimate];
+}
+
 - (IBAction)onViewLic:(id)sender {
     ProvisionCtr * pro = GETALONESTORYBOARDPAGE(@"ProvisionCtr");
     [self.navigationController pushViewController:pro animated:YES];

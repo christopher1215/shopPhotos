@@ -22,6 +22,7 @@
 #import "WeChatLoginRequset.h"
 #import "AppDelegate.h"
 #import "ErrMsgViewController.h"
+#import "ChatLoginRequset.h"
 
 @interface LoginCtr ()<UITextFieldDelegate>{
 //    AppDelegate *appd;
@@ -111,7 +112,7 @@
     
     if(![self getValueWithKey:ShopPhotosApi]){
         __weak __typeof(self)weakSelef = self;
-        [HTTPRequest requestGetUrl:UOOTUURL parametric:nil succed:^(id responseObject){
+        [HTTPRequest requestGETUrl:UOOTUURL parametric:nil succed:^(id responseObject){
             NSLog(@"login success: %@",responseObject);
             PublicDataAnalytic * publicData = [[PublicDataAnalytic alloc] init];
             [publicData analyticInterface:responseObject];
@@ -185,7 +186,7 @@
     [self showLoad];
     [ShareSDK getUserInfo:SSDKPlatformTypeWechat onStateChanged:^(SSDKResponseState state, SSDKUser *user, NSError *error){
         if(state == SSDKResponseStateSuccess){
-            [weakSelef appWithWeChatLogin:@{@"nickname ":user.nickname,@"avatar":[user.rawData objectForKey:@"headimgurl"], @"authId":[user.rawData objectForKey:@"openid"]}];
+            [weakSelef appWithWeChatLogin:@{@"nickname":user.nickname,@"avatar":[user.rawData objectForKey:@"headimgurl"], @"authId":[user.rawData objectForKey:@"openid"]}];
         }else{
             [weakSelef showToast:@"微信登录失败"];
         }
@@ -255,19 +256,15 @@
     [HTTPRequest requestPOSTUrl:[NSString stringWithFormat:@"%@%@",self.congfing.useWXLogin,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
         [weakSelef closeLoad];
         NSLog(@"%@",responseObject);
-        WeChatLoginRequset * requset = [[WeChatLoginRequset alloc] init];
+        ChatLoginRequset * requset = [[ChatLoginRequset alloc] init];
         [requset analyticInterface:responseObject];
         if(requset.status == 0){
-            if(requset.userID){
-                TabBarCtr * tabbar = [[TabBarCtr alloc] init];
-                [weakSelef.navigationController pushViewController:tabbar animated:YES];
-            }else{
-                [weakSelef showToast:@"登入失败"];
-            }
-        }else if(requset.status == 211){
+            TabBarCtr * tabbar = [[TabBarCtr alloc] init];
+            [weakSelef.navigationController pushViewController:tabbar animated:YES];
+        }else if(requset.status == 303){
             ChatLoginCtr * chat = GETALONESTORYBOARDPAGE(@"ChatLoginCtr");
-            chat.userData = [[NSMutableDictionary alloc] initWithDictionary:requset.userData];
-            chat.type = TypeWechatSession;
+            //chat.userData = [[NSMutableDictionary alloc] initWithDictionary:requset.userData];
+            //chat.type = TypeWechatSession;
             [self.navigationController pushViewController:chat animated:YES];
             
         }else{
@@ -289,20 +286,16 @@
     [HTTPRequest requestPOSTUrl:[NSString stringWithFormat:@"%@%@",self.congfing.useQQLogin,[self.appd getParameterString]] parametric:data  succed:^(id responseObject){
         [weakSelef closeLoad];
         NSLog(@"%@",responseObject);
-        WeChatLoginRequset * requset = [[WeChatLoginRequset alloc] init];
+        ChatLoginRequset * requset = [[ChatLoginRequset alloc] init];
         [requset analyticInterface:responseObject];
         if(requset.status == 0){
-            if(requset.userID){
-                TabBarCtr * tabbar = [[TabBarCtr alloc] init];
-                [weakSelef.navigationController pushViewController:tabbar animated:YES];
-            }else{
-                [weakSelef showToast:@"登入失败"];
-            }
-        }else if(requset.status == 211){
-            
+            TabBarCtr * tabbar = [[TabBarCtr alloc] init];
+            [weakSelef.navigationController pushViewController:tabbar animated:YES];
+        }else if(requset.status == 303){
+        
             ChatLoginCtr * chat = GETALONESTORYBOARDPAGE(@"ChatLoginCtr");
-            chat.userData = [[NSMutableDictionary alloc] initWithDictionary:requset.userData];
-            chat.type = TypeQQSession;
+//            chat.userData = [[NSMutableDictionary alloc] initWithDictionary:requset.userData];
+//            chat.type = TypeQQSession;
             [self.navigationController pushViewController:chat animated:YES];
             
         }else{

@@ -8,7 +8,7 @@
 
 #import "SearchAllRequset.h"
 #import "AttentionPersonalSearchModel.h"
-#import "AlbumPhotosMdel.h"
+#import "AlbumPhotosModel.h"
 
 @implementation SearchAllRequset
 
@@ -47,17 +47,15 @@
             
             if(photos && photos.count > 0){
                 for(NSDictionary * photo in photos){
-                    AlbumPhotosMdel * model = [[AlbumPhotosMdel alloc] init];
-                    model.name = [RequestErrorGrab getStringwitKey:@"name" toTarget:photo];
-                    model.big = [RequestErrorGrab getStringwitKey:@"big" toTarget:photo];
+                    AlbumPhotosModel * model = [[AlbumPhotosModel alloc] init];
+                    model.title = [RequestErrorGrab getStringwitKey:@"name" toTarget:photo];
+//                    model.big = [RequestErrorGrab getStringwitKey:@"big" toTarget:photo];
                     model.cover = [RequestErrorGrab getStringwitKey:@"cover" toTarget:photo];
-                    model.date = [RequestErrorGrab getStringwitKey:@"date" toTarget:photo];
-                    model.photosID = [NSString stringWithFormat:@"%ld",[RequestErrorGrab getIntegetKey:@"id" toTarget:photo]];
-                    model.price = [RequestErrorGrab getStringwitKey:@"price" toTarget:photo];
-                    model.showPrice = [RequestErrorGrab getBooLwitKey:@"showPrice" toTarget:photo];
-                    model.source = [RequestErrorGrab getStringwitKey:@"source" toTarget:photo];
+                    model.createdAt = [RequestErrorGrab getStringwitKey:@"date" toTarget:photo];
+                    model.Id = [NSString stringWithFormat:@"%ld",[RequestErrorGrab getIntegetKey:@"id" toTarget:photo]];
+//                    model. = [RequestErrorGrab getStringwitKey:@"source" toTarget:photo];
                     model.user = [RequestErrorGrab getDicwitKey:@"user" toTarget:photo];
-                    model.isCollected = [RequestErrorGrab getIntegetKey:@"isCollected" toTarget:photo];
+                    model.collected = [RequestErrorGrab getIntegetKey:@"isCollected" toTarget:photo];
                     model.recommend = [RequestErrorGrab getBooLwitKey:@"recommend" toTarget:photo];
                     [self.photos addObject:model];
                 }
@@ -66,17 +64,14 @@
             if(selfPhotos && selfPhotos.count > 0){
                 
                 for(NSDictionary * photo in selfPhotos){
-                    AlbumPhotosMdel * model = [[AlbumPhotosMdel alloc] init];
-                    model.name = [RequestErrorGrab getStringwitKey:@"name" toTarget:photo];
-                    model.big = [RequestErrorGrab getStringwitKey:@"big" toTarget:photo];
+                    AlbumPhotosModel * model = [[AlbumPhotosModel alloc] init];
+                    model.title = [RequestErrorGrab getStringwitKey:@"name" toTarget:photo];
+//                    model.big = [RequestErrorGrab getStringwitKey:@"big" toTarget:photo];
                     model.cover = [RequestErrorGrab getStringwitKey:@"cover" toTarget:photo];
-                    model.date = [RequestErrorGrab getStringwitKey:@"date" toTarget:photo];
-                    model.photosID = [NSString stringWithFormat:@"%ld",[RequestErrorGrab getIntegetKey:@"id" toTarget:photo]];
-                    model.price = [RequestErrorGrab getStringwitKey:@"price" toTarget:photo];
-                    model.showPrice = [RequestErrorGrab getStringwitKey:@"showPrice" toTarget:photo];
-                    model.source = [RequestErrorGrab getStringwitKey:@"source" toTarget:photo];
+                    model.createdAt = [RequestErrorGrab getStringwitKey:@"date" toTarget:photo];
+                    model.Id = [NSString stringWithFormat:@"%ld",[RequestErrorGrab getIntegetKey:@"id" toTarget:photo]];
                     model.user = [RequestErrorGrab getDicwitKey:@"user" toTarget:photo];
-                    model.isCollected = [RequestErrorGrab getIntegetKey:@"isCollected" toTarget:photo];
+                    model.collected = [RequestErrorGrab getIntegetKey:@"collected" toTarget:photo];
                     model.recommend = [RequestErrorGrab getBooLwitKey:@"recommend" toTarget:photo];
                     [self.selfPhotos addObject:model];
                 }

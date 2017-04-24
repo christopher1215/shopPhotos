@@ -45,6 +45,15 @@
     slider.frame = CGRectMake(0, 0, self.sliderView.frame.size.width,self.sliderView.frame.size.height);
     [self getInfo];
     
+    if([self getValueWithKey:CacheUserModel]){
+        // 已登入
+        TabBarCtr * tabbar = [[TabBarCtr alloc] init];
+        [self.appd setStartViewController:tabbar];
+        
+    }else{
+        LoginCtr * login = GETALONESTORYBOARDPAGE(@"LoginCtr");
+        [self.appd setStartViewController:login];
+    }
 }
 - (IBAction)gotoBase:(id)sender {
     if([self getValueWithKey:CacheUserModel]){

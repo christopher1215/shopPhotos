@@ -13,7 +13,6 @@
 #import "UserCtr.h"
 #import "CommonDefine.h"
 #import "TabBarView.h"
-#import "PublishPhotosCtr.h"
 #import "PublishPhotoCtr.h"
 #import "PublishSelect.h"
 
@@ -89,9 +88,31 @@
             break;
         case 2:
         {
-            PublishSelect * pubSelect = GETALONESTORYBOARDPAGE(@"PublishSelect");
-            [self presentViewController:pubSelect animated:YES completion:nil];
-//            [self.navigationController pushViewController:pulish animated:YES];
+            UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:@"" message:@"" preferredStyle:UIAlertControllerStyleActionSheet];
+            [actionSheet addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+                
+                // Cancel button tappped.
+                [self dismissViewControllerAnimated:YES completion:^{
+                }];
+            }]];
+            
+            [actionSheet addAction:[UIAlertAction actionWithTitle:@"上传图片" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
+                // Distructive button tapped.
+                PublishPhotoCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotoCtr");
+                [self.navigationController pushViewController:pulish animated:YES];
+
+                [self dismissViewControllerAnimated:YES completion:^{
+                }];
+            }]];
+            
+            [actionSheet addAction:[UIAlertAction actionWithTitle:@"录制短视频" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                // OK button tapped.
+                
+                [self dismissViewControllerAnimated:YES completion:^{
+                }];
+            }]];
+            // Present action sheet.
+            [self presentViewController:actionSheet animated:YES completion:nil];
         }
             break;
         case 3:

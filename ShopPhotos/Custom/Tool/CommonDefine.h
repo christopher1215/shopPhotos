@@ -31,6 +31,7 @@
 // 通知中心
 #define NotificationCenter [NSNotificationCenter defaultCenter]
 
+#define Clearance 10
 // 接口
 //#define UOOTUURL @"https://www.uootu.com/_api/get/api"
 #define UOOTUURL @"https://uootu.com/_api/get/api"
@@ -41,7 +42,7 @@
 // 主题
 #define IndigoColor [UIColor colorWithRed:0x3f/0xff green:0x92/0xff blue:0xfe/0xff alpha:1.0]
 
-#define ThemeColor [UIColor colorWithRed:1 green:84/255.0 blue:0/255.0 alpha:1.0]
+#define ThemeColor [UIColor colorWithRed:68/255.0 green:148/255.0 blue:210/255.0 alpha:1.0]
 // 一级色
 #define ONECALLSCOLOR [UIColor colorWithRed:51/255.0 green:51/255.0 blue:51/255.0 alpha:1.0]
 // 二级色
@@ -66,7 +67,7 @@
 // 字体大小
 #define Font(size) [UIFont systemFontOfSize:size]
 // 字体加粗
-#define FontBold(size) [UIFont fontWithName:@"Helvetica-Bold" size:size]
+#define FontBold(size) [UIFont boldSystemFontOfSize:size]
 // 显示普通提示AlertView
 //#define ShowAlert(msg) [[[UIAlertView alloc]initWithTitle:nil message:msg delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil] show]
 

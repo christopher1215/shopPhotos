@@ -58,7 +58,7 @@
         [self.icon setImage:[UIImage imageNamed:@"btn_circle_selected"]];
     }
     
-    [self.image sd_setImageWithURL:[NSURL URLWithString:model.thumbnails]];
+    [self.image sd_setImageWithURL:[NSURL URLWithString:model.thumbnailUrl]];
 }
 
 @end

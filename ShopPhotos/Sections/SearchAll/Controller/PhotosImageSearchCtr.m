@@ -162,14 +162,14 @@
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
     
-    AlbumPhotosMdel * model = [self.dataArray objectAtIndex:indexPath.row];
+    AlbumPhotosModel * model = [self.dataArray objectAtIndex:indexPath.row];
     PhotoDetailsCtr * details = GETALONESTORYBOARDPAGE(@"PhotoDetailsCtr");
-    details.photoId = model.photosID;
+    details.photoId = model.Id;
     [self.navigationController pushViewController:details animated:YES];
 }
 
 - (void)userContenSelected:(NSIndexPath *)indexPath{
-    AlbumPhotosMdel * model = [self.dataArray objectAtIndex:indexPath.row];
+    AlbumPhotosModel * model = [self.dataArray objectAtIndex:indexPath.row];
     NSDictionary * user = model.user;
     if(user && user.count > 0){
         NSString * uid = [user objectForKey:@"uid"];

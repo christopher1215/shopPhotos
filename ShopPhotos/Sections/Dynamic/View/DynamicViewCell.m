@@ -248,7 +248,7 @@
         [self.images addSubview:image];
         DynamicImagesModel * model = [imageArray objectAtIndex:index];
         
-        [image sd_setImageWithURL:[NSURL URLWithString:model.thumbnails]];
+        [image sd_setImageWithURL:[NSURL URLWithString:model.thumbnailUrl]];
         image.layer.cornerRadius = 5;
         image.layer.masksToBounds = TRUE;
         image.sd_layout

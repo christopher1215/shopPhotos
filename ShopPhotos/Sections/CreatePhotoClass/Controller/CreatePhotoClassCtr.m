@@ -138,7 +138,7 @@
             // 创建
             
             AlbumClassTableModel * model = [self.dataArray objectAtIndex:self.selecClass];
-            NSDictionary * data = @{@"classifyId":[NSString stringWithFormat:@"%ld",model.classID],
+            NSDictionary * data = @{@"classifyId":[NSString stringWithFormat:@"%ld",model.Id],
                                     @"newClassifyName":@"",
                                     @"subclassifications":subName};
             [self createClassData:data];
@@ -187,7 +187,7 @@
     [self showLoad];
     CongfingURL * congfing = [self getValueWithKey:ShopPhotosApi];
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:congfing.getPhotoClassifies parametric:data succed:^(id responseObject){
+    [HTTPRequest requestPOSTUrl:congfing.getClassifies parametric:data succed:^(id responseObject){
         [weakSelef closeLoad];
         NSLog(@"%@",responseObject);
         AlbumClassModel * model = [[AlbumClassModel alloc] init];
@@ -209,7 +209,7 @@
     [self showLoad];
     CongfingURL * congfing = [self getValueWithKey:ShopPhotosApi];
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:congfing.createClassifies parametric:data succed:^(id responseObject){
+    [HTTPRequest requestPOSTUrl:congfing.createClassify parametric:data succed:^(id responseObject){
         [weakSelef closeLoad];
         NSLog(@"%@",responseObject);
         BaseModel * model = [[BaseModel alloc] init];

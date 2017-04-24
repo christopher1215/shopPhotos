@@ -12,4 +12,6 @@
 
 @property (strong, nonatomic) NSMutableArray * dataArray;
 
+- (void)analyticInterface:(NSArray *)data;
+
 @end

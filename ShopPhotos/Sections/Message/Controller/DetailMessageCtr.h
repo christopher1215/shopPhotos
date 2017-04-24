@@ -13,6 +13,11 @@
 #import "BaseViewCtr.h"
 
 @interface DetailMessageCtr : BaseViewCtr
+@property (strong, nonatomic) NSString *atitle;
+@property (strong, nonatomic) NSString *content;
+@property (strong, nonatomic) NSString *date;
+@property (strong, nonatomic) NSString *avatar;
+@property (strong, nonatomic) NSString *type;
 
 
 @end

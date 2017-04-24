@@ -10,9 +10,9 @@
 
 @interface DynamicImagesModel : BaseModel
 
-@property (strong, nonatomic) NSString * big;
-@property (strong, nonatomic) NSString * thumbnails;
-@property (assign, nonatomic) NSInteger  imageID;
+@property (strong, nonatomic) NSString * bigImageUrl;
+@property (strong, nonatomic) NSString * thumbnailUrl;
+@property (assign, nonatomic) NSInteger  Id;
 @property (assign, nonatomic) BOOL select;
 
 @end

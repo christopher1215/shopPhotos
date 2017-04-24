@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16D32" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16B2657" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina5_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -23,7 +23,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="XOs-a6-PQL">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="676"/>
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="687"/>
                                 <color key="backgroundColor" red="0.93333333330000001" green="0.93333333330000001" blue="0.93333333330000001" alpha="1" colorSpace="calibratedRGB"/>
                                 <view key="tableFooterView" contentMode="scaleToFill" id="1la-Ox-7Sk">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="567"/>
@@ -356,15 +356,24 @@
                                             <state key="normal" backgroundImage="btn_scan"/>
                                         </button>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ico_pen" translatesAutoresizingMaskIntoConstraints="NO" id="YtP-MG-Q8s">
-                                            <rect key="frame" x="18" y="171" width="15" height="15"/>
+                                            <rect key="frame" x="18" y="135.33333333333334" width="15" height="15"/>
                                         </imageView>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="46X-Uy-lYE">
+                                            <rect key="frame" x="50" y="142.66666666666666" width="325" height="0.0"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="32L-AJ-NoC">
-                                            <rect key="frame" x="18" y="217" width="44" height="18"/>
+                                            <rect key="frame" x="18" y="173" width="44" height="18"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="44" id="Twu-Sp-qlm"/>
                                                 <constraint firstAttribute="height" constant="18" id="h9w-QG-L2i"/>
                                             </constraints>
                                             <state key="normal" backgroundImage="btn_chg_background"/>
+                                            <connections>
+                                                <action selector="changeBgImg:" destination="3ne-9N-oq3" eventType="touchUpInside" id="6ta-WE-bBk"/>
+                                            </connections>
                                         </button>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="zRd-ee-oyy">
                                             <rect key="frame" x="175" y="68" width="64" height="64"/>
@@ -373,19 +382,9 @@
                                                 <constraint firstAttribute="height" constant="64" id="oSE-Pb-BhS"/>
                                             </constraints>
                                         </imageView>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="样样" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UgU-gB-wdP">
-                                            <rect key="frame" x="183" y="138" width="48" height="23"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="23" id="Zo7-hm-9Sn"/>
-                                                <constraint firstAttribute="width" constant="48" id="pwX-ag-r02"/>
-                                            </constraints>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UgU-gB-wdP">
+                                            <rect key="frame" x="207.33333333333334" y="138" width="0.0" height="0.0"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="21"/>
-                                            <nil key="textColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="46X-Uy-lYE">
-                                            <rect key="frame" x="50" y="166" width="325" height="21"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
@@ -424,8 +423,8 @@
                                         <constraint firstItem="Z5r-xp-4Fa" firstAttribute="leading" secondItem="1la-Ox-7Sk" secondAttribute="leading" constant="50" id="eli-Bm-I4Y"/>
                                         <constraint firstItem="8s4-0Y-6aH" firstAttribute="leading" secondItem="1la-Ox-7Sk" secondAttribute="leading" id="fwh-GC-fIl"/>
                                         <constraint firstItem="wkr-Sh-dhG" firstAttribute="leading" secondItem="1la-Ox-7Sk" secondAttribute="leading" id="gJJ-74-Ecf"/>
-                                        <constraint firstItem="YtP-MG-Q8s" firstAttribute="top" secondItem="fdq-wh-qUI" secondAttribute="bottom" constant="118" id="sxn-iV-d1B"/>
                                         <constraint firstItem="fdq-wh-qUI" firstAttribute="centerY" secondItem="Z5r-xp-4Fa" secondAttribute="centerY" id="vbn-l1-qtq"/>
+                                        <constraint firstItem="YtP-MG-Q8s" firstAttribute="centerY" secondItem="46X-Uy-lYE" secondAttribute="centerY" id="wHU-Dk-ZKl"/>
                                         <constraint firstAttribute="trailing" secondItem="Z5r-xp-4Fa" secondAttribute="trailing" constant="50" id="zrx-8T-UaE"/>
                                     </constraints>
                                 </view>
@@ -504,7 +503,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="62f-Bv-q83" firstAttribute="top" secondItem="XOs-a6-PQL" secondAttribute="bottom" constant="60" id="3TO-lc-G5u"/>
+                            <constraint firstItem="62f-Bv-q83" firstAttribute="top" secondItem="XOs-a6-PQL" secondAttribute="bottom" constant="49" id="3TO-lc-G5u"/>
                             <constraint firstItem="XOs-a6-PQL" firstAttribute="leading" secondItem="7NM-b8-B2r" secondAttribute="leading" id="4wG-Hp-dRU"/>
                             <constraint firstItem="kin-uO-7ao" firstAttribute="leading" secondItem="7NM-b8-B2r" secondAttribute="leading" id="BFP-eG-HJF"/>
                             <constraint firstItem="62f-Bv-q83" firstAttribute="top" secondItem="kin-uO-7ao" secondAttribute="bottom" id="Rh3-Gf-2if"/>
@@ -526,6 +525,8 @@
                         <outlet property="mainView" destination="1la-Ox-7Sk" id="WRM-S6-D14"/>
                         <outlet property="message" destination="OT8-sU-GBQ" id="5kj-Gz-PXt"/>
                         <outlet property="more" destination="SmQ-LX-Rap" id="3ly-mj-eog"/>
+                        <outlet property="name" destination="UgU-gB-wdP" id="Ngx-nf-70O"/>
+                        <outlet property="point" destination="vI2-p4-8EU" id="Zv8-WI-cXe"/>
                         <outlet property="recommend" destination="cdk-fQ-cma" id="Msd-W2-neC"/>
                         <outlet property="scan" destination="fdq-wh-qUI" id="GtE-Dz-vd2"/>
                         <outlet property="search" destination="Z5r-xp-4Fa" id="xcN-se-0fl"/>
@@ -551,10 +552,10 @@
         <image name="btn_back_circle" width="42" height="42"/>
         <image name="btn_chg_background" width="44" height="18"/>
         <image name="btn_collection" width="80" height="80"/>
-        <image name="btn_dynamic" width="80" height="80"/>
+        <image name="btn_dynamic" width="70" height="70"/>
         <image name="btn_news" width="80" height="80"/>
         <image name="btn_point" width="80" height="80"/>
-        <image name="btn_recommend" width="80" height="80"/>
+        <image name="btn_recommend" width="100" height="100"/>
         <image name="btn_scan" width="20" height="20"/>
         <image name="btn_setting" width="80" height="80"/>
         <image name="btn_sort" width="80" height="80"/>

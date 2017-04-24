@@ -112,7 +112,7 @@
         UIImageView * image = [[UIImageView alloc] init];
         [image setBackgroundColor:ColorHex(0XEEEEEE)];
         [image setContentMode:UIViewContentModeScaleAspectFit];
-        [image sd_setImageWithURL:[NSURL URLWithString:imageModel.source]];
+        [image sd_setImageWithURL:[NSURL URLWithString:imageModel.srcUrl]];
         image.tag = index;
         [image addTarget:self action:@selector(imageSelected:)];
         [imageView addSubview:image];

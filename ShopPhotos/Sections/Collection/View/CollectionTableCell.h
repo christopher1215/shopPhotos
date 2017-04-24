@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "AlbumPhotosMdel.h"
+#import "AlbumPhotosModel.h"
 
 
 static NSString * CollectionTableCellID = @"CollectionTableCellID";
@@ -24,7 +24,7 @@ static NSString * CollectionTableCellID = @"CollectionTableCellID";
 @interface CollectionTableCell : UICollectionViewCell
 
 @property (weak, nonatomic) id<CollectionTableCellDelegate>delegate;
-@property (strong, nonatomic) AlbumPhotosMdel * model;
+@property (strong, nonatomic) AlbumPhotosModel * model;
 @property (strong, nonatomic) NSIndexPath * indexPath;
 
 @end

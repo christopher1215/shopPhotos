@@ -15,6 +15,8 @@
 
 @property (strong, nonatomic) NSMutableArray * imageArray;
 
+- (void)setClassifies:(NSString *)parent subClass:(NSString *)subclass;
+
 @end
 
 

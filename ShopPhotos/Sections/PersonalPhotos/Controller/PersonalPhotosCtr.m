@@ -18,7 +18,7 @@
 #import "DynamicImagesModel.h"
 #import <MJPhotoBrowser.h>
 #import "AlbumClassModel.h"
-#import "AlbumPhotosMdel.h"
+#import "AlbumPhotosModel.h"
 #import "PhotosSearchCtr.h"
 #import "PersonalPhotosSearchCtr.h"
 #import "UserInfoDrawerCtr.h"
@@ -27,11 +27,11 @@
 #import <ShareSDK/ShareSDK.h>
 #import "DynamicQRAlert.h"
 #import "DownloadImageCtr.h"
-#import "PublishPhotosCtr.h"
+#import "PublishPhotoCtr.h"
 #import "HasCollectPhotoRequset.h"
 #import "AlbumClassTableModel.h"
 #import "AlbumClassTableSubModel.h"
-#import "AlbumClassTabelCtr.h"
+//#import "AlbumClassTabelCtr.h"
 #import "SearchAllCtr.h"
 #import "CopyRequset.h"
 
@@ -400,7 +400,7 @@
     DynamicModel * model = [self.dynamicDataArray objectAtIndex:self.shareSelectIndex];
     NSMutableArray * urlImages = [NSMutableArray array];
     for(DynamicImagesModel * subModel in model.images){
-        [urlImages addObject:subModel.big];
+        [urlImages addObject:subModel.bigImageUrl];
     }
     
     NSString * photoStr = [NSString stringWithFormat:@"%@%@/photo/detail/%@",URLHead,[model.user objectForKey:@"uid"],model.photosID];
@@ -505,11 +505,12 @@
     
     AlbumClassTableModel * model = [self.photoClassDataArray objectAtIndex:indexPath.section];
     AlbumClassTableSubModel * subModel = [model.dataArray objectAtIndex:indexPath.row];
-    AlbumClassTabelCtr * classTable = GETALONESTORYBOARDPAGE(@"AlbumClassTabelCtr");
+/*    AlbumClassTable * classTable = GETALONESTORYBOARDPAGE(@"AlbumClassTabelCtr");
     classTable.uid = self.uid;
-    classTable.subClassID = [NSString stringWithFormat:@"%ld",subModel.subClassID];
+    classTable.subClassID = [NSString stringWithFormat:@"%ld",subModel.classfiyId];
     classTable.pageText = subModel.name;
     [self.navigationController pushViewController:classTable animated:YES];
+ */
 }
 
 
@@ -518,13 +519,13 @@
     NSString * photosID = @"";
     if(self.selectType == 100){
         NSLog(@"推荐");
-        AlbumPhotosMdel * model = [self.recommendDataArray objectAtIndex:indexPath];
-        photosID = model.photosID;
+        AlbumPhotosModel * model = [self.recommendDataArray objectAtIndex:indexPath];
+        photosID = model.Id;
         
     }else if(self.selectType == 102){
         NSLog(@"相册");
-        AlbumPhotosMdel * model = [self.photosDataArray objectAtIndex:indexPath];
-        photosID = model.photosID;
+        AlbumPhotosModel * model = [self.photosDataArray objectAtIndex:indexPath];
+        photosID = model.Id;
     }
     PhotoDetailsCtr * photoDetails = GETALONESTORYBOARDPAGE(@"PhotoDetailsCtr");
     photoDetails.photoId = photosID;
@@ -573,7 +574,7 @@
     for (int i = 0; i < count; i++) {
         DynamicImagesModel * imageModel = [model.images objectAtIndex:i];
         
-        NSString * getImageStrUrl = imageModel.big;
+        NSString * getImageStrUrl = imageModel.bigImageUrl;
         MJPhoto *photo = [[MJPhoto alloc] init];
         photo.url = [NSURL URLWithString: getImageStrUrl];
         [photos addObject:photo];
@@ -745,7 +746,7 @@
                             @"subclassification_id":@"0"};
     
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.getPhotos parametric:data succed:^(id responseObject){
+    [HTTPRequest requestPOSTUrl:self.congfing.getUserPhotos parametric:data succed:^(id responseObject){
         NSLog(@"%@",responseObject);
         [weakSelef.photosList.photos.mj_header endRefreshing];
         
@@ -784,7 +785,7 @@
                             @"subclassification_id":@"0"};
     
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.getPhotos parametric:data succed:^(id responseObject){
+    [HTTPRequest requestPOSTUrl:self.congfing.getUserPhotos parametric:data succed:^(id responseObject){
         NSLog(@"%@",responseObject);
         [weakSelef.photosList.photos.mj_footer endRefreshing];
         
@@ -814,7 +815,7 @@
     [self showLoad];
     CongfingURL * congfing = [self getValueWithKey:ShopPhotosApi];
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:congfing.getPhotoClassifies parametric:data succed:^(id responseObject){
+    [HTTPRequest requestPOSTUrl:congfing.getClassifies parametric:data succed:^(id responseObject){
         [weakSelef closeLoad];
         NSLog(@"%@",responseObject);
         AlbumClassModel * model = [[AlbumClassModel alloc] init];
@@ -865,12 +866,12 @@
             
             if(model.allow){
                 DynamicModel * model = [weakSelef.dynamicDataArray objectAtIndex:weakSelef.shareSelectIndex];
-                PublishPhotosCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotosCtr");
+/*                PublishPhotoCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotoCtr");
                 pulish.is_copy = YES;
                 pulish.photoTitleText = model.title;
                 pulish.imageCopy = [[NSMutableArray alloc] initWithArray:model.images];
                 
-                [weakSelef.navigationController pushViewController:pulish animated:YES];
+                [weakSelef.navigationController pushViewController:pulish animated:YES]; */
             }else{
                 
                 UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:@"对方设置了限制复制，是否发送请求复制" preferredStyle:UIAlertControllerStyleAlert];

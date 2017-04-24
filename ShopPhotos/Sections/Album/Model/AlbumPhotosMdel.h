@@ -13,7 +13,6 @@
 @interface AlbumPhotosMdel : BaseModel
 
 @property (strong, nonatomic) NSString * name;
-@property (strong, nonatomic) NSString * big;
 @property (strong, nonatomic) NSString * cover;
 @property (strong, nonatomic) NSString * date;
 @property (strong, nonatomic) NSString * photosID;

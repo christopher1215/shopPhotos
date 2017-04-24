@@ -126,7 +126,7 @@
             
         }else{
             DynamicImagesModel * model = obj;
-            [imageView sd_setImageWithURL:[NSURL URLWithString:model.big]];
+            [imageView sd_setImageWithURL:[NSURL URLWithString:model.bigImageUrl]];
         }
         
         i++;

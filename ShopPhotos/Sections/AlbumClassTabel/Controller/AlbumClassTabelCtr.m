@@ -10,13 +10,12 @@
 #import "SearchAllCtr.h"
 #import "MoreAlert.h"
 #import "QRCodeScanCtr.h"
-#import "AlbumPhotosMdel.h"
+#import "AlbumPhotosModel.h"
 #import "AlbumPhotoTableView.h"
 #import "AlbumPhotosRequset.h"
 #import <MJRefresh.h>
 #import "PhotosEditView.h"
 #import "PhotoDetailsCtr.h"
-#import "PublishPhotosCtr.h"
 
 @interface AlbumClassTabelCtr ()<MoreAlertDelegate,AlbumPhotoTableViewDelegate,PhotosEditViewDelegate>
 @property (weak, nonatomic) IBOutlet UIView *back;
@@ -157,7 +156,7 @@
     
     NSMutableArray * editArray = [NSMutableArray array];
     
-    for(AlbumPhotosMdel * model in self.dataArray){
+    for(AlbumPhotosModel * model in self.dataArray){
         if(model.selected){
             [editArray addObject:model];
         }
@@ -165,11 +164,11 @@
     
     NSMutableString * cancelIDs = [NSMutableString string];
     for(NSInteger index = 0; index<editArray.count;index++){
-        AlbumPhotosMdel * mdoel = [editArray objectAtIndex:index];
+        AlbumPhotosModel * mdoel = [editArray objectAtIndex:index];
         if(index!=0){
-            [cancelIDs appendFormat:@"*%@",mdoel.photosID];
+            [cancelIDs appendFormat:@"*%@",mdoel.Id];
         }else{
-            [cancelIDs appendString:mdoel.photosID];
+            [cancelIDs appendString:mdoel.Id];
         }
     }
     
@@ -190,8 +189,6 @@
     }]];
     [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
     [self presentViewController:alert animated:YES completion:nil];
-    
-    
 }
 
 
@@ -199,7 +196,7 @@
 - (void)photosEditSelected:(NSInteger)type{
     
     if(type == 1){
-        for(AlbumPhotosMdel * model in self.dataArray){
+        for(AlbumPhotosModel * model in self.dataArray){
             model.openEdit = NO;
         }
         [self.table loadData:self.dataArray];
@@ -210,7 +207,7 @@
     }else{
         // 全选/清除
         NSInteger count = 0;
-        for(AlbumPhotosMdel * model in self.dataArray){
+        for(AlbumPhotosModel * model in self.dataArray){
             if(model.selected && model.openEdit){
                 count++;
             }
@@ -218,14 +215,14 @@
         
         if(count == self.dataArray.count){
             // 清除
-            for(AlbumPhotosMdel * model in self.dataArray){
+            for(AlbumPhotosModel * model in self.dataArray){
                 model.selected = NO;
             }
             [self.editHead setSelectedCount:0];
             self.editHead.allSelectStatus = NO;
         }else{
             // 全选
-            for(AlbumPhotosMdel * model in self.dataArray){
+            for(AlbumPhotosModel * model in self.dataArray){
                 model.selected = YES;
             }
             [self.editHead setSelectedCount:self.dataArray.count];
@@ -240,7 +237,7 @@
 - (void)moreAlertSelected:(NSInteger)indexPath{
     
     if(indexPath == 0){
-        for(AlbumPhotosMdel * model in self.dataArray){
+        for(AlbumPhotosModel * model in self.dataArray){
             model.openEdit = YES;
         }
         [self.table loadData:self.dataArray];
@@ -250,26 +247,24 @@
         [self.table updateLayout];
     }else if(indexPath == 1){
         NSLog(@"上传相册");
-        PublishPhotosCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotosCtr");
-        [self.navigationController pushViewController:pulish animated:YES];
     }
 }
 
 #pragma mark - AlbumPhotoTableViewDelegate
 - (void)albumPhotoSelectPath:(NSInteger)indexPath{
-    AlbumPhotosMdel * model = [self.dataArray objectAtIndex:indexPath];
+    AlbumPhotosModel * model = [self.dataArray objectAtIndex:indexPath];
     PhotoDetailsCtr * photoDetails = GETALONESTORYBOARDPAGE(@"PhotoDetailsCtr");
-    photoDetails.photoId = model.photosID;
+    photoDetails.photoId = model.Id;
     [self.navigationController pushViewController:photoDetails animated:YES];
 }
 
 - (void)albumEditSelectPath:(NSInteger)indexPath{
     
-    AlbumPhotosMdel * model = [self.dataArray objectAtIndex:indexPath];
+    AlbumPhotosModel * model = [self.dataArray objectAtIndex:indexPath];
     model.selected = !model.selected;
     [self.table loadData:self.dataArray];
     NSInteger count = 0;
-    for(AlbumPhotosMdel * model in self.dataArray){
+    for(AlbumPhotosModel * model in self.dataArray){
         if(model.openEdit && model.selected){
             count++;
         }

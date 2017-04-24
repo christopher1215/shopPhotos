@@ -341,7 +341,7 @@
     DynamicModel * model = [self.dataArray objectAtIndex:self.shareSelectIndex];
     NSMutableArray * urlImages = [NSMutableArray array];
     for(DynamicImagesModel * subModel in model.images){
-        [urlImages addObject:subModel.big];
+        [urlImages addObject:subModel.bigImageUrl];
     }
     
     NSLog(@"%@",model.user);
@@ -479,7 +479,7 @@
     for (int i = 0; i < count; i++) {
         DynamicImagesModel * imageModel = [model.images objectAtIndex:i];
         
-        NSString * getImageStrUrl = imageModel.big;
+        NSString * getImageStrUrl = imageModel.bigImageUrl;
         MJPhoto *photo = [[MJPhoto alloc] init];
         photo.url = [NSURL URLWithString: getImageStrUrl];
         [photos addObject:photo];

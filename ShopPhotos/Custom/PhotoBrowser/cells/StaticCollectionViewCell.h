@@ -11,7 +11,7 @@
 
 
 #import <UIKit/UIKit.h>
-#import "AlbumPhotosMdel.h"
+#import "AlbumPhotosModel.h"
 
 @protocol StaticCollectionViewCellDelegate <NSObject>
 
@@ -25,7 +25,7 @@
 @interface StaticCollectionViewCell : UICollectionViewCell
 
 @property (weak, nonatomic) id<StaticCollectionViewCellDelegate>delegate;
-@property (strong, nonatomic) AlbumPhotosMdel * model;
+@property (strong, nonatomic) AlbumPhotosModel * model;
 @property (strong, nonatomic) NSIndexPath * indexPath;
 
 - (void)createAutoLayout:(BOOL)isVideo cellType:(int) type;

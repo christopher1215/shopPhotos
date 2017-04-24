@@ -7,7 +7,7 @@
 //
 
 #import "PhotosSearchRequset.h"
-#import "AlbumPhotosMdel.h"
+#import "AlbumPhotosModel.h"
 
 @implementation PhotosSearchRequset
 - (void)analyticInterface:(NSDictionary *)data{
@@ -23,17 +23,14 @@
             if(photos && photos.count > 0){
                 
                 for(NSDictionary * photo in photos){
-                    AlbumPhotosMdel * model = [[AlbumPhotosMdel alloc] init];
-                    model.name = [RequestErrorGrab getStringwitKey:@"name" toTarget:photo];
-                    model.big = [RequestErrorGrab getStringwitKey:@"big" toTarget:photo];
+                    AlbumPhotosModel * model = [[AlbumPhotosModel alloc] init];
+                    model.title = [RequestErrorGrab getStringwitKey:@"name" toTarget:photo];
+//                    model.big = [RequestErrorGrab getStringwitKey:@"big" toTarget:photo];
                     model.cover = [RequestErrorGrab getStringwitKey:@"cover" toTarget:photo];
-                    model.date = [RequestErrorGrab getStringwitKey:@"date" toTarget:photo];
-                    model.photosID = [NSString stringWithFormat:@"%ld",[RequestErrorGrab getIntegetKey:@"id" toTarget:photo]];
-                    model.price = [RequestErrorGrab getStringwitKey:@"price" toTarget:photo];
-                    model.showPrice = [RequestErrorGrab getIntegetKey:@"showPrice" toTarget:photo];
-                    model.source = [RequestErrorGrab getStringwitKey:@"source" toTarget:photo];
+                    model.createdAt = [RequestErrorGrab getStringwitKey:@"createdAt" toTarget:photo];
+                    model.Id = [NSString stringWithFormat:@"%ld",[RequestErrorGrab getIntegetKey:@"id" toTarget:photo]];
                     model.user = [RequestErrorGrab getDicwitKey:@"user" toTarget:photo];
-                    model.isCollected = [RequestErrorGrab getIntegetKey:@"isCollected" toTarget:photo];
+                    model.collected = [RequestErrorGrab getIntegetKey:@"collected" toTarget:photo];
                     model.recommend = [RequestErrorGrab getBooLwitKey:@"recommend" toTarget:photo];
                     [self.dataArray addObject:model];
                     

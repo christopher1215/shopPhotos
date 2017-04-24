@@ -38,6 +38,7 @@
                 userModel.settings = [RequestErrorGrab getDicwitKey:@"settings" toTarget:user];
                 userModel.signature = [RequestErrorGrab getStringwitKey:@"signature" toTarget:user];
                 userModel.wechat = [RequestErrorGrab getStringwitKey:@"wechat" toTarget:user];
+                userModel.email = [RequestErrorGrab getStringwitKey:@"email" toTarget:user];
                 
                 [self setValue:userModel WithKey:CacheUserModel];
             }

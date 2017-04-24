@@ -178,14 +178,14 @@
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
     
-    AlbumPhotosMdel * model = [self.dataArray objectAtIndex:indexPath.row];
+    AlbumPhotosModel * model = [self.dataArray objectAtIndex:indexPath.row];
     PhotoDetailsCtr * details = GETALONESTORYBOARDPAGE(@"PhotoDetailsCtr");
-    details.photoId = model.photosID;
+    details.photoId = model.Id;
     [self.navigationController pushViewController:details animated:YES];
 }
 
 - (void)userContenSelected:(NSIndexPath *)indexPath{
-   AlbumPhotosMdel * model = [self.dataArray objectAtIndex:indexPath.row];
+   AlbumPhotosModel * model = [self.dataArray objectAtIndex:indexPath.row];
     PersonalHomeCtr * personalHome = GETALONESTORYBOARDPAGE(@"PersonalHomeCtr");
     personalHome.uid = [model.user objectForKey:@"uid"];
     personalHome.twoWay =YES;

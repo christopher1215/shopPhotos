@@ -3,10 +3,64 @@
    version = "1.0">
    <ContextStates>
       <ContextState
+         contextName = "-[AFHTTPRequestSerializer requestBySerializingRequest:withParameters:error:]:AFURLRequestSerialization.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[LoginCtr loginLoadNetworkData:]:LoginCtr.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.congfing.login">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[PublishPhotoCtr drawImages]:PublishPhotoCtr.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.imageArray.count">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "+[HTTPRequest Manager:Method:dic:requestSucced:requestfailure:]:HTTPRequest.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[HomePageCtr loadNetworkData:]:HomePageCtr.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.congfing.getUserInfo">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "__35-[PublishPhotoCtr addPublishImage:]_block_invoke:PublishPhotoCtr.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.imageArray.count">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[PublishTask createPhoto1]:PublishTask.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "[NSString stringWithFormat:@&quot;%@%@&quot;,config.createPhoto1,[self.appd getParameterString]]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "-[BaseViewCtr viewDidLoad]:BaseViewCtr.m">
          <PersistentStrings>
             <PersistentString
                value = "[self getValueWithKey:CacheUserModel]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[PublishPhotoCtr selectClass]:PublishPhotoCtr.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.photosUserID">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

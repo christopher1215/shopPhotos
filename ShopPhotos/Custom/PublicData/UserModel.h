@@ -24,6 +24,7 @@
 @property (strong, nonatomic) NSString * avatar;
 @property (strong, nonatomic) NSString * bg_image;
 @property (strong, nonatomic) NSString * name_abbr;
+@property (strong, nonatomic) NSString * email;
 @property (strong, nonatomic) NSDictionary * settings;
 - (void)analyticInterface:(NSDictionary *)data;
 

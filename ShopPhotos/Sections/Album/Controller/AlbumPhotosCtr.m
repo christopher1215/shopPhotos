@@ -11,7 +11,7 @@
 #import "AlbumPhotosRequset.h"
 #import <MJRefresh.h>
 #import "PhotoDetailsCtr.h"
-#import "AlbumPhotosMdel.h"
+#import "AlbumPhotosModel.h"
 #import "PhotosEditView.h"
 #import "MoreAlert.h"
 #import "SearchAllCtr.h"
@@ -172,7 +172,6 @@
     .bottomSpaceToView(topView,0);
 }
 
-
 #pragma mark - OnClick
 - (void)backSelected{
     [self.navigationController popViewControllerAnimated:YES];
@@ -196,7 +195,7 @@
 - (void)photosOptionSelected{
     
     NSMutableArray * editArray = [NSMutableArray array];
-    for(AlbumPhotosMdel * model in self.dataArray){
+    for(AlbumPhotosModel * model in self.dataArray){
         if(model.selected){
             [editArray addObject:model];
         }
@@ -204,11 +203,11 @@
     
     NSMutableString * cancelIDs = [NSMutableString string];
     for(NSInteger index = 0; index<editArray.count;index++){
-        AlbumPhotosMdel * mdoel = [editArray objectAtIndex:index];
+        AlbumPhotosModel * mdoel = [editArray objectAtIndex:index];
         if(index!=0){
-            [cancelIDs appendString:[NSString stringWithFormat:@"*%@",mdoel.photosID]];
+            [cancelIDs appendString:[NSString stringWithFormat:@"*%@",mdoel.Id]];
         }else{
-            [cancelIDs appendString:mdoel.photosID];
+            [cancelIDs appendString:mdoel.Id];
         }
     }
     
@@ -236,7 +235,7 @@
 - (void)photosEditSelected:(NSInteger)type{
     
     if(type == 1){
-        for(AlbumPhotosMdel * model in self.dataArray){
+        for(AlbumPhotosModel * model in self.dataArray){
             model.openEdit = NO;
         }
         [self.table loadData:self.dataArray];
@@ -247,7 +246,7 @@
     }else{
         // 全选/清除
         NSInteger count = 0;
-        for(AlbumPhotosMdel * model in self.dataArray){
+        for(AlbumPhotosModel * model in self.dataArray){
             if(model.selected && model.openEdit){
                 count++;
             }
@@ -255,14 +254,14 @@
         
         if(count == self.dataArray.count){
             // 清除
-            for(AlbumPhotosMdel * model in self.dataArray){
+            for(AlbumPhotosModel * model in self.dataArray){
                 model.selected = NO;
             }
             [self.editHead setSelectedCount:0];
             self.editHead.allSelectStatus = NO;
         }else{
             // 全选
-            for(AlbumPhotosMdel * model in self.dataArray){
+            for(AlbumPhotosModel * model in self.dataArray){
                 model.selected = YES;
             }
             [self.editHead setSelectedCount:self.dataArray.count];
@@ -277,7 +276,7 @@
     
     if(indexPath == 0){
         
-        for(AlbumPhotosMdel * model in self.dataArray){
+        for(AlbumPhotosModel * model in self.dataArray){
             model.openEdit = YES;
         }
         [self.table loadData:self.dataArray];
@@ -294,19 +293,19 @@
 
 #pragma mark - AlbumPhotoTableViewDelegate
 - (void)albumPhotoSelectPath:(NSInteger)indexPath{
-    AlbumPhotosMdel * model = [self.dataArray objectAtIndex:indexPath];
+    AlbumPhotosModel * model = [self.dataArray objectAtIndex:indexPath];
     PhotoDetailsCtr * photoDetails = GETALONESTORYBOARDPAGE(@"PhotoDetailsCtr");
-    photoDetails.photoId = model.photosID;
+    photoDetails.photoId = model.Id;
     [self.navigationController pushViewController:photoDetails animated:YES];
 }
 
 - (void)albumEditSelectPath:(NSInteger)indexPath{
     
-    AlbumPhotosMdel * model = [self.dataArray objectAtIndex:indexPath];
+    AlbumPhotosModel * model = [self.dataArray objectAtIndex:indexPath];
     model.selected = !model.selected;
     [self.table loadData:self.dataArray];
     NSInteger count = 0;
-    for(AlbumPhotosMdel * model in self.dataArray){
+    for(AlbumPhotosModel * model in self.dataArray){
         if(model.openEdit && model.selected){
             count++;
         }
@@ -332,12 +331,13 @@
     NSDictionary * data = @{@"uid":self.photosUserID,
                             @"page":[NSString stringWithFormat:@"%ld",self.page],
                             @"pageSize":@"30",
-                            @"keyWord":@"false",
-                            @"subclassification_id":@"0"};
+                            @"keyWord":@"false"};
+//                            @"subclassification_id":@"0"};
     
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.getPhotos parametric:data succed:^(id responseObject){
-        
+    [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",self.congfing.getUserPhotos,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+        NSLog(@"1  %@",responseObject);
+
         [weakSelef.table.photos.mj_header endRefreshing];
        
         AlbumPhotosRequset * requset = [[AlbumPhotosRequset alloc] init];
@@ -374,7 +374,7 @@
                             @"subclassification_id":@"0"};
     
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.getPhotos parametric:data succed:^(id responseObject){
+    [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",self.congfing.getUserPhotos,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
         NSLog(@"%@",responseObject);
         
         [weakSelef.table.photos.mj_footer endRefreshing];
@@ -423,8 +423,8 @@
 #pragma mark - ShareDelegate
 - (void)shareSelected:(NSInteger)type{
     
-    AlbumPhotosMdel * model = [self.dataArray objectAtIndex:self.itmeSelectedIndex];
-    NSString * text = [NSString stringWithFormat:@"%@%@/photo/detail/%@",URLHead,self.uid,model.photosID];
+    AlbumPhotosModel * model = [self.dataArray objectAtIndex:self.itmeSelectedIndex];
+    NSString * text = [NSString stringWithFormat:@"%@%@/photo/detail/%@",URLHead,self.uid,model.Id];
     
     //1、创建分享参数（必要）
     NSMutableDictionary *shareParams = [NSMutableDictionary dictionary];
@@ -449,12 +449,12 @@
             NSMutableArray * images = [NSMutableArray array];
             for(PhotoImagesModel * imageModel in self.imageArray){
                 DynamicImagesModel * model = [[DynamicImagesModel alloc] init];
-                model.big = imageModel.big;
-                model.thumbnails = imageModel.thumbnails;
+                model.bigImageUrl = imageModel.bigImageUrl;
+                model.thumbnailUrl = imageModel.thumbnailUrl;
                 [images addObject:model];
             }
             UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
-            pasteboard.string = model.name;
+            pasteboard.string = model.title;
             ShareContentSelectCtr * shareSelect = GETALONESTORYBOARDPAGE(@"ShareContentSelectCtr");
             shareSelect.dataArray = images;
             [self.navigationController pushViewController:shareSelect animated:YES];
@@ -485,7 +485,7 @@
             break;
         case 5:// 复制链接
         {
-            NSString * text = [NSString stringWithFormat:@"%@%@/photo/detail/%@",URLHead,self.uid,model.photosID];
+            NSString * text = [NSString stringWithFormat:@"%@%@/photo/detail/%@",URLHead,self.uid,model.Id];
             UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
             pasteboard.string = text;
             [self showToast:@"复制成功"];
@@ -495,14 +495,14 @@
         case 6:// 复制标题
         {
             UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
-            pasteboard.string = model.name;
+            pasteboard.string = model.title;
             [self showToast:@"复制成功"];
         }
             break;
         case 7:// 查看二维码
         {
-            self.qrAlert.titleText = model.name;
-            self.qrAlert.contentText = [NSString stringWithFormat:@"%@%@/photo/detail/%@",URLHead,self.uid,model.photosID];
+            self.qrAlert.titleText = model.title;
+            self.qrAlert.contentText = [NSString stringWithFormat:@"%@%@/photo/detail/%@",URLHead,self.uid,model.title];
             [self.qrAlert showAlert];
         }
             
@@ -517,7 +517,7 @@
                 }
             }
             
-            [self hasCollectPhoto:@{@"photoId":model.photosID}];
+            [self hasCollectPhoto:@{@"photoId":model.Id}];
         }
             break;
         case 9:// 下载图片
@@ -525,8 +525,8 @@
             NSMutableArray * images = [NSMutableArray array];
             for(PhotoImagesModel * imageModel in self.imageArray){
                 DynamicImagesModel * model = [[DynamicImagesModel alloc] init];
-                model.big = imageModel.big;
-                model.thumbnails = imageModel.thumbnails;
+                model.bigImageUrl = imageModel.bigImageUrl;
+                model.thumbnailUrl = imageModel.thumbnailUrl;
                 [images addObject:model];
             }
             
@@ -646,10 +646,10 @@
             
             if(model.allow){
                 PublishPhotosCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotosCtr");
-                AlbumPhotosMdel * albumModel = [self.dataArray objectAtIndex:self.itmeSelectedIndex];
+                AlbumPhotosModel * albumModel = [self.dataArray objectAtIndex:self.itmeSelectedIndex];
                 
                 pulish.is_copy = YES;
-                pulish.photoTitleText = albumModel.name;
+                pulish.photoTitleText = albumModel.title;
                 pulish.photoTitleText = @"";
                 pulish.imageCopy = [[NSMutableArray alloc] initWithArray:self.imageArray];
                 [weakSelef.navigationController pushViewController:pulish animated:YES];
@@ -677,9 +677,9 @@
 }
 
 - (void)getPhotoImages{
-    AlbumPhotosMdel * model = [self.dataArray objectAtIndex:self.itmeSelectedIndex];
+    AlbumPhotosModel * model = [self.dataArray objectAtIndex:self.itmeSelectedIndex];
     
-    NSDictionary * detailPhotodata = @{@"photoId":model.photosID};
+    NSDictionary * detailPhotodata = @{@"photoId":model.Id};
     __weak __typeof(self)weakSelef = self;
     [HTTPRequest requestPOSTUrl:self.congfing.getPhotoImages parametric:detailPhotodata succed:^(id responseObject){
         [weakSelef closeLoad];

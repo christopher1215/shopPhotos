@@ -483,14 +483,14 @@
         [self.navigationController pushViewController:personalHome animated:YES];
         
     }else if(indexPath.section == 1){
-        AlbumPhotosMdel * model = [self.photoArray objectAtIndex:indexPath.row];
+        AlbumPhotosModel * model = [self.photoArray objectAtIndex:indexPath.row];
         PhotoDetailsCtr * details = GETALONESTORYBOARDPAGE(@"PhotoDetailsCtr");
-        details.photoId = model.photosID;
+        details.photoId = model.Id;
         [self.navigationController pushViewController:details animated:YES];
     }else{
-        AlbumPhotosMdel * model = [self.selfPhotoArray objectAtIndex:indexPath.row];
+        AlbumPhotosModel * model = [self.selfPhotoArray objectAtIndex:indexPath.row];
         PhotoDetailsCtr * photoDetails = GETALONESTORYBOARDPAGE(@"PhotoDetailsCtr");
-        photoDetails.photoId = model.photosID;
+        photoDetails.photoId = model.Id;
         [self.navigationController pushViewController:photoDetails animated:YES];
     }
 }
@@ -515,7 +515,7 @@
 }
 
 - (void)userContenSelected:(NSIndexPath *)indexPath{
-    AlbumPhotosMdel * model = [self.photoArray objectAtIndex:indexPath.row];
+    AlbumPhotosModel * model = [self.photoArray objectAtIndex:indexPath.row];
     NSDictionary * user = model.user;
     if(user && user.count > 0){
         NSString * uid = [user objectForKey:@"uid"];

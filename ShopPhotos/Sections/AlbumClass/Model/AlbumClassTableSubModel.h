@@ -10,10 +10,13 @@
 
 @interface AlbumClassTableSubModel : BaseModel
 
-@property (assign, nonatomic) NSInteger  classID;
+@property (assign, nonatomic) NSInteger  Id;
+@property (assign, nonatomic) NSInteger  classfiyId;
+@property (assign, nonatomic) NSInteger  photoCount;
 @property (strong, nonatomic) NSString * name;
 @property (strong, nonatomic) NSString * cover;
-@property (assign, nonatomic) NSInteger  subClassID;
 @property (assign, nonatomic) BOOL edit;
-@property (assign, nonatomic) BOOL severData;
+@property (assign, nonatomic) BOOL open;
+@property (assign, nonatomic) BOOL delChecked;
+
 @end

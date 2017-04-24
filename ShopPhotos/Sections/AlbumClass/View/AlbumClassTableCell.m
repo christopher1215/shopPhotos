@@ -41,6 +41,7 @@
     
     UIView *editView = [[UIView alloc] init];
     [editView setBackgroundColor:[UIColor clearColor]];
+    [editView addTarget:self action:@selector(changSelected)];
     [self addSubview:editView];
     editView.sd_layout
     .centerYEqualToView(self)
@@ -50,6 +51,7 @@
     
     UIButton *btn_edit = [[UIButton alloc]init];
     [btn_edit setBackgroundImage:[UIImage imageNamed:@"ico_edit2"] forState:UIControlStateNormal];
+    [btn_edit addTarget:self action:@selector(changSelected)];
     [editView addSubview:btn_edit];
     btn_edit.sd_layout
     .centerXEqualToView(editView)
@@ -62,6 +64,7 @@
     [lab_edit setTextColor:[UIColor darkGrayColor]];
     [lab_edit setFont:Font(13)];
     [lab_edit setTextAlignment:NSTextAlignmentCenter];
+    [lab_edit addTarget:self action:@selector(changSelected)];
     [editView addSubview:lab_edit];
     lab_edit.sd_layout
     .bottomEqualToView(editView)
@@ -71,6 +74,7 @@
     if (isSubClass == FALSE) {
         UIView *addView = [[UIView alloc] init];
         [addView setBackgroundColor:[UIColor clearColor]];
+        [addView addTarget:self action:@selector(addSubSelected)];
         [self addSubview:addView];
         addView.sd_layout
         .centerXEqualToView(self)
@@ -80,6 +84,7 @@
         
         UIButton *btn_add = [[UIButton alloc]init];
         [btn_add setBackgroundImage:[UIImage imageNamed:@"ico_add"] forState:UIControlStateNormal];
+        [btn_add addTarget:self action:@selector(addSubSelected)];
         [addView addSubview:btn_add];
         btn_add.sd_layout
         .centerXEqualToView(addView)
@@ -92,6 +97,7 @@
         [lab_add setTextColor:[UIColor darkGrayColor]];
         [lab_add setFont:Font(13)];
         [lab_add setTextAlignment:NSTextAlignmentCenter];
+        [lab_add addTarget:self action:@selector(addSubSelected)];
         [addView addSubview:lab_add];
         lab_add.sd_layout
         .bottomEqualToView(addView)
@@ -103,6 +109,7 @@
     
     UIView *delView = [[UIView alloc] init];
     [delView setBackgroundColor:[UIColor clearColor]];
+    [delView addTarget:self action:@selector(deleteSelected)];
     [self addSubview:delView];
     delView.sd_layout
     .centerYEqualToView(self)
@@ -112,6 +119,7 @@
     
     UIButton *btn_del = [[UIButton alloc]init];
     [btn_del setBackgroundImage:[UIImage imageNamed:@"ico_delete"] forState:UIControlStateNormal];
+    [btn_del addTarget:self action:@selector(deleteSelected)];
     [delView addSubview:btn_del];
     btn_del.sd_layout
     .centerXEqualToView(delView)
@@ -124,6 +132,7 @@
     [lab_del setTextColor:[UIColor darkGrayColor]];
     [lab_del setTextAlignment:NSTextAlignmentCenter];
     [lab_del setFont:Font(13)];
+    [lab_del addTarget:self action:@selector(deleteSelected)];
     [delView addSubview:lab_del];
     lab_del.sd_layout
     .bottomEqualToView(delView)
@@ -134,6 +143,13 @@
 - (void)setModel:(AlbumClassTableSubModel *)model {
     
     [self.title setText:model.name];
+}
+
+- (void)addSubSelected {
+    
+    if(self.delegate && [self.delegate respondsToSelector:@selector(albumClassTableSelectType:selectPath:)]){
+        [self.delegate albumClassTableSelectType:3 selectPath:self.indexPath];
+    }
 }
 
 - (void)changSelected {

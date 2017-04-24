@@ -27,8 +27,9 @@
 #import "PersonalHomeCtr.h"
 #import "PublishPhotosCtr.h"
 #import "DynamicCtr.h"
+#import "MypointViewController.h"
 
-@interface HomePageCtr ()<MoreAlertDelegate,AddFriendAlertDelegate>
+@interface HomePageCtr ()<MoreAlertDelegate,AddFriendAlertDelegate,UIImagePickerControllerDelegate>
 @property (weak, nonatomic) IBOutlet UIView *firstGuidView;
 @property (weak, nonatomic) IBOutlet UIView *mainView;
 @property (weak, nonatomic) IBOutlet UIImageView *headImage;
@@ -57,6 +58,7 @@
 @property (strong, nonatomic) MoreAlert * moreAlert;
 @property (strong, nonatomic) AddFriendAlert * addAlert;
 @property (weak, nonatomic) IBOutlet UIButton *scan;
+@property (weak, nonatomic) IBOutlet UIButton *point;
 
 @end
 
@@ -108,6 +110,7 @@
     [self.setting addTarget:self action:@selector(settingSelected)];
     [self.dynamic addTarget:self action:@selector(dynamicSelected)];
     [self.scan addTarget:self action:@selector(qrScanSelected)];
+    [self.point addTarget:self action:@selector(pointSelected)];
     
     UIBlurEffect *blur = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
     UIVisualEffectView *effectview = [[UIVisualEffectView alloc] initWithEffect:blur];
@@ -144,6 +147,74 @@
     
 }
 
+- (IBAction)changeBgImg:(id)sender {
+    if (![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]) {
+        SPAlert(@"请允许相册访问",self);
+        return;
+    }
+    
+    UIImagePickerController *ipc = [[UIImagePickerController alloc] init];
+    ipc.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    ipc.allowsEditing = YES;
+    ipc.delegate = self;
+    [self presentViewController:ipc animated:YES completion:nil];
+}
+#pragma mark -- <UIImagePickerControllerDelegate>--
+// 获取图片后的操作
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
+{
+    // 销毁控制器
+    [picker dismissViewControllerAnimated:YES completion:nil];
+    UIImage * image = info[UIImagePickerControllerEditedImage];
+    UIImage * testImage = info[UIImagePickerControllerOriginalImage];
+    NSLog(@"1 size = %@", NSStringFromCGSize(testImage.size));
+    NSLog(@"2 size = %@",NSStringFromCGSize(CGSizeMake(CGImageGetWidth(testImage.CGImage) , CGImageGetHeight(testImage.CGImage))));
+    if(image){
+        [self showLoad];
+        NSData * file = UIImageJPEGRepresentation(image, 0.5);
+        
+        NSDictionary * data = @{@"_method":@"put",@"target":@"bg_image"};
+        __weak __typeof(self)weakSelef = self;
+        [HTTPRequest Manager:[NSString stringWithFormat:@"%@%@",self.congfing.updateUserImage,[self.appd getParameterString]] Method:nil dic:data file:file fileName:@"image" requestSucced:^(id responseObject){
+            [weakSelef closeLoad];
+            NSLog(@"%@",responseObject);
+            
+            BaseModel * model = [[BaseModel alloc] init];
+            [model analyticInterface:responseObject];
+            if(model.status == 0){
+                [weakSelef showToast:@"修改成功"];
+                [self loadNetworkData:@{@"uid":weakSelef.photosUserID}];
+                
+            }else{
+                [self showToast:model.message];
+            }
+        } requestfailure:^(NSError * error){
+            [weakSelef closeLoad];
+            NSLog(@"%@",error.userInfo);
+            [self showToast:@"修改失败"];
+        }];
+        
+        //        [HTTPRequest requestPUTUrl:[NSString stringWithFormat:@"%@%@",self.congfing.updateUserImage,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+        //            [weakSelef closeLoad];
+        //            NSLog(@"%@",responseObject);
+        //
+        //            BaseModel * model = [[BaseModel alloc] init];
+        //            [model analyticInterface:responseObject];
+        //            if(model.status == 0){
+        //                [weakSelef showToast:@"修改成功"];
+        //                [self loadNetworkData:@{@"uid":weakSelef.photosUserID}];
+        //
+        //            }else{
+        //                [self showToast:model.message];
+        //            }
+        //        } failure:^(NSError * error){
+        //            [weakSelef closeLoad];
+        //            NSLog(@"%@",error.userInfo);
+        //            [self showToast:@"修改失败"];
+        //        }];
+    }
+    
+}
 
 - (IBAction)hideFirstGuide:(id)sender {
     [self.firstGuidView setHidden:YES];
@@ -168,8 +239,13 @@
     
 }
 
--(void) qrScanSelected{
+- (void) qrScanSelected{
     [self moreAlertSelected:1];
+}
+
+- (void) pointSelected {
+    MypointViewController *vc=[[MypointViewController alloc] initWithNibName:@"MypointViewController" bundle:nil];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)messageSelected{
@@ -207,6 +283,7 @@
 
 - (void)albumClassSelected{
     AlbumClassCtr * albumClass = GETALONESTORYBOARDPAGE(@"AlbumClassCtr");
+    albumClass.isSubClass = NO;
     albumClass.uid = self.photosUserID;
     [self.navigationController pushViewController:albumClass animated:YES];
 }
@@ -269,7 +346,7 @@
 - (void)setStyle:(UserModel *)model{
     
     [self.head sd_setImageWithURL:[NSURL URLWithString:model.bg_image]];
-    [self.headImage sd_setImageWithURL:[NSURL URLWithString:model.bg_image]];
+    [self.headImage sd_setImageWithURL:[NSURL URLWithString:model.avatar]];
     self.iconURL = model.avatar;
     [self.name setText:model.name];
     
@@ -365,7 +442,7 @@
     NSLog(@"%@, %@ %@",[data objectForKey:@"uid"],self.congfing.getUserInfo,[self.appd getParameterString]);
     
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestGetUrl:[NSString stringWithFormat:@"%@%@",self.congfing.getUserInfo,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+    [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",self.congfing.getUserInfo,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
         [weakSelef closeLoad];
         NSLog(@"1  %@",responseObject);
         UserModel * infoModel = [[UserModel alloc] init];

@@ -35,13 +35,13 @@
     [self addSubview:self.icon];
     
     self.enter = [[UITextField alloc] initWithFrame:CGRectZero];
-    [self.enter setFont:[UIFont systemFontOfSize:13]];
+    [self.enter setFont:[UIFont systemFontOfSize:15]];
     //self.enter.delegate = self;
     [self addSubview:self.enter];
     
     self.send = [UIButton buttonWithType:UIButtonTypeSystem];
     [self.send setBackgroundColor:ColorHex(0XEEEEEE)];
-    self.send.titleLabel.font = Font(13);
+    self.send.titleLabel.font = Font(14);
     [self.send setTitle:@"获取验证码" forState:UIControlStateNormal];
     self.send.cornerRadius = 3;
     [self.send setTitleColor:ColorHex(0X888888) forState:UIControlStateNormal];

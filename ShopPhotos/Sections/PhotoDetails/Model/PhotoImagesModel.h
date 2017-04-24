@@ -10,11 +10,12 @@
 
 @interface PhotoImagesModel : BaseModel
 
-@property (strong, nonatomic) NSString * imageID;
+@property (strong, nonatomic) NSString * Id;
 @property (strong, nonatomic) NSString * imageLink_id;
-@property (strong, nonatomic) NSString * thumbnails;
-@property (strong, nonatomic) NSString * big;
-@property (strong, nonatomic) NSString * source;
+@property (strong, nonatomic) NSString * thumbnailUrl;
+@property (strong, nonatomic) NSString * bigImageUrl;
+@property (strong, nonatomic) NSString * srcUrl;
+@property (assign, nonatomic) UIImage *photo;
 @property (assign, nonatomic) BOOL isCover;
 @property (assign, nonatomic) BOOL edit;
 

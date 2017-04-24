@@ -21,7 +21,7 @@
 
 - (void)creteAutoLayout:(BOOL) isCheckBox selected:(BOOL) isChecked{
     [self setBackgroundColor:[UIColor whiteColor]];
-    _isChecked = isCheckBox;
+    _isChecked = isChecked;
     
     if (isCheckBox == YES) {
         self.checkBox = [[UIImageView alloc] init];
@@ -105,23 +105,23 @@
 }
 
 - (void)toolSelected {
-    if(self.delegate && [self.delegate respondsToSelector:@selector(albmClassTableHeadSelectType:slectedPath:)]){
-        [self.delegate albmClassTableHeadSelectType:1 slectedPath:self.indexPath];
+    if(self.delegate && [self.delegate respondsToSelector:@selector(albumClassTableHeadShowRow:)]){
+        [self.delegate albumClassTableHeadShowRow:self.section];
     }
 }
 
 - (void)checkBoxSelected {
     _isChecked = !_isChecked;
     
-    if (_isChecked == YES) {
+    if (_isChecked) {
         [self.checkBox setImage:[UIImage imageNamed:@"btn_circle_selected"]];
     }
     else {
         [self.checkBox setImage:[UIImage imageNamed:@"btn_circle_default"]];
     }
     
-    if(self.delegate && [self.delegate respondsToSelector:@selector(albmClassTableHeadSelectType:slectedPath:)]){
-        [self.delegate albmClassTableHeadSelectCheck:_isChecked slectedPath:self.indexPath];
+    if(self.delegate && [self.delegate respondsToSelector:@selector(albumClassTableHeadSelectCheck:selectedPath:)]){
+        [self.delegate albumClassTableHeadSelectCheck:_isChecked selectedPath:self.section];
     }
 }
 
@@ -134,15 +134,5 @@
     [self.icon setImage:[UIImage imageNamed:@"ico_triangle"]];
     [self.folder setImage:[UIImage imageNamed:@"ico_photo_folder"]];
 }
-
-- (void)check {
-    [self.checkBox setImage:[UIImage imageNamed:@"btn_circle_selected"]];
-}
-
-- (void)unCheck {
-    [self.checkBox setImage:[UIImage imageNamed:@"btn_circle_default"]];
-}
-
-
 
 @end

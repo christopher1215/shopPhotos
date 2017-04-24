@@ -10,6 +10,7 @@
 
 @interface ChatLoginRequset : BaseModel
 
-@property (strong, nonatomic) NSString * userID;
+@property (strong, nonatomic) NSString * authToken;
+@property (strong, nonatomic) NSString * imToken;
 
 @end

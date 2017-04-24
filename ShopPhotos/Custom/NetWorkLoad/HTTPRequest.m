@@ -25,7 +25,7 @@
 static const NSUInteger kDefaultTimeoutInterval = 5;
 
 #pragma mark - 异步GET请求
-+ (void)requestGetUrl:(NSString*)url
++ (void)requestGETUrl:(NSString*)url
            parametric:(NSDictionary*)dic
                succed:(Success)succed
               failure:(Failure)failure{
@@ -179,6 +179,11 @@ static const NSUInteger kDefaultTimeoutInterval = 5;
     manager.requestSerializer.timeoutInterval = 30;
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     [manager.requestSerializer setValue:[[HTTPUserAgent getHTTPUserAgent] getUserAgent] forHTTPHeaderField:ADDCNUSERAGENTKEY];
+    NSString * token = [[HTTPUserAgent getHTTPUserAgent] getToken];
+    if(token && token.length > 0){
+        [manager.requestSerializer setValue:[NSString stringWithFormat:@"Bearer %@", [[HTTPUserAgent getHTTPUserAgent] getToken]] forHTTPHeaderField:@"Authorization"];
+    }
+    
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:ContentType, nil];
     [manager POST:url parameters:postData constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
         NSDateFormatter *formatter = [[NSDateFormatter alloc] init];

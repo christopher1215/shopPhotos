@@ -13,12 +13,16 @@
 - (void)analyticInterface:(NSDictionary *)data{
     
     @try {
-        
+        self.imagesName = [NSMutableArray array];
         self.status = [RequestErrorGrab getIntegetKey:@"code" toTarget:data];
         self.message = [RequestErrorGrab getStringwitKey:@"message" toTarget:data];
         NSDictionary * json = [RequestErrorGrab getDicwitKey:@"data" toTarget:data];
         if(json && json.count > 0){
-            self.photosID = [NSString stringWithFormat:@"%ld",[RequestErrorGrab getIntegetKey:@"id" toTarget:json]];
+            self.qiniuToken = [RequestErrorGrab getStringwitKey:@"qiniuToken" toTarget:json];
+            NSArray * name = [RequestErrorGrab getArrwitKey:@"imagesName" toTarget:json];
+            if(name && name.count > 0){
+                [self.imagesName addObjectsFromArray:name];
+            }
         }
         
     } @catch (NSException *exception) {

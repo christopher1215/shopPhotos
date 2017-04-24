@@ -86,7 +86,7 @@
     [self.imageArray removeAllObjects];
     NSMutableArray * datas = [NSMutableArray array];
     for(DynamicImagesModel * model in self.dataArray){
-        if(!model.select) [self.imageArray addObject:model.big];
+        if(!model.select) [self.imageArray addObject:model.bigImageUrl];
     }
     
     

@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "AlbumPhotosMdel.h"
+#import "AlbumPhotosModel.h"
 
 #define AlbumPhotoTableCellID @"AlbumPhotoTableCellID"
 
@@ -22,7 +22,7 @@
 @interface AlbumPhotoTableCell : UICollectionViewCell
 @property (assign, nonatomic) BOOL showPrice;
 @property (weak, nonatomic) id<AlbumPhotoTableCellDelegate>delegate;
-@property (strong, nonatomic) AlbumPhotosMdel * model;
+@property (strong, nonatomic) AlbumPhotosModel * model;
 @property (strong, nonatomic) NSIndexPath * indexPath;
 
 @end

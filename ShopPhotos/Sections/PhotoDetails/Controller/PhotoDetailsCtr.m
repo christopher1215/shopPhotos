@@ -11,21 +11,19 @@
 #import "PhotosEditView.h"
 #import <UIImageView+WebCache.h>
 #import "PhotoDetailsFooter.h"
-#import "DetailPhotoRequset.h"
+#import "AlbumPhotosRequset.h"
+#import "AlbumPhotosModel.h"
 #import "PhotoImagesRequset.h"
 #import "PhotoImagesModel.h"
 #import "PhotoDescriptionRequset.h"
 #import "PhotoImagesModel.h"
 #import <MJPhotoBrowser.h>
-#import "SuperAlbumClassCtr.h"
-#import "AlbumClassTabelCtr.h"
 #import "ShareCtr.h"
 #import "ShareContentSelectCtr.h"
 #import <ShareSDK/ShareSDK.h>
 #import "HasCollectPhotoRequset.h"
 #import "DynamicQRAlert.h"
 #import "DownloadImageCtr.h"
-#import "PublishPhotosCtr.h"
 #import "DynamicImagesModel.h"
 #import "CopyRequset.h"
 #import "PublishPhotoCtr.h"
@@ -240,7 +238,7 @@
     self.photoClassParent.layer.cornerRadius = 5;
     self.photoClassParent.layer.borderWidth = 1;
     self.photoClassParent.layer.borderColor = ColorHex(0xe0e0e0).CGColor;
-    [self.photoClassParent addTarget:self action:@selector(photoClassParentSelected)];
+//    [self.photoClassParent addTarget:self action:@selector(photoClassParentSelected)];
     [self.photoClass addSubview:_photoClassParent];
     self.photoClassParent.sd_layout
     .leftSpaceToView(self.photoClass,0)
@@ -264,7 +262,7 @@
     self.photoClassSub.layer.cornerRadius = 5;
     self.photoClassSub.layer.borderWidth = 1;
     self.photoClassSub.layer.borderColor = ColorHex(0xe0e0e0).CGColor;
-    [self.photoClassSub addTarget:self action:@selector(photoClassSubViewSelected)];
+//    [self.photoClassSub addTarget:self action:@selector(photoClassSubViewSelected)];
     [self.photoClass addSubview:_photoClassSub];
     self.photoClassSub.sd_layout
     .leftSpaceToView(line3,5)
@@ -462,19 +460,32 @@
     }
 }
 
-- (void)setPhotoDetailsContent:(DetailPhotoRequset *)data{
+- (void)setPhotoDetailsContent:(AlbumPhotosModel *)data{
     
 //    [self.icon sd_setImageWithURL:[NSURL URLWithString:[data.photoId]]];
     self.icon.layer.cornerRadius = _icon.frame.size.width/2;
     self.icon.layer.masksToBounds = TRUE;
     
-    [self.name setText:data.name];
-    [self.date setText:[NSString stringWithFormat:@"%@ 上传",data.date]];
+    [self.name setText:data.title];
+    [self.date setText:[NSString stringWithFormat:@"%@ 上传",data.dateDiff]];
     
-    self.subclassID = data.subclassID;
-    self.uid = data.userID;
-    self.classifyID = data.classifyID;
-    [self.photoTitle setText:data.name];
+    PhotoImagesRequset * requset = [[PhotoImagesRequset alloc] init];
+    [requset analyticInterface:data.images];
+    if(requset.status == 0){
+        [self.imageArray removeAllObjects];
+        [self.imageArray addObjectsFromArray:requset.dataArray];
+        self.head.sd_layout.heightIs([self.head setStyle:self.imageArray]);
+        [self.head updateLayout];
+        self.foot.sd_layout.heightIs([self.foot setStyle:self.imageArray]);
+        [self.foot updateLayout];
+        [self.content setContentSize:CGSizeMake(0, self.foot.top+self.foot.height)];
+        [self.content updateLayout];
+    }
+    
+    self.subclassID = [data.subclass objectForKey:@"id"];
+    self.uid = [data.user objectForKey:@"uid"];
+    self.classifyID = [data.classify objectForKey:@"id"];
+    [self.photoTitle setText:data.title];
     
     if([self.uid isEqualToString:self.photosUserID]){
         [self.edit setHidden:NO];
@@ -491,20 +502,22 @@
     self.photoTitle.sd_layout.heightIs([self heightForString:self.photoTitle andWidth:self.photoTitle.width]);
     [self.photoTitle updateLayout];
     
-    if(data.classifyName && data.classifyName.length > 0){
-        [self.photoClassParent setTitle:data.classifyName forState:UIControlStateNormal];
+    NSString *classify = [data.classify objectForKey:@"name"];
+    if(classify && classify.length > 0){
+        [self.photoClassParent setTitle:classify forState:UIControlStateNormal];
         [self.photoClassParent setHidden:NO];
     }else{
         [self.photoClassParent setHidden:YES];
     }
-    if(data.subclassName && data.subclassName.length > 0){
-        [self.photoClassSub setTitle:data.subclassName forState:UIControlStateNormal];
+    NSString *subclass = [data.subclass objectForKey:@"name"];
+    if(subclass && subclass.length > 0){
+        [self.photoClassSub setTitle:subclass forState:UIControlStateNormal];
         [self.photoClassSub setHidden:NO];
     }else{
         [self.photoClassSub setHidden:YES];
     }
     
-    [self.foot setDateTitle:data.date];
+    [self.foot setDateTitle:data.dateDiff];
     
     CGFloat photoClassMaxWidth = WindowWidth - 120;
     CGSize parentSize = [self.photoClassParent.titleLabel.text sizeWithAttributes:[NSDictionary dictionaryWithObjectsAndKeys:self.photoClassParent.titleLabel.font,NSFontAttributeName,nil]];
@@ -542,23 +555,6 @@
     [self.shareView showAlert];
 }
 
-- (void)photoClassParentSelected{
-    
-    SuperAlbumClassCtr * superClass = GETALONESTORYBOARDPAGE(@"SuperAlbumClassCtr");
-    superClass.classifyId = self.classifyID;
-    superClass.pageName = self.photoClassParent.titleLabel.text;
-    superClass.uid = self.uid;
-    [self.navigationController pushViewController:superClass animated:YES];
-    
-}
-- (void)photoClassSubViewSelected{
-    AlbumClassTabelCtr * classTable = GETALONESTORYBOARDPAGE(@"AlbumClassTabelCtr");
-    classTable.uid = self.uid;
-    classTable.subClassID = self.subclassID;
-    classTable.pageText = self.photoClassSub.titleLabel.text;
-    [self.navigationController pushViewController:classTable animated:YES];
-}
-
 - (void)switchSelected:(UISwitch *)swt{
     NSString * recommend = @"";
     [self changePhotoDetails:@{@"name":self.photoTitle.text,
@@ -569,17 +565,16 @@
 
 - (void)editSelected{
     
-    [self.editHead setHidden:NO];
-    [self.foot setHidden:YES];
+//    [self.editHead setHidden:NO];
+//    [self.foot setHidden:YES];
     for(PhotoImagesModel * model in self.imageArray) {
         model.edit = YES;
     }
     
     PublishPhotoCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotoCtr");
     pulish.imageArray = self.imageArray;
-    [self presentViewController:pulish animated:YES completion:nil];
-    
-    
+    [self.navigationController pushViewController:pulish animated:YES];
+//    [self presentViewController:pulish animated:YES completion:nil];
     /*
     [self.head setStyle:self.imageArray];
     self.remarksContent.scrollEnabled = YES;
@@ -600,7 +595,7 @@
         for(PhotoImagesModel * model in self.imageArray){
             model.edit = NO;
         }
-        [self.head setStyle:self.imageArray mode:NO];
+        [self.head setStyle:self.imageArray];
         
         NSString * recommend = @"";
         NSString * remarksContentText = self.remarksContent.text;
@@ -637,7 +632,7 @@
     
     NSMutableArray * urlImages = [NSMutableArray array];
     for(PhotoImagesModel * model in self.imageArray){
-        [urlImages addObject:model.big];
+        [urlImages addObject:model.bigImageUrl];
     }
     
     NSString * text = [NSString stringWithFormat:@"%@%@/photo/detail/%@",URLHead,self.uid,self.photoId];
@@ -665,8 +660,8 @@
             NSMutableArray * images = [NSMutableArray array];
             for(PhotoImagesModel * imageModel in self.imageArray){
                 DynamicImagesModel * model = [[DynamicImagesModel alloc] init];
-                model.big = imageModel.big;
-                model.thumbnails = imageModel.thumbnails;
+                model.bigImageUrl = imageModel.bigImageUrl;
+                model.thumbnailUrl = imageModel.thumbnailUrl;
                 [images addObject:model];
             }
             UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
@@ -741,8 +736,8 @@
             NSMutableArray * images = [NSMutableArray array];
             for(PhotoImagesModel * imageModel in self.imageArray){
                 DynamicImagesModel * model = [[DynamicImagesModel alloc] init];
-                model.big = imageModel.big;
-                model.thumbnails = imageModel.thumbnails;
+                model.bigImageUrl = imageModel.bigImageUrl;
+                model.thumbnailUrl = imageModel.thumbnailUrl;
                 [images addObject:model];
             }
             
@@ -763,7 +758,7 @@
     for (int i = 0; i < count; i++) {
         PhotoImagesModel * imageModel = [self.imageArray objectAtIndex:i];
         
-        NSString * getImageStrUrl = imageModel.big;
+        NSString * getImageStrUrl = imageModel.bigImageUrl;
         MJPhoto *photo = [[MJPhoto alloc] init];
         photo.url = [NSURL URLWithString: getImageStrUrl];
         [photos addObject:photo];
@@ -824,7 +819,7 @@
         for (int i = 0; i < count; i++) {
             PhotoImagesModel * imageModel = [self.imageArray objectAtIndex:i];
             
-            NSString * getImageStrUrl = imageModel.big;
+            NSString * getImageStrUrl = imageModel.bigImageUrl;
             MJPhoto *photo = [[MJPhoto alloc] init];
             photo.url = [NSURL URLWithString: getImageStrUrl];
             [photos addObject:photo];
@@ -843,16 +838,18 @@
         [self editSelected];
         PhotoImagesModel * imageModel = [self.imageArray objectAtIndex:indexPath];
         [self setCover:@{@"photoId":self.photoId,
-                         @"imageId":imageModel.imageID}];
+                         @"imageId":imageModel.Id}];
     }
 }
+
+- (void)photoDetailsHeadAddImage:(UIImageView *)image select:(NSInteger)indexPath {}
 
 #pragma makr - AFNetworking网络加载
 - (void)loadNetworkData{
     
     [self getDetailPhoto];
-    [self getPhotoImages];
-    [self getPhotoDescription];
+//    [self getPhotoImages];
+//    [self getPhotoDescription];
 }
 
 - (void)getDetailPhoto{
@@ -862,17 +859,16 @@
     }
     //[self showLoad];
     
-    NSDictionary * detailPhotodata = @{@"photoId":self.photoId};
-    NSLog(@"url -- %@",self.congfing.getDetailPhoto);
+    NSDictionary * data = @{@"photoId":self.photoId};
     __weak __typeof(self)weakSelef = self;
     // 获取相册详情内容
-    [HTTPRequest requestPOSTUrl:self.congfing.getDetailPhoto parametric:detailPhotodata succed:^(id responseObject){
+    [HTTPRequest requestGETUrl :[NSString stringWithFormat:@"%@%@",self.congfing.getPhoto,[self.appd getParameterString]] parametric:data succed:^(id responseObject) {
         [weakSelef closeLoad];
         NSLog(@"获取相册详情内容 -- >%@",responseObject);
-        DetailPhotoRequset * requset = [[DetailPhotoRequset alloc] init];
+        AlbumPhotosRequset * requset = [[AlbumPhotosRequset alloc] init];
         [requset analyticInterface:responseObject];
         if(requset.status == 0){
-            [weakSelef setPhotoDetailsContent:requset];
+            [weakSelef setPhotoDetailsContent:[requset.dataArray objectAtIndex:0]];
             [weakSelef.content setContentSize:CGSizeMake(0, weakSelef.foot.top+weakSelef.foot.height)];
             [weakSelef.content updateLayout];
         }else{
@@ -884,9 +880,10 @@
     }];
 }
 
+/*
 - (void)getPhotoDescription{
     NSDictionary * detailPhotodata = @{@"photoId":self.photoId};
-    NSLog(@"url -- %@",self.congfing.getDetailPhoto);
+    NSLog(@"url -- %@",self.congfing.getPhoto);
     __weak __typeof(self)weakSelef = self;
     // 获取相册备注
     [HTTPRequest requestPOSTUrl:self.congfing.getPhotoDescription parametric:detailPhotodata succed:^(id responseObject){
@@ -912,7 +909,6 @@
     }];
 }
 
-
 - (void)getPhotoImages{
     
     NSDictionary * detailPhotodata = @{@"photoId":self.photoId};
@@ -925,7 +921,7 @@
         if(requset.status == 0){
             [weakSelef.imageArray removeAllObjects];
             [weakSelef.imageArray addObjectsFromArray:requset.dataArray];
-            weakSelef.head.sd_layout.heightIs([weakSelef.head setStyle:weakSelef.imageArray mode:NO]);
+            weakSelef.head.sd_layout.heightIs([weakSelef.head setStyle:weakSelef.imageArray]);
             [weakSelef.head updateLayout];
             weakSelef.foot.sd_layout.heightIs([weakSelef.foot setStyle:weakSelef.imageArray]);
             [weakSelef.foot updateLayout];
@@ -937,6 +933,7 @@
         //[weakSelef closeLoad];
     }];
 }
+*/
 
 - (void)setCover:(NSDictionary *)data{
     //[self showLoad];
@@ -947,7 +944,7 @@
         PhotoDescriptionRequset * requset = [[PhotoDescriptionRequset alloc] init];
         [requset analyticInterface:responseObject];
         if(requset.status == 0){
-            [weakSelef getPhotoImages];
+//            [weakSelef getPhotoImages];
         }
     } failure:^(NSError *error){
         //[weakSelef closeLoad];
@@ -964,7 +961,7 @@
         PhotoDescriptionRequset * requset = [[PhotoDescriptionRequset alloc] init];
         [requset analyticInterface:responseObject];
         if(requset.status == 0){
-            [weakSelef getPhotoImages];
+//            [weakSelef getPhotoImages];
         }
     } failure:^(NSError *error){
         //[weakSelef closeLoad];
@@ -987,7 +984,7 @@
         if(requset.status == 0){
             [weakSelef showToast:@"修改成功"];
             [weakSelef getDetailPhoto];
-            [weakSelef getPhotoDescription];
+//            [weakSelef getPhotoDescription];
         }
     } failure:^(NSError *error){
         //[weakSelef closeLoad];
@@ -1007,11 +1004,11 @@
         if(model.status == 0){
             
             if(model.allow){
-                PublishPhotosCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotosCtr");
+/*                PublishPhotosCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotosCtr");
                 pulish.is_copy = YES;
                 pulish.photoTitleText = self.photoTitle.text;
                 pulish.imageCopy = [[NSMutableArray alloc] initWithArray:self.imageArray];
-                [weakSelef.navigationController pushViewController:pulish animated:YES];
+                [weakSelef.navigationController pushViewController:pulish animated:YES];*/
             }else{
                 
                 UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:@"对方设置了限制复制，是否发送请求复制" preferredStyle:UIAlertControllerStyleAlert];

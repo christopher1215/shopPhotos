@@ -129,18 +129,13 @@
     .heightIs(25);
 }
 
-- (void)setModel:(AlbumPhotosMdel *)model{
+- (void)setModel:(AlbumPhotosModel *)model{
     
     if(!model)return;
     
-    [self.icon sd_setImageWithURL:[NSURL URLWithString:model.big]];
-    [self.title setText:model.name];
-    [self.prize setText:[NSString stringWithFormat:@"￥%@",model.price]];
-    if(!model.showPrice){
-        [self.prize setHidden:YES];
-    }else{
-        [self.prize setHidden:NO];
-    }
+//    [self.icon sd_setImageWithURL:[NSURL URLWithString:model.big]];
+    [self.title setText:model.title];
+    [self.prize setHidden:YES];
     
     NSDictionary * user = model.user;
     if(user && user.count > 0){

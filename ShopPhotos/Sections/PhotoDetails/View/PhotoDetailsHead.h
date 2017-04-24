@@ -8,7 +8,7 @@
 
 #import "BaseView.h"
 
-#define Clearance 10
+//#define Clearance 10
 
 @protocol PhotoDetailsHeadDelegate <NSObject>
 
@@ -19,6 +19,6 @@
 
 @interface PhotoDetailsHead : BaseView
 @property (weak, nonatomic)id<PhotoDetailsHeadDelegate>delegate;
-- (CGFloat)setStyle:(NSArray *)imageArray mode:(BOOL) isEditMode;
+- (CGFloat)setStyle:(NSArray *)imageArray;
 
 @end

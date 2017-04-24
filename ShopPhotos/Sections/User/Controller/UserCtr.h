@@ -23,9 +23,11 @@
 @property (weak, nonatomic) IBOutlet UILabel *phone;
 @property (weak, nonatomic) IBOutlet UILabel *locationText;
 @property (weak, nonatomic) IBOutlet UILabel *homeText;
+@property (weak, nonatomic) IBOutlet UILabel *emailText;
 @property (weak, nonatomic) IBOutlet UIImageView *home;
 @property (weak, nonatomic) IBOutlet UIView *feedback;
 @property (assign, nonatomic) BOOL changeStatu;
+@property (assign, nonatomic) BOOL firstFlag;
 @property (weak, nonatomic) IBOutlet UIButton *loginOut;
 @property (strong, nonatomic) NSString * iconURL;
 @property (strong, nonatomic) UITextField * tempTextField;

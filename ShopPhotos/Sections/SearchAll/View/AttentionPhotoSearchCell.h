@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-#import "AlbumPhotosMdel.h"
+#import "AlbumPhotosModel.h"
 
 #define AttentionPhotoSearchCellID @"AttentionPhotoSearchCellID"
 
@@ -19,7 +19,7 @@
 @end
 
 @interface AttentionPhotoSearchCell : UICollectionViewCell
-@property (strong, nonatomic) AlbumPhotosMdel * model;
+@property (strong, nonatomic) AlbumPhotosModel * model;
 @property (strong, nonatomic) NSIndexPath * indexPath;
 @property (assign, nonatomic) id<AttentionPhotoSearchCellDelegate>delegate;
 @end
