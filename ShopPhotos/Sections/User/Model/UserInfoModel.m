@@ -17,19 +17,23 @@
         self.status = [RequestErrorGrab getIntegetKey:@"code" toTarget:data];
         self.message = [RequestErrorGrab getStringwitKey:@"message" toTarget:data];
         if(self.status)return;
-        NSDictionary * json = [RequestErrorGrab getDicwitKey:@"data" toTarget:data];
-        if(json && json.count > 0){
-            self.icon = [RequestErrorGrab getStringwitKey:@"icon" toTarget:json];
-            self.name = [RequestErrorGrab getStringwitKey:@"name" toTarget:json];
-            self.qq = [RequestErrorGrab getStringwitKey:@"qq" toTarget:json];
-            self.weixin = [RequestErrorGrab getStringwitKey:@"weixin" toTarget:json];
-            self.tel = [RequestErrorGrab getStringwitKey:@"tel" toTarget:json];
-            self.qq_qrCode = [RequestErrorGrab getStringwitKey:@"qq_qrCode" toTarget:json];
-            self.wx_qrCode = [RequestErrorGrab getStringwitKey:@"wx_qrCode" toTarget:json];
-            self.uid = [RequestErrorGrab getStringwitKey:@"uid" toTarget:json];
-            self.signature = [RequestErrorGrab getStringwitKey:@"signature" toTarget:json];
-            self.address = [RequestErrorGrab getStringwitKey:@"address" toTarget:json];
-            self.config = [RequestErrorGrab getDicwitKey:@"config" toTarget:json];
+        NSDictionary * result = [RequestErrorGrab getDicwitKey:@"data" toTarget:data];
+        if(result && result.count > 0){
+            NSDictionary * user = [RequestErrorGrab getDicwitKey:@"user" toTarget:result];
+            if(user && user.count > 0){
+                self.uid = [RequestErrorGrab getStringwitKey:@"uid" toTarget:user];
+                self.address = [RequestErrorGrab getStringwitKey:@"address" toTarget:user];
+                self.avatar = [RequestErrorGrab getStringwitKey:@"avatar" toTarget:user];
+                self.bg_image = [RequestErrorGrab getStringwitKey:@"bg_image" toTarget:user];
+                self.name = [RequestErrorGrab getStringwitKey:@"name" toTarget:user];
+                self.name_abbr = [RequestErrorGrab getStringwitKey:@"name_abbr" toTarget:user];
+                self.phone = [RequestErrorGrab getStringwitKey:@"phone" toTarget:user];
+                self.qq = [RequestErrorGrab getStringwitKey:@"qq" toTarget:user];
+                self.settings = [RequestErrorGrab getDicwitKey:@"settings" toTarget:user];
+                self.signature = [RequestErrorGrab getStringwitKey:@"signature" toTarget:user];
+                self.wechat = [RequestErrorGrab getStringwitKey:@"wechat" toTarget:user];
+                self.email = [RequestErrorGrab getStringwitKey:@"email" toTarget:user];
+            }
         }
     } @catch (NSException *exception) {
         self.status = 1;

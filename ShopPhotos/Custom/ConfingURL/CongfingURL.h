@@ -34,7 +34,9 @@
 @property (strong, nonatomic) NSString * updateUserImage;
 @property (strong, nonatomic) NSString * updateUserSetting;
 @property (strong, nonatomic) NSString * updateUserInfo;
-
+@property (strong, nonatomic) NSString * handleCopyRequest;
+@property (strong, nonatomic) NSString * handleStarUser;
+@property (strong, nonatomic) NSString * searchPhotos;
 //----------------------tcg-------------------------//
 @property (strong, nonatomic) NSString * token;
 // 用户登入
@@ -94,7 +96,7 @@
 // 添加特别关注
 @property (strong, nonatomic) NSString * starUser;
 // 取消关注
-@property (strong, nonatomic) NSString * cancelConcern;
+@property (strong, nonatomic) NSString * cancelConcernUser;
 // 获取相册详情
 @property (strong, nonatomic) NSString * getPhoto;
 // 获取相册所有图片
@@ -118,7 +120,7 @@
 // 搜索
 @property (strong, nonatomic) NSString * searchSummary;
 // 图片识别搜索
-@property (strong, nonatomic) NSString * withImageSearch;
+@property (strong, nonatomic) NSString * useImageSearch;
 // 创建相册
 @property (strong, nonatomic) NSString * createPhoto1;
 @property (strong, nonatomic) NSString * createPhoto2;

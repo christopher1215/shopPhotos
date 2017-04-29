@@ -14,7 +14,7 @@
     
     @try {
         self.key = [RequestErrorGrab getStringwitKey:@"key" toTarget:data];
-        self.hash = [RequestErrorGrab getStringwitKey:@"hash" toTarget:data];
+        self.hhash = [RequestErrorGrab getStringwitKey:@"hash" toTarget:data];
     } @catch (NSException *exception) {
         self.message = NETWORKTIPS;
         self.status = 1;

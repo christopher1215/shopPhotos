@@ -13,7 +13,7 @@
 
 @interface CreatePhoto2Model : BaseModel
 
-@property (strong, nonatomic) NSString * hash;
+@property (strong, nonatomic) NSString * hhash;
 @property (strong, nonatomic) NSString * key;
 
 @end

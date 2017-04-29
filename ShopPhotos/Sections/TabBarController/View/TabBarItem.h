@@ -15,4 +15,5 @@
 
 - (void)setStyleSelected;
 - (void)setStyleDefault;
+- (void)setUnreadCountBadge:(int)unreadCount;
 @end

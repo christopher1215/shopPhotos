@@ -16,7 +16,7 @@
 #import "PhotosOptionView.h"
 #import "SearchAllCtr.h"
 #import "PhotoDetailsCtr.h"
-#import "PublishPhotosCtr.h"
+#import "PublishPhotoCtr.h"
 
 #import "PhotoImagesRequset.h"
 #import "DynamicImagesModel.h"
@@ -320,7 +320,7 @@
         
     }else if(indexPath == 1){
         NSLog(@"上传相册");
-        PublishPhotosCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotosCtr");
+        PublishPhotoCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotoCtr");
         [self.navigationController pushViewController:pulish animated:YES];
     }
 }
@@ -366,11 +366,11 @@
     NSDictionary * data = @{@"uid":self.uid,
                             @"page":[NSString stringWithFormat:@"%ld",self.page],
                             @"pageSize":@"30",
-                            @"keyWord":@"false",
-                            @"subclassification_id":@"0"};
+                            @"keyWord":@"false"};
     
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.getRecommendPhotos parametric:data succed:^(id responseObject){
+    [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",self.congfing.getRecommendPhotos,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+        
         NSLog(@"%@",responseObject);
         [weakSelef.table.photos.mj_header endRefreshing];
         AlbumPhotosRequset * requset = [[AlbumPhotosRequset alloc] init];
@@ -403,13 +403,12 @@
     NSDictionary * data = @{@"uid":self.uid,
                             @"page":[NSString stringWithFormat:@"%ld",self.page],
                             @"pageSize":@"30",
-                            @"keyWord":@"false",
-                            @"subclassification_id":@"0"};
+                            @"keyWord":@"false"};
     
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.getRecommendPhotos parametric:data succed:^(id responseObject){
+    [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",self.congfing.getRecommendPhotos,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+
         NSLog(@"%@",responseObject);
-        
         [weakSelef.table.photos.mj_footer endRefreshing];
         AlbumPhotosRequset * requset = [[AlbumPhotosRequset alloc] init];
         [requset analyticInterface:responseObject];
@@ -617,7 +616,7 @@
     }];
 }
 
-- (void)hasCollectPhoto:(NSDictionary *)data{
+- (void)hasCollectPhoto:(NSDictionary *)data {
     
     //[self showLoad];
     __weak __typeof(self)weakSelef = self;
@@ -700,13 +699,13 @@
         if(model.status == 0){
             
             if(model.allow){
-                PublishPhotosCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotosCtr");
+                PublishPhotoCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotoCtr");
                 AlbumPhotosModel * albumModel = [self.dataArray objectAtIndex:self.itmeSelectedIndex];
-                
+/*
                 pulish.is_copy = YES;
                 pulish.photoTitleText = albumModel.title;
                 pulish.photoTitleText = @"";
-                pulish.imageCopy = [[NSMutableArray alloc] initWithArray:self.imageArray];
+                pulish.imageCopy = [[NSMutableArray alloc] initWithArray:self.imageArray]; */
                 [weakSelef.navigationController pushViewController:pulish animated:YES];
             }else{
                 

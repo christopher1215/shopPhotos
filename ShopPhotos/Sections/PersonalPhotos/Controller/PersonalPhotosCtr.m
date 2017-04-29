@@ -342,7 +342,7 @@
     }else if(type == 1){
     }else if(type == 2){
         
-        NSString * chatStr = model.weixin;
+        NSString * chatStr = model.wechat;
         if(chatStr && chatStr.length > 0){
             UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
             pasteboard.string = chatStr;

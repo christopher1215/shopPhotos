@@ -25,8 +25,7 @@
             
             NSArray * classifies = [RequestErrorGrab getArrwitKey:@"classifies" toTarget:json];
             NSArray * subclasses = [RequestErrorGrab getArrwitKey:@"subclasses" toTarget:json];
-            
-            
+            NSDictionary * video = [RequestErrorGrab getDicwitKey:@"video" toTarget:json];
             if(classifies && classifies.count > 0){
                 for(NSDictionary * classifie in classifies){
                     AlbumClassTableModel * model = [[AlbumClassTableModel alloc] init];
@@ -34,7 +33,17 @@
                     model.Id = [RequestErrorGrab getIntegetKey:@"id" toTarget:classifie];
                     model.name = [RequestErrorGrab getStringwitKey:@"name" toTarget:classifie];
                     model.subclassCount = [RequestErrorGrab getIntegetKey:@"subclassCounts" toTarget:classifie];
+                    model.isVideo = NO;
                     [self.dataArray addObject:model];
+                }
+                
+                if(video){
+                    AlbumClassTableModel * model = [[AlbumClassTableModel alloc] init];
+                    model.Id = [RequestErrorGrab getIntegetKey:@"id" toTarget:video];
+                    model.name = [RequestErrorGrab getStringwitKey:@"name" toTarget:video];
+                    model.videosCount = [RequestErrorGrab getIntegetKey:@"videosCount" toTarget:video];
+                    model.isVideo = YES;
+                    [self.dataArray insertObject:model atIndex:0];
                 }
             }
            
@@ -61,7 +70,6 @@
             }
         }
     } @catch (NSException *exception) {
-        
         self.status = 1;
         self.message = NETWORKTIPS;
     }

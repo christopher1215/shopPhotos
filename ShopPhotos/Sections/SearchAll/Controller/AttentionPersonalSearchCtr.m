@@ -14,6 +14,7 @@
 
 
 @interface AttentionPersonalSearchCtr ()<UICollectionViewDelegate,UICollectionViewDataSource>
+@property (weak, nonatomic) IBOutlet UIView *titleBackground;
 @property (weak, nonatomic) IBOutlet UIView *back;
 @property (weak, nonatomic) IBOutlet UITextField *searchText;
 @property (weak, nonatomic) IBOutlet UIView *search;
@@ -43,6 +44,7 @@
 }
 
 - (void)setup{
+    self.titleBackground.cornerRadius = 5;
 
     [self.back addTarget:self action:@selector(backSelected)];
     [self.search addTarget:self action:@selector(searchSelected)];
@@ -63,10 +65,17 @@
     self.photos.sd_layout
     .leftEqualToView(self.view)
     .rightEqualToView(self.view)
-    .topSpaceToView(self.view,114)
+    .topSpaceToView(self.view,64)
     .bottomEqualToView(self.view);
 }
 
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    if (textField == self.searchText) {
+        [self searchSelected];
+        return NO;
+    }
+    return YES;
+}
 
 #pragma mark - OnClick
 - (void)backSelected{
@@ -127,13 +136,13 @@
 - (void)loadSearchData{
     
     self.pageIndex = 1;
-    NSDictionary * data = @{@"lastId":@"0",
-                            @"userType":@"concerns",
-                            @"keyWord":self.searchText.text};
+    NSDictionary * data = @{
+                            @"type":@"concerns",
+                            @"keyword":self.searchText.text};
     
     [self showLoad];
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.searchUsers parametric:data succed:^(id responseObject){
+    [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",self.congfing.searchUsers,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
         [weakSelef closeLoad];
         
         AttentionPersonalSearchRequset * requset = [[AttentionPersonalSearchRequset alloc] init];

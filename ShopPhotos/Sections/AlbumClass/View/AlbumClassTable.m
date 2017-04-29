@@ -145,7 +145,12 @@
         else {
             AlbumClassTableModel * model = [self.dataArray objectAtIndex:section];
             isOpen = model.open;
-            head.title.text = [NSString stringWithFormat:@"%@ (%lu)",model.name,(unsigned long)model.subclassCount] ;
+            if (model.isVideo == NO) {
+                head.title.text = [NSString stringWithFormat:@"%@ (%lu)",model.name,(unsigned long)model.subclassCount];
+            }
+            else {
+                head.title.text = [NSString stringWithFormat:@"%@ (%lu)",model.name,(unsigned long)model.videosCount];
+            }
         }
         
         if(isOpen){

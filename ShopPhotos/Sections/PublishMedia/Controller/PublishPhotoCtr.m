@@ -11,9 +11,10 @@
 #import <TZImagePickerController.h>
 #import "PhotoImagesModel.h"
 #import "PostImage.h"
-#import "PublishTask.h"
+#import "PublishPhoto.h"
 #import "AlbumClassCtr.h"
 #import <UIImageView+WebCache.h>
+
 //#import <UITextView+Placeholder.h>
 
 @interface PublishPhotoCtr ()<UIScrollViewDelegate,UITextViewDelegate,TZImagePickerControllerDelegate>
@@ -23,12 +24,9 @@
 @property (weak, nonatomic) IBOutlet UIButton *btn_ok;
 @property (weak, nonatomic) IBOutlet UIScrollView *content;
 
-@property (strong, nonatomic) UITextView * photoTitle;
-
-@property (strong, nonatomic) UITextView * remarksContent;
 @property (strong, nonatomic) UIView * photoClassView;
 @property (strong, nonatomic) UILabel * photoClassContent;
-//@property (strong, nonatomic) UIImageView * recommendSwitch;
+
 @property (strong, nonatomic) UISwitch * recommendSwitch;
 
 @property (strong, nonatomic) UIView *photoView;
@@ -380,10 +378,21 @@
 
 - (void)deleteSelected:(UIButton *)button{
     NSLog(@"%ld",button.superview.superview.tag);
+    [_imageArray removeObjectAtIndex:button.superview.superview.tag];
+    [self drawImages];
 }
 
 - (void)settingSelected:(UIButton *)button{
     NSLog(@"%ld",button.superview.superview.tag);
+    NSInteger idxsel = button.superview.superview.tag;
+    
+    int index = 0;
+    for (PhotoImagesModel * imageModel in _imageArray) {
+        if (imageModel.isCover) { imageModel.isCover = NO; }
+        if (index == idxsel) { imageModel.isCover = YES; }
+        index++;
+    }
+    [self drawImages];
 }
 
 - (void)imageSelected:(UIButton *)button{
@@ -399,11 +408,6 @@
 }
 
 - (void) publishSelected {
-    
-    NSMutableArray * images = [NSMutableArray array];
-    for(PhotoImagesModel * imageModel in _imageArray){
-        [images addObject:imageModel.photo];
-    }
     
     // 上传发布相册
     if(_imageArray.count == 0){
@@ -447,16 +451,16 @@
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:str preferredStyle:UIAlertControllerStyleAlert];
         [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault handler:nil]];
         [alert addAction:[UIAlertAction actionWithTitle:@"继续上传" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action){
-            [self postImage:images];
+            [self postImage];
             
         }]];
         [self presentViewController:alert animated:YES completion:nil];
     }else{
-        [self postImage:images];
+        [self postImage];
     }
 }
 
-- (void)postImage:(NSArray *)images{
+- (void)postImage{
     // 保存当前信息
     NSMutableDictionary * postData = [[NSMutableDictionary alloc] init];
     
@@ -474,18 +478,24 @@
     [self showToast:@"正在上传,请保存网络通畅"];
     [self.content setContentOffset:CGPointMake(0, 0) animated:YES];
     
+    
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSMutableArray * imageDatas = [NSMutableArray array];
-        for(UIImage * image in images){
-            NSData *imageData =  [self compressOriginalImage:image toMaxDataSizeKBytes:300];
+        int index = 0;
+        for(PhotoImagesModel * imageModel in _imageArray){
+            NSData *imageData =  [self compressOriginalImage:imageModel.photo toMaxDataSizeKBytes:300];
             [imageDatas addObject:imageData];
             NSLog(@"size == %ld",imageData.length);
+            if (imageModel.isCover) {
+                [postData setValue:[NSString stringWithFormat:@"%d",index] forKey:@"idxCover"];
+            }
+            index ++;
         }
         
         [postData setValue:imageDatas forKey:@"images"];
         
         // 耗时的操作
-        PublishTask * task = [[PublishTask alloc] init];
+        PublishPhoto * task = [[PublishPhoto alloc] init];
         [task startTask:postData complete:^(BOOL stuta){
             dispatch_async(dispatch_get_main_queue(), ^{
                 //回调或者说是通知主线程刷新，
@@ -537,8 +547,8 @@
     
     NSInteger count = 9 - _imageArray.count;
     TZImagePickerController *imagePickerVc = [[TZImagePickerController alloc] initWithMaxImagesCount:count delegate:self];
-    imagePickerVc.allowPickingVideo = NO;
-    imagePickerVc.allowPickingOriginalPhoto = NO;
+    imagePickerVc.allowPickingVideo = YES;
+    imagePickerVc.allowPickingOriginalPhoto = YES;
     imagePickerVc.photoWidth = 960;
     imagePickerVc.photoPreviewMaxWidth = 960;
     [imagePickerVc setDidFinishPickingPhotosHandle:^(NSArray<UIImage *> *photos,NSArray *assets,BOOL isSelectOriginalPhoto) {
@@ -547,7 +557,7 @@
                 PhotoImagesModel * imageModel = [[PhotoImagesModel alloc] init];
                 imageModel.photo = image;
                 imageModel.isCover = NO;
-                imageModel.edit= NO;
+                imageModel.edit= YES;
                 [_imageArray addObject:imageModel];
             }
         }

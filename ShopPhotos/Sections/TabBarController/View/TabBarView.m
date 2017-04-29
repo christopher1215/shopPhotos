@@ -9,10 +9,13 @@
 #import "TabBarView.h"
 #import "TabBarItem.h"
 #import "TabBarModel.h"
+#import <RongIMKit/RongIMKit.h>
+#import "NSObject+StoreValue.h"
 
 @interface TabBarView ()
 
 @property (strong, nonatomic) TabBarItem * selectTabBar;
+@property (strong, nonatomic) TabBarItem * contactTabBar;
 
 @end
 
@@ -27,9 +30,14 @@
     }
     return self;
 }
-
+-(void)setUnreadCountBadge:(NSNotification *)noti
+{
+    int totalUnreadCount = [[RCIMClient sharedRCIMClient] getTotalUnreadCount];
+    NSLog(@"当前所有会话的未读消息数为：%d", totalUnreadCount);
+    [self.contactTabBar setUnreadCountBadge:totalUnreadCount];
+}
 - (void)createAutoLayout{
-    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setUnreadCountBadge:) name:@"getTotalUnreadCount" object:nil];
     [self setBackgroundColor:[UIColor clearColor]];
     
     TabBarModel * model1 = [[TabBarModel alloc] init];
@@ -50,7 +58,7 @@
     model4.defaultImage = @"ico_follow_default";
     model4.selectedImage = @"ico_follow_selected";
     model4.text = @"联系人";
-    
+
     TabBarModel * model5 = [[TabBarModel alloc] init];
     model5.defaultImage = @"ico_mine_default";
     model5.selectedImage = @"ico_mine_selected";
@@ -87,6 +95,10 @@
             if(index == 0){
                 [item setStyleSelected];
                 self.selectTabBar = item;
+            } else if(index == 3){
+                self.contactTabBar = item;
+                [self setUnreadCountBadge:nil];
+
             }
         }
     }

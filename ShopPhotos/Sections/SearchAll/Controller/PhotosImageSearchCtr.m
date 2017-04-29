@@ -190,7 +190,7 @@
     __weak __typeof(self)weakSelf = self;
     NSDictionary * data = @{@"uid":self.uid, @"getAll":@"true", @"resultCount":@"100",@"includeSelf":@"true"};
     NSData * imageData = UIImageJPEGRepresentation(self.searchImage, 0.3);
-    [HTTPRequest Manager:self.congfing.withImageSearch Method:nil dic:data file:imageData fileName:@"imageFile" requestSucced:^(id responseObject){
+    [HTTPRequest Manager:self.congfing.useImageSearch Method:nil dic:data file:imageData fileName:@"imageFile" requestSucced:^(id responseObject){
         NSLog(@"%@",responseObject);
         PhotosSearchRequset * requset = [[PhotosSearchRequset alloc] init];
         [requset analyticInterface:responseObject];

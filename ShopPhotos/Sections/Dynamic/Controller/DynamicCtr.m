@@ -11,7 +11,7 @@
 #import "UserInfoDrawerCtr.h"
 #import "AppDelegate.h"
 #import <MJRefresh.h>
-#import "DynamicRequset.h"
+#import "AlbumPhotosRequset.h"
 #import "UserInfoModel.h"
 #import <MJPhotoBrowser.h>
 #import "DynamicImagesModel.h"
@@ -24,7 +24,7 @@
 #import "PersonalHomeCtr.h"
 #import "PhotoDetailsCtr.h"
 #import <ShareSDK/ShareSDK.h>
-#import "PublishPhotosCtr.h"
+#import "PublishPhotoCtr.h"
 #import "DynamicImagesModel.h"
 #import "SharedItem.h"
 #import "ShareContentSelectCtr.h"
@@ -32,6 +32,8 @@
 #import "HasCollectPhotoRequset.h"
 #import "DownloadImageCtr.h"
 #import "CopyRequset.h"
+#import "AlbumPhotosModel.h"
+#import <TZVideoPlayerController.h>
 
 @interface DynamicCtr ()<DynamicTableViewDelegate,MoreAlertDelegate,AddFriendAlertDelegate,UserInfoDrawerDelegate,ShareDelegate>
 
@@ -210,7 +212,7 @@
 - (void)moreAlertSelected:(NSInteger)indexPath{
     
     if(indexPath == 0){
-        PublishPhotosCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotosCtr");
+        PublishPhotoCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotoCtr");
         [self.navigationController pushViewController:pulish animated:YES];
     }else if(indexPath == 1){
         QRCodeScanCtr * qrCode = [[QRCodeScanCtr alloc] init];
@@ -254,7 +256,8 @@
 - (void)userInfoDrawerHeadSelected:(NSInteger)type{
     
     if(type == 1){
-        DynamicModel * model = [self.dataArray objectAtIndex:self.userInfoSelectIndex];
+//        DynamicModel * model = [self.dataArray objectAtIndex:self.userInfoSelectIndex];
+        AlbumPhotosModel * model = [self.dataArray objectAtIndex:self.userInfoSelectIndex];
         NSMutableArray *photos = [NSMutableArray array];
         MJPhoto * photo = [[MJPhoto alloc] init];
         if([model.user objectForKey:@"icon"]){
@@ -269,7 +272,7 @@
 }
 - (void)userInfoDrawerCellSelected:(UserInfoModel *)model WithType:(NSInteger)type{
 
-    NSLog(@"--%@ -- %@",model.weixin,model.qq);
+    NSLog(@"--%@ -- %@",model.wechat,model.qq);
     
     if(type == 0){
         
@@ -281,7 +284,7 @@
     }else if(type == 1){  
     }else if(type == 2){
     
-        NSString * chatStr = model.weixin;
+        NSString * chatStr = model.wechat;
         if(chatStr && chatStr.length > 0){
             UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
             pasteboard.string = chatStr;
@@ -338,7 +341,7 @@
 #pragma mark - ShareDelegate
 - (void)shareSelected:(NSInteger)type{
     
-    DynamicModel * model = [self.dataArray objectAtIndex:self.shareSelectIndex];
+    AlbumPhotosModel * model = [self.dataArray objectAtIndex:self.shareSelectIndex];
     NSMutableArray * urlImages = [NSMutableArray array];
     for(DynamicImagesModel * subModel in model.images){
         [urlImages addObject:subModel.bigImageUrl];
@@ -347,7 +350,7 @@
     NSLog(@"%@",model.user);
     
     
-    NSString * text = [NSString stringWithFormat:@"%@%@/photo/detail/%@",URLHead,[model.user objectForKey:@"uid"],model.photosID];
+    NSString * text = [NSString stringWithFormat:@"%@%@/photo/detail/%@",URLHead,[model.user objectForKey:@"uid"],model.Id];
     
     //1、创建分享参数（必要）
     NSMutableDictionary *shareParams = [NSMutableDictionary dictionary];
@@ -418,7 +421,7 @@
         case 7:// 查看二维码
         {
             self.qrAlert.titleText = model.title;
-            self.qrAlert.contentText = [NSString stringWithFormat:@"%@%@/photo/detail/%@",URLHead,[model.user objectForKey:@"uid"],model.photosID];
+            self.qrAlert.contentText = [NSString stringWithFormat:@"%@%@/photo/detail/%@",URLHead,[model.user objectForKey:@"uid"],model.Id];
             [self.qrAlert showAlert];
         }
             
@@ -433,7 +436,7 @@
                 }
             }
             
-            [self hasCollectPhoto:@{@"photoId":[NSString stringWithFormat:@"%@",model.photosID]}];
+            [self hasCollectPhoto:@{@"photoId":[NSString stringWithFormat:@"%@",model.Id]}];
         }
             break;
         case 9:// 下载图片
@@ -450,7 +453,7 @@
 #pragma mark - DynamicViewCellDelegate
 - (void)cellSelectType:(NSInteger)type tableViewCelelIndexPath:(NSIndexPath *)indexPath{
     
-    DynamicModel * model = [self.dataArray objectAtIndex:indexPath.row];
+    AlbumPhotosModel * model = [self.dataArray objectAtIndex:indexPath.row];
     
     if(type == 1){
         self.userInfoSelectIndex = indexPath.row;
@@ -471,33 +474,40 @@
 }
 
 - (void)cellImageSelected:(NSInteger)tag TabelViewCellIndexPath:(NSIndexPath *)indexPath{
-    
-    
-    DynamicModel * model = [self.dataArray objectAtIndex:indexPath.row];
-    NSInteger count = model.images.count;
-    NSMutableArray *photos = [NSMutableArray arrayWithCapacity:count];
-    for (int i = 0; i < count; i++) {
-        DynamicImagesModel * imageModel = [model.images objectAtIndex:i];
+
+    if (tag > -1) {
+        AlbumPhotosModel * model = [self.dataArray objectAtIndex:indexPath.row];
+        NSInteger count = model.images.count;
+        NSMutableArray *photos = [NSMutableArray arrayWithCapacity:count];
+        for (int i = 0; i < count; i++) {
+            if (tag == i) {
+                NSDictionary * imageModel = [model.images objectAtIndex:i];
+                NSString * getImageStrUrl = [imageModel objectForKey:@"bigImageUrl"];
+                MJPhoto *photo = [[MJPhoto alloc] init];
+                photo.url = [NSURL URLWithString: getImageStrUrl];
+                [photos addObject:photo];
+            }
+        }
         
-        NSString * getImageStrUrl = imageModel.bigImageUrl;
-        MJPhoto *photo = [[MJPhoto alloc] init];
-        photo.url = [NSURL URLWithString: getImageStrUrl];
-        [photos addObject:photo];
+        if(photos.count > 0){
+            MJPhotoBrowser *browser = [[MJPhotoBrowser alloc] init];
+            browser.currentPhotoIndex = 0;//tag;
+            browser.photos = photos;
+            [browser show];
+        }
     }
-    if(photos.count > 0){
-        MJPhotoBrowser *browser = [[MJPhotoBrowser alloc] init];
-        browser.currentPhotoIndex = tag;
-        browser.photos = photos;
-        [browser show];
+    else {
+        // click video
+        TZVideoPlayerController *videoPlayer = [[TZVideoPlayerController alloc] init];
     }
 }
 
 - (void)dynamicTableCellSelected:(NSIndexPath *)indexPath{
-    DynamicModel * model = [self.dataArray objectAtIndex:indexPath.row];
+    AlbumPhotosModel * model = [self.dataArray objectAtIndex:indexPath.row];
     NSString * uid = [model.user objectForKey:@"uid"];
     
     PhotoDetailsCtr * photoDetails = GETALONESTORYBOARDPAGE(@"PhotoDetailsCtr");
-    photoDetails.photoId = model.photosID;
+    photoDetails.photoId = model.Id;
     if(uid && ![uid isEqualToString:self.photosUserID]){
         photoDetails.persona = YES;
     }
@@ -506,19 +516,19 @@
 }
 
 #pragma makr - AFNetworking网络加载
-- (void)loadNetworkData{
+- (void)loadNetworkData {
     self.pageIndex= 1;
     NSDictionary * data = @{@"uid":self.photosUserID,
                             @"page":[NSString stringWithFormat:@"%ld",self.pageIndex],
-                            @"pageSize":@"20",
-                            @"getAll":@"true"};
+                            @"pageSize":@"20"};
     NSLog(@"%@",data);
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.getNewDynamics parametric:data succed:^(id responseObject){
+    [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",self.congfing.getNewDynamics,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
         
         NSLog(@"%@",responseObject);
         [weakSelef.table.table.mj_header endRefreshing];
-        DynamicRequset * requset = [[DynamicRequset alloc] init];
+//        DynamicRequset * requset = [[DynamicRequset alloc] init];
+        AlbumPhotosRequset * requset = [[AlbumPhotosRequset alloc] init];
         [requset analyticInterface:responseObject];
         if(requset.status == 0){
             weakSelef.pageIndex ++;
@@ -548,16 +558,16 @@
     
     NSDictionary * data = @{@"uid":self.photosUserID,
                             @"page":[NSString stringWithFormat:@"%ld",self.pageIndex],
-                            @"pageSize":@"20",
-                            @"getAll":@"true"};
+                            @"pageSize":@"20"};
     NSLog(@"%@",data);
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.getNewDynamics parametric:data succed:^(id responseObject){
+    [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",self.congfing.getNewDynamics,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
         
         NSLog(@"%@",responseObject);
         [weakSelef.table.table.mj_footer endRefreshing];
+        AlbumPhotosRequset * requset = [[AlbumPhotosRequset alloc] init];
         
-        DynamicRequset * requset = [[DynamicRequset alloc] init];
+//        DynamicRequset * requset = [[DynamicRequset alloc] init];
         [requset analyticInterface:responseObject];
         if(requset.status == 0){
             weakSelef.pageIndex ++;
@@ -632,12 +642,13 @@
         if(model.status == 0){
             
             if(model.allow){
-                DynamicModel * model = [weakSelef.dataArray objectAtIndex:self.shareSelectIndex];
-                PublishPhotosCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotosCtr");
+                AlbumPhotosModel * model = [weakSelef.dataArray objectAtIndex:self.shareSelectIndex];
+                PublishPhotoCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotoCtr");
+                /*
                 pulish.is_copy = YES;
                 pulish.photoTitleText = model.title;
                 pulish.imageCopy = [[NSMutableArray alloc] initWithArray:model.images];
-                
+                */
                 [weakSelef.navigationController pushViewController:pulish animated:YES];
             }else{
                 

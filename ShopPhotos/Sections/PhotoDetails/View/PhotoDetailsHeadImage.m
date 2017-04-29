@@ -40,10 +40,17 @@
     [self.settingBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.editView addSubview:self.settingBtn];
     
+    UIView *seperateView = [[UIView alloc] init];
+    [seperateView setBackgroundColor:[UIColor whiteColor]];
+    [self.editView addSubview:seperateView];
+    seperateView.sd_layout
+    .leftEqualToView(self.editView)
+    .rightEqualToView(self.editView)
+    .centerYEqualToView(self.editView)
+    .heightIs(1);
+    
     self.deleteBtn = [UIButton buttonWithType:UIButtonTypeSystem];
     [self.deleteBtn setBackgroundImage:[UIImage imageNamed:@"btn_delete_w"] forState:UIControlStateNormal];
-//    [self.deleteBtn setTitle:@"删除" forState:UIControlStateNormal];
-//    [self.deleteBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.editView addSubview:self.deleteBtn];
     
     self.image.sd_layout

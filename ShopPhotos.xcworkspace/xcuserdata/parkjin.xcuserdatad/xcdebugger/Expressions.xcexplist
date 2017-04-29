@@ -3,32 +3,10 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "-[AFHTTPRequestSerializer requestBySerializingRequest:withParameters:error:]:AFURLRequestSerialization.m">
-      </ContextState>
-      <ContextState
-         contextName = "-[LoginCtr loginLoadNetworkData:]:LoginCtr.m">
+         contextName = "-[BaseViewCtr viewDidLoad]:BaseViewCtr.m">
          <PersistentStrings>
             <PersistentString
-               value = "self.congfing.login">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "-[PublishPhotoCtr drawImages]:PublishPhotoCtr.m">
-         <PersistentStrings>
-            <PersistentString
-               value = "self.imageArray.count">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "+[HTTPRequest Manager:Method:dic:requestSucced:requestfailure:]:HTTPRequest.m">
-      </ContextState>
-      <ContextState
-         contextName = "-[HomePageCtr loadNetworkData:]:HomePageCtr.m">
-         <PersistentStrings>
-            <PersistentString
-               value = "self.congfing.getUserInfo">
+               value = "[self getValueWithKey:CacheUserModel]">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -41,6 +19,33 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "-[HomePageCtr loadNetworkData:]:HomePageCtr.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.congfing.getUserInfo">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "__33-[PublishVideo postImageToQiniu:]_block_invoke.113:PublishVideo.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.postData">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "+[HTTPRequest Manager:Method:dic:requestSucced:requestfailure:]:HTTPRequest.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[LoginCtr loginLoadNetworkData:]:LoginCtr.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.congfing.login">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "-[PublishTask createPhoto1]:PublishTask.m">
          <PersistentStrings>
             <PersistentString
@@ -49,12 +54,21 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "-[BaseViewCtr viewDidLoad]:BaseViewCtr.m">
+         contextName = "__29-[PublishVideoCtr saveVideo:]_block_invoke_2:PublishVideoCtr.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[PublishVideo postImageToQiniu:]:PublishVideo.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[PublishPhotoCtr drawImages]:PublishPhotoCtr.m">
          <PersistentStrings>
             <PersistentString
-               value = "[self getValueWithKey:CacheUserModel]">
+               value = "self.imageArray.count">
             </PersistentString>
          </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "__29-[PublishVideoCtr saveVideo:]_block_invoke:PublishVideoCtr.m">
       </ContextState>
       <ContextState
          contextName = "-[PublishPhotoCtr selectClass]:PublishPhotoCtr.m">
@@ -63,6 +77,15 @@
                value = "self.photosUserID">
             </PersistentString>
          </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[AFHTTPRequestSerializer requestBySerializingRequest:withParameters:error:]:AFURLRequestSerialization.m">
+      </ContextState>
+      <ContextState
+         contextName = "__33-[PublishVideo postImageToQiniu:]_block_invoke:PublishVideo.m">
+      </ContextState>
+      <ContextState
+         contextName = "__28-[PublishVideo createVideo1]_block_invoke:PublishVideo.m">
       </ContextState>
    </ContextStates>
 </VariablesViewState>

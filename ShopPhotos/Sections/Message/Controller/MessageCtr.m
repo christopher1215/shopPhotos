@@ -265,6 +265,9 @@
             detailMsg.avatar = model.avatar;
             detailMsg.type = model.type;
             detailMsg.date = model.date;
+            detailMsg.reply = model.reply;
+            detailMsg.allow = model.allow;
+            detailMsg.noticeId = model.itemID;
             [self.navigationController pushViewController:detailMsg animated:YES];
         }
     }

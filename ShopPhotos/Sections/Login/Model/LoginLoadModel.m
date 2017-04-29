@@ -24,6 +24,7 @@
             self.authToken = [RequestErrorGrab getStringwitKey:@"authToken" toTarget:result];
             [self setValue:self.authToken WithKey:@"authToken"];
             self.imToken = [RequestErrorGrab getStringwitKey:@"imToken" toTarget:result];
+            [self setValue:self.authToken WithKey:@"imToken"];
             NSDictionary * user = [RequestErrorGrab getDicwitKey:@"user" toTarget:result];
             if(user && user.count > 0){
                 UserModel * userModel = [[UserModel alloc] init];

@@ -9,6 +9,12 @@
 #import "ChargeViewController.h"
 
 @interface ChargeViewController ()
+@property (weak, nonatomic) IBOutlet UIView *back;
+@property (weak, nonatomic) IBOutlet UIView *wechatPay;
+@property (weak, nonatomic) IBOutlet UIView *alipay;
+@property (weak, nonatomic) IBOutlet UIImageView *ico_wechat;
+@property (weak, nonatomic) IBOutlet UIImageView *ico_alipay;
+@property (strong, nonatomic) NSString *payMethod;
 
 @end
 
@@ -17,6 +23,27 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    [self.back addTarget:self action:@selector(backSelected)];
+    [self.wechatPay addTarget:self action:@selector(wechatSelected)];
+    [self.alipay addTarget:self action:@selector(aliSelected)];
+}
+- (void)backSelected{
+    
+    [self.navigationController popViewControllerAnimated:YES];
+    
+}
+- (void)wechatSelected{
+    
+    [self.ico_alipay setImage:[UIImage imageNamed:@"icon_unchecked.png"]];
+    [self.ico_wechat setImage:[UIImage imageNamed:@"icon_checked.png"]];
+    _payMethod = @"wechat";
+    
+}
+- (void)aliSelected{
+    
+    [self.ico_alipay setImage:[UIImage imageNamed:@"icon_checked.png"]];
+    [self.ico_wechat setImage:[UIImage imageNamed:@"icon_unchecked.png"]];
+    _payMethod = @"alipay";
 }
 
 - (void)didReceiveMemoryWarning {

@@ -60,7 +60,7 @@
     self.model = model;
     [self.dataArray removeAllObjects];
     
-    [self.userIocn sd_setImageWithURL:[NSURL URLWithString:model.icon]];
+    [self.userIocn sd_setImageWithURL:[NSURL URLWithString:model.avatar]];
     
     [self.userID setText:[NSString stringWithFormat:@"有图号:%@",model.uid]];
     
@@ -74,7 +74,7 @@
     model2.icon = @"drawer_user";
     
     UserInfoDrawerModel * model3 = [[UserInfoDrawerModel alloc] init];
-    model3.name = model.weixin;
+    model3.name = model.wechat;
     model3.icon = @"drawer_chat";
     model3.chat = YES;
     

@@ -37,18 +37,19 @@
     [self addSubview:self.alert];
     
     self.alertWidth = 120;
-    self.alertHeight = 90;
+    self.alertHeight = 135;
     
     NSArray * titleArray;
     if(mode == OptionModel){
-//        titleArray = @[@"上传相册",@"扫一扫",@"添加用户"];
-        titleArray = @[@"上传相册",@"添加用户"];
-        [self.alert setBackgroundColor:ColorHexA(0Xffffff,0.7)];
+        titleArray = @[@"上传相册",@"添加用户",@"扫一扫"];
+        //        titleArray = @[@"上传相册",@"添加用户"];
+        [self.alert setBackgroundColor:ColorHexA(0X333333,0.9)];
         self.alert.sd_layout
         .rightSpaceToView(self,10)
         .topSpaceToView(self,64)
         .widthIs(self.alertWidth)
         .heightIs(self.alertHeight);
+        
     }else if(mode == PhotosModel){
         titleArray = @[@"编辑",@"上传相册"];
         self.alert.sd_layout
@@ -82,7 +83,7 @@
         [button setTitle:[titleArray objectAtIndex:index] forState:UIControlStateNormal];
         [button.titleLabel setFont:[UIFont systemFontOfSize:15]];
         if(mode == OptionModel){
-            [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+            [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         }
         else {
             [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
@@ -99,7 +100,7 @@
         if(index != titleArray.count - 1){
             UIView * line = [[UIView alloc] init];
             if(mode == OptionModel){
-                [line setBackgroundColor:[UIColor blackColor]];
+                [line setBackgroundColor:ColorHex(0Xcccccc)];
             }
             else {
                 [line setBackgroundColor:[UIColor whiteColor]];
@@ -107,20 +108,20 @@
             [self.alert addSubview:line];
             
             line.sd_layout
-            .leftEqualToView(self.alert)
-            .rightEqualToView(self.alert)
+            .leftSpaceToView(self.alert,8)
+            .rightSpaceToView(self.alert,8)
             .topSpaceToView(self.alert,index*40+49.5)
             .heightIs(0.5);
-        }   
+        }
     }
 }
 
 - (void)setStyle{
-
+    
     CGFloat viewWidth = _alertWidth;
     CGFloat viewHeight = _alertHeight;
     CGPoint point1,point2,point3,point4,point5,point6,point7,point8,point9,point10,point11,center1,center2,center3,center4;
-
+    
     int cornerRadius = 5;
     int tHeight = 5;
     int tWidth = 10;
@@ -217,13 +218,13 @@
 
 - (void)itemSelected:(UIButton *)button{
     
-//    if(self.mode == PhotosClassModel){
-//        if([button.currentTitle isEqualToString:@"编辑"]){
-//            [button setTitle:@"取消" forState:UIControlStateNormal];
-//        }else if([button.currentTitle isEqualToString:@"取消"]){
-//            [button setTitle:@"编辑" forState:UIControlStateNormal];
-//        }
-//    }
+    //    if(self.mode == PhotosClassModel){
+    //        if([button.currentTitle isEqualToString:@"编辑"]){
+    //            [button setTitle:@"取消" forState:UIControlStateNormal];
+    //        }else if([button.currentTitle isEqualToString:@"取消"]){
+    //            [button setTitle:@"编辑" forState:UIControlStateNormal];
+    //        }
+    //    }
     
     if(self.delegate && [self.delegate respondsToSelector:@selector(moreAlertSelected:)]){
         [self.delegate moreAlertSelected:button.tag];

@@ -12,6 +12,7 @@
 
 @property (strong, nonatomic) UIImageView * icon;
 @property (strong, nonatomic) UILabel * text;
+@property (strong, nonatomic) UILabel * badge;
 @property (strong, nonatomic) TabBarModel * model;
 
 @end
@@ -45,6 +46,15 @@
     [self.text setFont:Font(11)];
     [self addSubview:self.text];
     
+    self.badge = [[UILabel alloc] init];
+    [self.badge setTextAlignment:NSTextAlignmentCenter];
+    [self.badge setTextColor:[UIColor whiteColor]];
+    [self.badge setBackgroundColor:[UIColor redColor]];
+    [self.badge setFont:Font(8)];
+    self.badge.cornerRadius = 6;
+    [self addSubview:self.badge];
+    [self.badge setHidden:YES];
+    
     self.icon.sd_layout
     .leftEqualToView(self)
     .topSpaceToView(self,7.5)
@@ -57,6 +67,12 @@
     .bottomEqualToView(self)
     .topSpaceToView(self.icon,0);
     
+    self.badge.sd_layout
+    .rightSpaceToView(self,15)
+    .widthIs(15)
+    .heightIs(12)
+    .topSpaceToView(self,5);
+
     [self setStyleDefault];
 }
 
@@ -72,5 +88,13 @@
     [self.icon setImage:[UIImage imageNamed:self.model.defaultImage]];
 //    [self.text setTextColor:ColorHex(0X4d4d4d)];
     
+}
+- (void)setUnreadCountBadge:(int)unreadCount{
+    if (unreadCount <= 0) {
+        [self.badge setHidden:YES];
+    } else {
+        [self.badge setHidden:NO];
+        [self.badge setText:unreadCount > 99 ? @"99+" : [NSString stringWithFormat:@"%d", unreadCount]];
+    }
 }
 @end

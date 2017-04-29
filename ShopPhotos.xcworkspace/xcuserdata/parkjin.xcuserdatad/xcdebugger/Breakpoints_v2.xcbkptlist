@@ -9,22 +9,6 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ShopPhotos/Sections/AlbumRecommend/Controller/AlbumRecommendCtr.m"
-            timestampString = "513677175.88277"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "205"
-            endingLineNumber = "205"
-            landmarkName = "-searchSelected"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "ShopPhotos/Sections/PublishPhotos/Controller/PublishPhotoCtr.m"
             timestampString = "514105028.116544"
             startingColumnNumber = "9223372036854775807"
@@ -33,70 +17,6 @@
             endingLineNumber = "291"
             landmarkName = "-photoDetailsHeadAddImage:select:"
             landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ShopPhotos/Sections/Album/Controller/AlbumPhotosCtr.m"
-            timestampString = "514610706.967352"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "382"
-            endingLineNumber = "382"
-            landmarkName = "-loadNetworkMoreData"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ShopPhotos/Sections/Album/Controller/AlbumPhotosCtr.m"
-            timestampString = "514610754.431486"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "377"
-            endingLineNumber = "377"
-            landmarkName = "-loadNetworkMoreData"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[AlbumPhotosCtr loadNetworkMoreData]"
-                  moduleName = "ShopPhotos"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/parkjin/Documents/Work/taskcity/shopingphoto/ShopPhotos/0424-shop/ShopPhotos/Sections/Album/Controller/AlbumPhotosCtr.m"
-                  timestampString = "514716349.649351"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "377"
-                  endingLineNumber = "377"
-                  offsetFromSymbolStart = "379">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "__37-[AlbumPhotosCtr loadNetworkMoreData]_block_invoke"
-                  moduleName = "ShopPhotos"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/parkjin/Documents/Work/taskcity/shopingphoto/ShopPhotos/0424-shop/ShopPhotos/Sections/Album/Controller/AlbumPhotosCtr.m"
-                  timestampString = "514716349.651585"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "378"
-                  endingLineNumber = "378"
-                  offsetFromSymbolStart = "54">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -121,13 +41,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ShopPhotos/Sections/AlbumClass/Controller/AlbumClassCtr.m"
-            timestampString = "514715270.115102"
+            filePath = "ShopPhotos/Sections/PublishMedia/View/VideoRecordView.m"
+            timestampString = "514961281.36176"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "441"
-            endingLineNumber = "441"
-            landmarkName = "-loadNetworkData"
+            startingLineNumber = "266"
+            endingLineNumber = "266"
+            landmarkName = "-configureSession"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

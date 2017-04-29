@@ -17,8 +17,12 @@
 #import "UserInfoModel.h"
 #import "PersonalHomeCtr.h"
 #import "PhotoDetailsCtr.h"
+#import "ErrMsgViewController.h"
 
-@interface QRCodeScanCtr ()<ScanNavigationDelegate,AVCaptureMetadataOutputObjectsDelegate,UINavigationControllerDelegate, UIImagePickerControllerDelegate>
+@interface QRCodeScanCtr ()<ScanNavigationDelegate,AVCaptureMetadataOutputObjectsDelegate,UINavigationControllerDelegate, UIImagePickerControllerDelegate>{
+    ErrMsgViewController *popupErrVC;
+
+}
 @property (strong, nonatomic) ScanOcclusionView * occlusion;
 @property (strong, nonatomic) ScanTipsView * tips;
 @property (strong, nonatomic) ScanLineView * line;
@@ -68,7 +72,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    popupErrVC = [[ErrMsgViewController alloc] initWithNibName:@"ErrMsgViewController" bundle:nil];
     [self stCreateView];
     
     [self checkScanCode];
@@ -329,38 +333,63 @@
 
     // 这里需要处理两种形式的结果： (1) http://www.uootu.com//uid (2)http://www.uootu.com//uid/photo/detail/id
     
-    if([result rangeOfString:@"uootu.com/"].length > 0){
-        NSRange range = [result rangeOfString:@"uootu.com/"];
-        result = [result substringFromIndex:range.location+range.length];
-        NSLog(@"result -- %@",result);
-    }else{
-        [self startScan];
-        [self showToast:@"抱歉! 内容不识别"];
-        return;
-    }
-    
-    NSRange range = [result rangeOfString:@"/photo/detail/"];
-    if(range.length > 0){
-        // 相册详情
-        NSString * uid =  [result substringToIndex:range.location];
-        NSString * photoID = [result substringFromIndex:range.location+range.length];
-        if(!uid) uid = @"";
-        if(!photoID) photoID = @"";
-        if([uid isEqualToString:self.photosUserID]){
-            [self startScan];
-            [self showToast:@"不能关注自己"];
-            return;
+//    if([result rangeOfString:@"uootu.com/"].length > 0){
+//        NSRange range = [result rangeOfString:@"uootu.com/"];
+//        result = [result substringFromIndex:range.location+range.length];
+//        NSLog(@"result -- %@",result);
+//    }else{
+//        [self startScan];
+//        [self showToast:@"抱歉! 内容不识别"];
+//        return;
+//    }
+//    
+//    NSRange range = [result rangeOfString:@"/photo/detail/"];
+//    if(range.length > 0){
+//        // 相册详情
+//        NSString * uid =  [result substringToIndex:range.location];
+//        NSString * photoID = [result substringFromIndex:range.location+range.length];
+//        if(!uid) uid = @"";
+//        if(!photoID) photoID = @"";
+//        if([uid isEqualToString:self.photosUserID]){
+//            [self startScan];
+//            [self showToast:@"不能关注自己"];
+//            return;
+//        }
+//        [self loadPhotoData:@{@"uid":uid,@"photoID":photoID}];
+//        
+//    }else{
+//        if([result isEqualToString:self.photosUserID]){
+//            [self startScan];
+//            [self showToast:@"不能关注自己"];
+//            return;
+//        }
+//        [self loadUserData:@{@"uid":result}];
+//    }
+    [self showLoad];
+    NSDictionary *data = @{@"uid":result};
+    __weak __typeof(self)weakSelef = self;
+    [HTTPRequest requestPOSTUrl:[NSString stringWithFormat:@"%@%@",self.congfing.concernUser,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+        [weakSelef closeLoad];
+        BaseModel * model = [[BaseModel alloc] init];
+        [model analyticInterface:responseObject];
+        if(model.status == 0){
+            [popupErrVC showInView:self animated:YES type:@"success" message:@"关注成功"];
+            //[weakSelef showToast:@"关注成功"];
+            //                [self.navigationController popViewControllerAnimated:YES];
+            
+        }else{
+            
+            [popupErrVC showInView:self animated:YES type:@"error" message:model.message];
+            //            [weakSelef showToast:model.message];
         }
-        [self loadPhotoData:@{@"uid":uid,@"photoID":photoID}];
-        
-    }else{
-        if([result isEqualToString:self.photosUserID]){
-            [self startScan];
-            [self showToast:@"不能关注自己"];
-            return;
-        }
-        [self loadUserData:@{@"uid":result}];
-    }
+    } failure:^(NSError * error){
+        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef closeLoad];
+    }];
+
+}
+- (void)closePopupErr {
+    [popupErrVC removeAnimate];
 }
 
 -(void)turnOffLed {

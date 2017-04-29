@@ -19,7 +19,6 @@
 
 @implementation PhotoDetailsHead
 
-
 - (CGFloat)setStyle:(NSArray *)imageArray {
     for(UIView * subView in self.subviews){
         [subView removeFromSuperview];
@@ -58,8 +57,8 @@
             image.tag = index;
             [image setImageCover:imageModel.isCover];
             [image setEditStyle:imageModel.edit];
-//            [image.deleteBtn addTarget:self action:@selector(deleteSelected:) forControlEvents:UIControlEventTouchUpInside];
-//            [image.settingBtn addTarget:self action:@selector(settingSelected:) forControlEvents:UIControlEventTouchUpInside];
+            [image.deleteBtn addTarget:self action:@selector(deleteSelected:) forControlEvents:UIControlEventTouchUpInside];
+            [image.settingBtn addTarget:self action:@selector(settingSelected:) forControlEvents:UIControlEventTouchUpInside];
             [image.image addTarget:self action:@selector(imageSelected:)];
            
             index++;

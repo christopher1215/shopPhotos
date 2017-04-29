@@ -14,10 +14,13 @@
 #import "CommonDefine.h"
 #import "TabBarView.h"
 #import "PublishPhotoCtr.h"
+#import "PublishVideoCtr.h"
 #import "PublishSelect.h"
 
 @interface TabBarCtr ()<TabBarViewDelegate>
-
+{
+    TabBarView * tabbarView;
+}
 @end
 
 @implementation TabBarCtr
@@ -26,6 +29,9 @@
     [super viewDidAppear:animated];
     if ([self.navigationController respondsToSelector:@selector(interactivePopGestureRecognizer)]) {
         self.navigationController.interactivePopGestureRecognizer.enabled = NO;
+    }
+    if (tabbarView) {
+        [tabbarView setUnreadCountBadge:nil];
     }
 }
 
@@ -66,7 +72,7 @@
     
     [self setViewControllers:@[home,dynamic,attention,user]];
     
-    TabBarView * tabbarView = [[TabBarView alloc] init];
+    tabbarView = [[TabBarView alloc] init];
     tabbarView.delegate = self;
     [self.view addSubview:tabbarView];
     
@@ -107,6 +113,8 @@
             
             [actionSheet addAction:[UIAlertAction actionWithTitle:@"录制短视频" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
                 // OK button tapped.
+                PublishVideoCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishVideoCtr");
+                [self.navigationController pushViewController:pulish animated:YES];
                 
                 [self dismissViewControllerAnimated:YES completion:^{
                 }];
@@ -116,8 +124,12 @@
         }
             break;
         case 3:
-            self.selectedIndex = 2;
+        {
+            //self.selectedIndex = 2;
+            AttentionCtr * attention = GETALONESTORYBOARDPAGE(@"AttentionCtr");
+            [self.navigationController pushViewController:attention animated:YES];
             break;
+        }
         case 4:
             self.selectedIndex = 3;
             break;

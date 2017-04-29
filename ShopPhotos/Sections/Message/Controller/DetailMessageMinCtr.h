@@ -14,5 +14,8 @@
 @property (strong, nonatomic) NSString *date;
 @property (strong, nonatomic) NSString *avatar;
 @property (strong, nonatomic) NSString *type;
+@property (assign, nonatomic) BOOL reply;
+@property (assign, nonatomic) BOOL allow;
+@property (assign, nonatomic) int noticeId;
 
 @end

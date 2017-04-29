@@ -10,16 +10,18 @@
 
 @interface UserInfoModel : BaseModel
 
-@property (strong, nonatomic) NSString * icon;
-@property (strong, nonatomic) NSString * name;
-@property (strong, nonatomic) NSString * qq;
-@property (strong, nonatomic) NSString * weixin;
-@property (strong, nonatomic) NSString * tel;
-@property (strong, nonatomic) NSString * signature;
-@property (strong, nonatomic) NSString * qq_qrCode;
-@property (strong, nonatomic) NSString * wx_qrCode;
 @property (strong, nonatomic) NSString * uid;
+@property (strong, nonatomic) NSString * name;
+@property (strong, nonatomic) NSString * signature;
+@property (strong, nonatomic) NSString * qq;
+@property (strong, nonatomic) NSString * wechat;
+@property (strong, nonatomic) NSString * phone;
 @property (strong, nonatomic) NSString * address;
-@property (strong, nonatomic) NSDictionary * config;
+@property (strong, nonatomic) NSString * avatar;
+@property (strong, nonatomic) NSString * bg_image;
+@property (strong, nonatomic) NSString * name_abbr;
+@property (strong, nonatomic) NSString * email;
+@property (strong, nonatomic) NSDictionary * settings;
+- (void)analyticInterface:(NSDictionary *)data;
 
 @end

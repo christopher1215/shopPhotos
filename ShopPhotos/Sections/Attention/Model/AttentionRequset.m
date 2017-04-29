@@ -19,18 +19,20 @@
         self.message = [RequestErrorGrab getStringwitKey:@"message" toTarget:data];
         if(self.status)return;
         self.dataArray = [NSMutableArray array];
-        NSArray * json = [RequestErrorGrab getArrwitKey:@"data" toTarget:data];
+        NSDictionary * datas = [RequestErrorGrab getDicwitKey:@"data" toTarget:data];
+        NSArray * json = [RequestErrorGrab getArrwitKey:@"users" toTarget:datas];
         if(json && json.count > 0){
             
             for(NSDictionary * attention in json){
                 
                 AttentionModel  * model = [[AttentionModel alloc] init];
                 model.date = [RequestErrorGrab getStringwitKey:@"date" toTarget:attention];
-                model.icon = [RequestErrorGrab getStringwitKey:@"icon" toTarget:attention];
+                model.icon = [RequestErrorGrab getStringwitKey:@"avatar" toTarget:attention];
                 model.itmeID = [RequestErrorGrab getStringwitKey:@"id" toTarget:attention];
                 model.name = [RequestErrorGrab getStringwitKey:@"name" toTarget:attention];
                 model.qq = [RequestErrorGrab getStringwitKey:@"qq" toTarget:attention];
                 model.star = [RequestErrorGrab getBooLwitKey:@"star" toTarget:attention];
+                model.concerned = [RequestErrorGrab getBooLwitKey:@"concerned" toTarget:attention];
                 model.tel = [RequestErrorGrab getStringwitKey:@"tel" toTarget:attention];
                 model.twoWay = [RequestErrorGrab getBooLwitKey:@"twoWay" toTarget:attention];
                 model.uid = [RequestErrorGrab getStringwitKey:@"uid" toTarget:attention];

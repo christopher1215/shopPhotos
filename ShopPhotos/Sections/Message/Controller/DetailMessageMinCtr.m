@@ -17,6 +17,15 @@
 @property (weak, nonatomic) IBOutlet UIView *contentView;
 @property (weak, nonatomic) IBOutlet UILabel *lblContent;
 
+@property (weak, nonatomic) IBOutlet UILabel *mainTitleSec;
+@property (weak, nonatomic) IBOutlet UIImageView *imgAvatarSec;
+@property (weak, nonatomic) IBOutlet UILabel *lblDateSec;
+@property (weak, nonatomic) IBOutlet UIView *contentViewSec;
+@property (weak, nonatomic) IBOutlet UILabel *lblContentSec;
+@property (weak, nonatomic) IBOutlet UILabel *lblAllowState;
+@property (weak, nonatomic) IBOutlet UIButton *btnDeny;
+@property (weak, nonatomic) IBOutlet UIButton *btnAllow;
+
 @end
 
 @implementation DetailMessageMinCtr
@@ -29,13 +38,69 @@
 - (void)setup{
     [self.back addTarget:self action:@selector(backSelected)];
     self.mainTitle.text = self.atitle;
+    self.mainTitleSec.text = self.atitle;
     self.lblDate.text = self.date;
     [self.imgAvatar sd_setImageWithURL:[NSURL URLWithString:self.avatar] placeholderImage:[UIImage imageNamed:@"default-avatar.png"]];
     self.imgAvatar.cornerRadius = 25;
     self.contentView.cornerRadius = 15;
     [_lblContent sizeToFit];
     self.lblContent.text = self.content;
+
+    [self.imgAvatarSec sd_setImageWithURL:[NSURL URLWithString:self.avatar] placeholderImage:[UIImage imageNamed:@"default-avatar.png"]];
+    self.imgAvatarSec.cornerRadius = 25;
+    self.contentViewSec.cornerRadius = 15;
+    [_lblContentSec sizeToFit];
+    self.lblContentSec.text = self.content;
+    [self setupReply];
 }
+- (void)setupReply{
+    if(self.reply){
+        [self.imgAvatarSec setHidden:NO];
+        [self.lblDateSec setHidden:NO];
+        [self.contentViewSec setHidden:NO];
+        if (self.allow) {
+            _lblAllowState.text = @"已同意";
+        } else {
+            _lblAllowState.text = @"已拒绝";
+        }
+        [_btnDeny setEnabled:NO];
+        [_btnAllow setEnabled:NO];
+    } else {
+        [self.imgAvatarSec setHidden:YES];
+        [self.lblDateSec setHidden:YES];
+        [self.contentViewSec setHidden:YES];
+        [_btnDeny setEnabled:YES];
+        [_btnAllow setEnabled:YES];
+    }
+
+}
+- (IBAction)onHandleCopyRequest:(id)sender {
+    UIButton *btn = sender;
+    NSDictionary * data = @{@"noticeId":[NSString stringWithFormat:@"%d",self.noticeId],
+                            @"allow":[NSString stringWithFormat:@"%ld",btn.tag]};
+    
+    [self showLoad];
+    __weak __typeof(self)weakSelef = self;
+    [HTTPRequest requestPUTUrl:[NSString stringWithFormat:@"%@%@",self.congfing.handleCopyRequest,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+        [weakSelef closeLoad];
+        NSLog(@"%@",responseObject);
+        BaseModel * model = [[BaseModel alloc] init];
+        [model analyticInterface:responseObject];
+        if(model.status == 0){
+            weakSelef.reply = YES;
+            weakSelef.allow = btn.tag == 1? YES: NO;
+            [weakSelef setupReply];
+        }else{
+            [weakSelef showToast:model.message];
+        }
+        
+    } failure:^(NSError *error){
+        [weakSelef closeLoad];
+        [weakSelef showToast:NETWORKTIPS];
+    }];
+    
+}
+
 #pragma mark - OnClick
 - (void)backSelected{
     [self.navigationController popViewControllerAnimated:YES];

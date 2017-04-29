@@ -10,6 +10,7 @@
 #import "ChargeViewController.h"
 
 @interface MypointViewController ()
+@property (weak, nonatomic) IBOutlet UIView *back;
 
 @end
 
@@ -18,8 +19,17 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    [self.back addTarget:self action:@selector(backSelected)];
 }
+- (void)backSelected{
+    
+    [self.navigationController popViewControllerAnimated:YES];
+    
+}
+
 - (IBAction)gotoExplain:(id)sender {
+}
+- (IBAction)onPay:(id)sender {
     ChargeViewController *vc=[[ChargeViewController alloc] initWithNibName:@"ChargeViewController" bundle:nil];
     [self.navigationController pushViewController:vc animated:YES];
 }

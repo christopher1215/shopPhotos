@@ -9,7 +9,8 @@
 #import "DynamicViewCell.h"
 #import <UIImageView+WebCache.h>
 #import "DynamicImagesModel.h"
-
+#import "AlbumPhotosModel.h"
+#import "PhotoImagesModel.h"
 
 @interface DynamicViewCell ()
 @property (strong, nonatomic) UIView * content;
@@ -193,14 +194,14 @@
 
 
 
-- (void)setModel:(DynamicModel *)model{
+- (void)setModel:(AlbumPhotosModel *)model{
     
     [self.icon sd_setImageWithURL:[NSURL URLWithString:[model.user objectForKey:@"icon"]]];
     self.icon.layer.cornerRadius = _icon.frame.size.width/2;
     self.icon.layer.masksToBounds = TRUE;
     
     [self.name setText:[model.user objectForKey:@"name"]];
-    [self.date setText:[NSString stringWithFormat:@"%@ 上传",model.date]];
+    [self.date setText:[NSString stringWithFormat:@"%@ 上传",model.dateDiff]];
     
     //NSString *
     /*
@@ -223,13 +224,47 @@
     self.text.text = model.title;
     // ,model.descriptionText
     [self.images setBackgroundColor:[UIColor whiteColor]];
-    [self showImages:model.images];
+    if ([model.type isEqualToString:@"photo"]) {
+        [self showImages:model.images];
+    }
+    else if ([model.type isEqualToString:@"video"]) {
+        [self showVideoCover:model.cover];
+    }
     
     if(self.icon.gestureRecognizers.count == 0){
         self.selectionStyle = UITableViewCellSelectionStyleNone;
         [self.icon addTarget:self action:@selector(iconSelected)];
         [self.share addTarget:self action:@selector(shareSelected)];
     }
+}
+
+- (void)showVideoCover:(NSString *)coverUrl {
+    for(UIView * view in self.images.subviews){
+        [view removeFromSuperview];
+    }
+    
+    UIImageView * image = [[UIImageView alloc] init];
+    [image setBackgroundColor:ColorHex(0Xeeeeee)];
+    [image setContentMode:UIViewContentModeScaleAspectFit];
+    image.tag = 100;
+    [self.images addSubview:image];
+    
+    [image sd_setImageWithURL:[NSURL URLWithString:coverUrl]];
+    image.layer.cornerRadius = 5;
+    image.layer.masksToBounds = TRUE;
+    image.sd_layout
+    .leftSpaceToView(self.images,0)
+    .topEqualToView(self.images)
+    .widthIs(100)
+    .heightIs(100);
+
+    UIButton *videoPlayButton = [[UIButton alloc] initWithFrame:CGRectMake(image.frame.size.width/4, image.frame.size.height/4, image.frame.size.width/2, image.frame.size.height/2)];
+    [image addSubview:videoPlayButton];
+    [videoPlayButton setBackgroundImage:[UIImage imageNamed:@"btn_movie"] forState:UIControlStateNormal];
+    videoPlayButton.sd_cornerRadius = [NSNumber numberWithDouble:5.0];
+    [videoPlayButton addTarget:self action:@selector(videoSelected)];
+    
+    [self.images setContentSize:CGSizeMake(110,0)];
 }
 
 - (void)showImages:(NSArray *)imageArray{
@@ -246,9 +281,9 @@
         image.tag = 100+index;
         [image addTarget:self action:@selector(imageSelected:)];
         [self.images addSubview:image];
-        DynamicImagesModel * model = [imageArray objectAtIndex:index];
+        NSDictionary * model = [imageArray objectAtIndex:index];
         
-        [image sd_setImageWithURL:[NSURL URLWithString:model.thumbnailUrl]];
+        [image sd_setImageWithURL:[NSURL URLWithString:[model objectForKey:@"thumbnailUrl"]]];
         image.layer.cornerRadius = 5;
         image.layer.masksToBounds = TRUE;
         image.sd_layout
@@ -276,6 +311,12 @@
 - (void)imageSelected:(UITapGestureRecognizer *)tap{
     if(self.delegate && [self.delegate respondsToSelector:@selector(cellImageSelected:TabelViewCellIndexPath:)]){
         [self.delegate cellImageSelected:tap.view.tag-100 TabelViewCellIndexPath:self.indexPath];
+    }
+}
+
+- (void)videoSelected {
+    if(self.delegate && [self.delegate respondsToSelector:@selector(cellImageSelected:TabelViewCellIndexPath:)]){
+        [self.delegate cellImageSelected:-1 TabelViewCellIndexPath:self.indexPath];
     }
 }
 

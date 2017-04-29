@@ -56,6 +56,7 @@
     model.classify = [RequestErrorGrab getDicwitKey:@"classify" toTarget:photo];
     model.subclass = [RequestErrorGrab getDicwitKey:@"subclass" toTarget:photo];
     model.images = [RequestErrorGrab getArrwitKey:@"images" toTarget:photo];
+    model.type = [RequestErrorGrab getStringwitKey:@"type" toTarget:photo];
     
     return model;
 }

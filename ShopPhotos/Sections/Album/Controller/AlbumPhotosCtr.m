@@ -15,7 +15,7 @@
 #import "PhotosEditView.h"
 #import "MoreAlert.h"
 #import "SearchAllCtr.h"
-#import "PublishPhotosCtr.h"
+#import "PublishPhotoCtr.h"
 
 #import "PhotoImagesRequset.h"
 #import "DynamicImagesModel.h"
@@ -88,7 +88,6 @@
     [self.edit addTarget:self action:@selector(addSelected)];
     [self.search addTarget:self action:@selector(searchSelected)];
 }
-
 
 - (void)createAutoLayout{
     
@@ -286,7 +285,7 @@
         [self.table updateLayout];
         
     }else if(indexPath == 1){
-        PublishPhotosCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotosCtr");
+        PublishPhotoCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotoCtr");
         [self.navigationController pushViewController:pulish animated:YES];
     }
 }
@@ -645,13 +644,13 @@
         if(model.status == 0){
             
             if(model.allow){
-                PublishPhotosCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotosCtr");
+                PublishPhotoCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotoCtr");
                 AlbumPhotosModel * albumModel = [self.dataArray objectAtIndex:self.itmeSelectedIndex];
-                
+                /*
                 pulish.is_copy = YES;
                 pulish.photoTitleText = albumModel.title;
                 pulish.photoTitleText = @"";
-                pulish.imageCopy = [[NSMutableArray alloc] initWithArray:self.imageArray];
+                pulish.imageCopy = [[NSMutableArray alloc] initWithArray:self.imageArray];*/
                 [weakSelef.navigationController pushViewController:pulish animated:YES];
             }else{
                 

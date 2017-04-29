@@ -23,7 +23,8 @@
 
 
 @interface SearchAllCtr ()<UICollectionViewDelegate,UICollectionViewDataSource,UITextFieldDelegate,UIImagePickerControllerDelegate, UINavigationControllerDelegate,AttentionPhotoSearchCellDelegate,TOCropViewControllerDelegate,PhotosControllerDelegate,TZImagePickerControllerDelegate>
-@property (weak, nonatomic) IBOutlet UIView *back;
+@property (weak, nonatomic) IBOutlet UIView *titleBackground;
+@property (weak, nonatomic) IBOutlet UIButton *back;
 @property (weak, nonatomic) IBOutlet UIButton *search;
 @property (weak, nonatomic) IBOutlet UIImageView *image;
 @property (weak, nonatomic) IBOutlet UITextField *searchText;
@@ -69,7 +70,7 @@
 - (void)setup{
     
     if(!self.uid)self.uid = self.photosUserID;
-    
+    self.titleBackground.cornerRadius = 5;
     [self.back addTarget:self action:@selector(backSelected)];
     self.searchText.delegate = self;
     [self.search addTarget:self action:@selector(searchSelected) forControlEvents:UIControlEventTouchUpInside];
@@ -130,6 +131,13 @@
     return images;
 }
 
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    if (textField == self.searchText) {
+        [self searchSelected];
+        return NO;
+    }
+    return YES;
+}
 #pragma mark - OnClick
 - (void)backSelected{
     [self.navigationController popViewControllerAnimated:YES];
@@ -532,9 +540,9 @@
 - (void)loadSearchData{
     
     [self showLoad];
-    NSDictionary * data = @{@"keyWord":self.searchText.text};
+    NSDictionary * data = @{@"keyWord":self.searchText.text, @"limit":@"20"};
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.searchSummary parametric:data succed:^(id responseObject){
+    [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",self.congfing.advancedSearch,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
         [weakSelef closeLoad];
         SearchAllRequset * requset = [[SearchAllRequset alloc] init];
         [requset analyticInterface:responseObject];

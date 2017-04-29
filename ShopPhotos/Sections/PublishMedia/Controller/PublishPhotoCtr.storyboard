@@ -37,7 +37,7 @@
                                             <constraint firstAttribute="height" constant="15" id="MV4-h7-IKt"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
-                                        <state key="normal" title="上传">
+                                        <state key="normal" title="完成">
                                             <color key="titleColor" red="0.084288209769999997" green="0.58745339090000004" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
                                     </button>

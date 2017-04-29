@@ -369,7 +369,6 @@
 }
 
 //- (void)albumClassTableHeadSelectType:(NSInteger)type selectedPath:(NSInteger)section{}
-
 - (void)albumClassTableHeadSelectCheck:(BOOL)isChecked selectedPath:(NSInteger)index {
     if (_isSubClass) {
         AlbumClassTableSubModel *subModel = [self.dataArray objectAtIndex:index];

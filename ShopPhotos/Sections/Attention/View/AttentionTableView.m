@@ -53,6 +53,9 @@
     self.search.font = Font(13);
     self.search.delegate = self;
     self.search.keyboardType = UIKeyboardTypeWebSearch;
+    [self.search setBackgroundColor:[UIColor whiteColor]];
+    self.search.borderStyle = UITextBorderStyleRoundedRect;
+    [self.search setTextAlignment:NSTextAlignmentCenter];
     [searchView addSubview:self.search];
     
     self.table = [[UITableView alloc] init];
@@ -160,14 +163,14 @@
 
 #pragma mark - UITableViewDelegate
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    return 60;
+    return 70;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [self.search resignFirstResponder];
     AttentionModel * model = [self.dataArray objectAtIndex:indexPath.row];
-    if(self.delegate && [self.delegate respondsToSelector:@selector(attentionTableSelect: WithTwoWay:)]){
-        [self.delegate attentionTableSelect:model.uid WithTwoWay:model.twoWay];
+    if(self.delegate && [self.delegate respondsToSelector:@selector(attentionTableSelect: WithName: WithTwoWay:)]){
+        [self.delegate attentionTableSelect:model.uid WithName:model.name WithTwoWay:model.twoWay];
     }
 }
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView{
@@ -181,6 +184,15 @@
     
     if(self.delegate && [self.delegate respondsToSelector:@selector(attentionSelected:)]){
         [self.delegate attentionSelected:model];
+    }
+    
+}
+- (void)concernSelected:(NSIndexPath *)indexPath{
+    [self.search resignFirstResponder];
+    AttentionModel * model = [self.dataArray objectAtIndex:indexPath.row];
+    
+    if(self.delegate && [self.delegate respondsToSelector:@selector(concernSelected:)]){
+        [self.delegate concernSelected:model];
     }
     
 }

@@ -11,8 +11,9 @@
 
 @protocol AttentionTableViewDelegate  <NSObject>
 
-- (void)attentionTableSelect:(NSString *)uid WithTwoWay:(BOOL)twoWay;
+- (void)attentionTableSelect:(NSString *)uid WithName:(NSString *)name WithTwoWay:(BOOL)twoWay;
 - (void)attentionSelected:(AttentionModel *)model;
+- (void)concernSelected:(AttentionModel *)model;
 
 @end
 

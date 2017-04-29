@@ -14,6 +14,7 @@
 @protocol AttentionTableCellDelegate  <NSObject>
 
 - (void)attentionSelected:(NSIndexPath *)indexPath;
+- (void)concernSelected:(NSIndexPath *)indexPath;
 
 @end
 

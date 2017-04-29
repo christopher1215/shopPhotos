@@ -11,6 +11,7 @@
 @interface PersonalHomeCtr : BaseViewCtr
 
 @property (strong, nonatomic) NSString * uid;
+@property (strong, nonatomic) NSString * username;
 @property (assign, nonatomic) BOOL twoWay;
 @property (assign, nonatomic) BOOL caan;
 

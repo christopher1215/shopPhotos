@@ -19,7 +19,7 @@
     return self;
 }
 
-- (void)creteAutoLayout:(BOOL) isCheckBox selected:(BOOL) isChecked{
+- (void)creteAutoLayout:(BOOL) isCheckBox selected:(BOOL) isChecked {
     [self setBackgroundColor:[UIColor whiteColor]];
     _isChecked = isChecked;
     

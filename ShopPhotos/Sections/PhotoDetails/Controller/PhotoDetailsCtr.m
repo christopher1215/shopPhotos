@@ -281,88 +281,6 @@
     .widthIs(15)
     .heightIs(20);
 
-// editView
-    /*
-    _editView = [[UIView alloc]init];
-    [self.content addSubview:_editView];
-    _editView.sd_layout
-    .topEqualToView(_photoTitle)
-    .leftEqualToView(_content)
-    .rightEqualToView(_content)
-    .heightIs(300);
-    [_editView setHidden:YES];
-    
-    UIButton * btnCancel = [[UIButton alloc]init];
-    [_editView addSubview:btnCancel];
-    [btnCancel addTarget:self action:@selector(clearPhotoTitle)];
-    [btnCancel setBackgroundImage:[UIImage imageNamed:@"btn_close_grey"] forState:UIControlStateNormal];
-    btnCancel.sd_layout
-    .rightSpaceToView(_editView,15)
-    .topSpaceToView(_editView,10)
-    .widthIs(16)
-    .heightIs(16);
-    
-    UIView *eline1 = [[UIView alloc]init];
-    [eline1 setBackgroundColor:ColorHex(0xebebeb)];
-    [_editView addSubview:eline1];
-    eline1.sd_layout
-    .leftEqualToView(_editView)
-    .rightEqualToView(_editView)
-    .topEqualToView(_editView)
-    .heightIs(10);
-
-    self.reamrksText = [[UILabel alloc] init];
-    [self.reamrksText setText:@"备注:"];
-    [self.reamrksText setTextColor:ColorHex(0xebebeb)];
-    [self.reamrksText setFont:Font(15)];
-    [self.remarksView addSubview:self.reamrksText];
-    self.reamrksText.sd_layout
-    .leftSpaceToView(self.remarksView,2)
-    .topSpaceToView(self.remarksView,3)
-    .widthIs(40)
-    .heightIs(30);
-    
-    self.remarksContent = [[UITextView alloc] init];
-    self.remarksContent.scrollEnabled = NO;
-    self.remarksContent.editable = NO;
-    self.remarksContent.delegate = self;
-    self.remarksContent.contentInset = UIEdgeInsetsMake(2,0,2,0);
-    [self.remarksContent setBackgroundColor:[UIColor clearColor]];
-    [self.remarksContent setFont:Font(15)];
-    [self.remarksContent setTextColor:[UIColor darkGrayColor]];
-    [self.remarksView addSubview:self.remarksContent];
-    self.remarksContent.sd_layout
-    .leftSpaceToView(self.reamrksText,0)
-    .topSpaceToView(self.remarksView,0)
-    .rightSpaceToView(self.remarksView,0)
-    .heightIs(50);
-    
-    UIView *eline2 = [[UIView alloc]init];
-    [eline2 setBackgroundColor:ColorHex(0xebebeb)];
-    [_editView addSubview:eline2];
-    eline2.sd_layout
-    .leftSpaceToView(_editView,Clearance)
-    .rightSpaceToView(_editView,Clearance)
-    .topSpaceToView(_editView,Clearance)
-    .heightIs(1);
-    
-    UILabel *lab = [[UILabel alloc] init];
-    [lab setFont:Font(19)];
-    [self.share setText:@"..."];
-    [self.share addTarget:self action:@selector(shareViewSelected)];
-    self.share.textAlignment = NSTextAlignmentLeft;
-    [self.photoClass addSubview:self.share];
-    self.share.sd_layout
-    .rightSpaceToView(self.photoClass,0)
-    .topSpaceToView(self.photoClass,10)
-    .widthIs(15)
-    .heightIs(20);
-    
-    
-    
-    
-    */
-    
     self.foot = [[PhotoDetailsFooter alloc] init];
     self.foot.delegate = self;
     [self.content addSubview:self.foot];
@@ -462,7 +380,9 @@
 
 - (void)setPhotoDetailsContent:(AlbumPhotosModel *)data{
     
-//    [self.icon sd_setImageWithURL:[NSURL URLWithString:[data.photoId]]];
+//    NSDictionary *userInfo =
+    [self.icon sd_setImageWithURL:[NSURL URLWithString:[data.user objectForKey:@"avatar"]]];
+    
     self.icon.layer.cornerRadius = _icon.frame.size.width/2;
     self.icon.layer.masksToBounds = TRUE;
     
@@ -571,9 +491,12 @@
         model.edit = YES;
     }
     
-    PublishPhotoCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotoCtr");
-    pulish.imageArray = self.imageArray;
-    [self.navigationController pushViewController:pulish animated:YES];
+    PublishPhotoCtr * publish = GETALONESTORYBOARDPAGE(@"PublishPhotoCtr");
+    publish.imageArray = self.imageArray;
+    publish.photoTitle.text = self.photoTitle.text;
+    publish.remarksContent.text = self.remarksContent.text;
+    [self.navigationController pushViewController:publish animated:YES];
+    
 //    [self presentViewController:pulish animated:YES completion:nil];
     /*
     [self.head setStyle:self.imageArray];
@@ -604,13 +527,12 @@
                                        @"description":@" ",
                                        @"recommend":recommend,
                                        @"photo_id":self.photoId}];
-        }else{
+        } else {
             [self changePhotoDetails:@{@"name":self.photoTitle.text,
                                        @"recommend":recommend,
                                        @"description":self.remarksContent.text,
                                        @"photo_id":self.photoId}];
         }
-        
     }
     else if (type == 2) {}
     
@@ -818,7 +740,6 @@
         NSMutableArray *photos = [NSMutableArray arrayWithCapacity:count];
         for (int i = 0; i < count; i++) {
             PhotoImagesModel * imageModel = [self.imageArray objectAtIndex:i];
-            
             NSString * getImageStrUrl = imageModel.bigImageUrl;
             MJPhoto *photo = [[MJPhoto alloc] init];
             photo.url = [NSURL URLWithString: getImageStrUrl];

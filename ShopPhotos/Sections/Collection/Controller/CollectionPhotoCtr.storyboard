@@ -26,8 +26,8 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2UI-mV-BWa">
                                 <rect key="frame" x="20" y="74" width="374" height="45"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="我的收藏视频(12)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="czg-6d-PCm">
-                                        <rect key="frame" x="120.66666666666667" y="12" width="132.66666666666663" height="21"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="我的收藏视频(0)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="czg-6d-PCm">
+                                        <rect key="frame" x="124.33333333333336" y="12" width="125.66666666666664" height="21"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -115,6 +115,7 @@
                     </view>
                     <connections>
                         <outlet property="back" destination="SMt-8O-8Md" id="CDc-Po-p53"/>
+                        <outlet property="collectLabel" destination="czg-6d-PCm" id="gpT-2c-ja9"/>
                         <outlet property="edit" destination="c4I-XY-HiU" id="b2L-sD-ytT"/>
                         <outlet property="search" destination="oHb-Np-OYw" id="iFs-X8-JM7"/>
                     </connections>

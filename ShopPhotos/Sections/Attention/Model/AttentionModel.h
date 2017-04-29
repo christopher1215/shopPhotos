@@ -16,6 +16,7 @@
 @property (strong, nonatomic) NSString * name;
 @property (strong, nonatomic) NSString * qq;
 @property (assign, nonatomic) BOOL star;
+@property (assign, nonatomic) BOOL concerned;
 @property (strong, nonatomic) NSString * tel;
 @property (assign, nonatomic) BOOL twoWay;
 @property (strong, nonatomic) NSString * uid;

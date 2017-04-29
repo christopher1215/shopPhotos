@@ -16,6 +16,8 @@
 @property (strong, nonatomic) UIView * attention;
 @property (strong, nonatomic) UIView * line;
 @property (strong, nonatomic) UIImageView * attenIcon;
+@property (strong, nonatomic) UIView * concern;
+@property (strong, nonatomic) UIImageView * concernIcon;
 
 @end
 
@@ -46,17 +48,29 @@
     [self.attention setBackgroundColor:[UIColor clearColor]];
     [self.attention addTarget:self action:@selector(attentionSelected)];
     [self.contentView addSubview:self.attention];
-    if(self.attentionStatu){
-        [self.attention setHidden:YES];
-    }else{
-        [self.attention setHidden:NO];
-    }
     
     self.attenIcon = [[UIImageView alloc] init];
-    [self.attenIcon  setImage:[UIImage imageNamed:@"btn_star_default"]];
+    [self.attenIcon  setImage:[UIImage imageNamed:@"btn_favorite_b"]];
     [self.attenIcon  setContentMode:UIViewContentModeScaleAspectFit];
     [self.attention addSubview:self.attenIcon ];
     
+    self.concern = [[UIView alloc] init];
+    [self.concern setBackgroundColor:[UIColor clearColor]];
+    [self.concern addTarget:self action:@selector(concernSelected)];
+    [self.contentView addSubview:self.concern];
+    if(self.attentionStatu){
+        [self.attention setHidden:YES];
+        [self.concern setHidden:NO];
+    }else{
+        [self.attention setHidden:NO];
+        [self.concern setHidden:YES];
+    }
+    
+    self.concernIcon = [[UIImageView alloc] init];
+    [self.concernIcon  setImage:[UIImage imageNamed:@"concern.png"]];
+    [self.concernIcon  setContentMode:UIViewContentModeScaleAspectFit];
+    [self.concern addSubview:self.concernIcon ];
+
     self.line = [[UIView alloc] init];
     [self.line setBackgroundColor:ColorHex(0Xeeeeee)];
     [self.contentView addSubview:self.line];
@@ -64,31 +78,44 @@
     self.icon.sd_layout
     .leftSpaceToView(self.contentView,10)
     .topSpaceToView(self.contentView,10)
-    .widthIs(40)
-    .heightIs(40);
+    .widthIs(50)
+    .heightIs(50);
+    self.icon.cornerRadius = 25;
     
     self.attention.sd_layout
     .rightSpaceToView(self.contentView,10)
-    .topSpaceToView(self.contentView,5)
-    .widthIs(50)
-    .heightIs(50);
+    .topSpaceToView(self.contentView,15)
+    .widthIs(40)
+    .heightIs(40);
     
     self.attenIcon .sd_layout
     .leftSpaceToView(self.attention,10)
-    .rightSpaceToView(self.attention,5)
+    .rightSpaceToView(self.attention,10)
     .topSpaceToView(self.attention,10)
     .bottomSpaceToView(self.attention,10);
     
+    self.concern.sd_layout
+    .rightSpaceToView(self.contentView,10)
+    .topSpaceToView(self.contentView,15)
+    .widthIs(40)
+    .heightIs(40);
+    
+    self.concernIcon .sd_layout
+    .leftSpaceToView(self.concern,10)
+    .rightSpaceToView(self.concern,10)
+    .topSpaceToView(self.concern,10)
+    .bottomSpaceToView(self.concern,10);
+
     self.name.sd_layout
     .leftSpaceToView(self.icon,10)
-    .topSpaceToView(self.contentView,5)
+    .topSpaceToView(self.contentView,10)
     .rightSpaceToView(self.attention,10)
     .heightIs(50);
     
     self.line.sd_layout
     .leftSpaceToView(self.contentView,0)
     .rightSpaceToView(self.contentView,0)
-    .topSpaceToView(self.contentView,59)
+    .topSpaceToView(self.contentView,69)
     .heightIs(1);
     
 }
@@ -99,15 +126,17 @@
     [self.icon sd_setImageWithURL:[NSURL URLWithString:model.icon]];
     [self.name setText:model.name];
     if(model.star){
-       [self.attenIcon  setImage:[UIImage imageNamed:@"btn_star_selected"]];
+       [self.attenIcon  setImage:[UIImage imageNamed:@"btn_favorite"]];
     }else{
-        [self.attenIcon  setImage:[UIImage imageNamed:@"btn_star_default"]];
+        [self.attenIcon  setImage:[UIImage imageNamed:@"btn_favorite_b"]];
     }
     
     if(self.attentionStatu){
         [self.attention setHidden:YES];
+        [self.concern setHidden:NO];
     }else{
         [self.attention setHidden:NO];
+        [self.concern setHidden:YES];
     }
 }
 
@@ -115,6 +144,13 @@
     
     if(self.delegate && [self.delegate respondsToSelector:@selector(attentionSelected:)]){
         [self.delegate attentionSelected:self.indexPath];
+    }
+    
+}
+- (void)concernSelected{
+    
+    if(self.delegate && [self.delegate respondsToSelector:@selector(concernSelected:)]){
+        [self.delegate concernSelected:self.indexPath];
     }
     
 }

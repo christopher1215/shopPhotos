@@ -12,19 +12,27 @@
 #import "PersonalHomeCtr.h"
 #import "SearchAllCtr.h"
 #import "MoreAlert.h"
-#import "PublishPhotosCtr.h"
+#import "PublishPhotoCtr.h"
 #import "QRCodeScanCtr.h"
 #import "AddFriendAlert.h"
 #import "AppDelegate.h"
 #import "SharedItem.h"
 #import <MJRefresh.h>
+#import "AddUserViewController.h"
+#import "ChatListViewController.h"
+#import "UserInfoModel.h"
+#import "ChattingViewController.h"
 
-#define likeType @"concernUsers"
-#define likeMineType @"passive"
+#define likeType @"concerns"
+#define likeMineType @"passiveConcerns"
 
-@interface AttentionCtr ()<UIScrollViewDelegate,AttentionTableViewDelegate,MoreAlertDelegate,AddFriendAlertDelegate>
+@interface AttentionCtr ()<UIScrollViewDelegate,AttentionTableViewDelegate,MoreAlertDelegate,AddFriendAlertDelegate,RCIMUserInfoDataSource>
 @property (weak, nonatomic) IBOutlet UIView *more;
 @property (weak, nonatomic) IBOutlet UIView *search;
+@property (weak, nonatomic) IBOutlet UIView *back;
+@property (weak, nonatomic) IBOutlet UIView *contactTitle;
+@property (weak, nonatomic) IBOutlet UILabel *dialogTitle;
+@property (weak, nonatomic) IBOutlet UIView *tabView;
 
 @property (weak, nonatomic) IBOutlet UILabel *like;
 @property (weak, nonatomic) IBOutlet UILabel *likeMine;
@@ -39,6 +47,13 @@
 @property (strong, nonatomic) NSMutableArray * likeMineDataArray;
 
 @property (strong, nonatomic) MoreAlert * moreAlert;
+@property (assign, nonatomic) NSInteger likePage;
+@property (assign, nonatomic) NSInteger likeMinePage;
+@property (weak, nonatomic) IBOutlet UIView *tabChat;
+@property (weak, nonatomic) IBOutlet UIView *tabContact;
+@property (weak, nonatomic) IBOutlet UIImageView *imgChat;
+@property (weak, nonatomic) IBOutlet UIImageView *imgContact;
+@property (weak, nonatomic) IBOutlet UIView *viewChat;
 @end
 
 @implementation AttentionCtr
@@ -54,6 +69,9 @@
     if(!_likeMineDataArray) _likeMineDataArray = [NSMutableArray array];
     return _likeMineDataArray;
 }
+- (void)backSelected{
+    [self.navigationController popViewControllerAnimated:YES];
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -61,14 +79,43 @@
 
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
-    [self loadNetworkData];
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
     [self setup];
-   
+    self.likePage = 1;
+    self.likeMinePage = 1;
+    [self chatSelected];
+
+    //设置需要显示哪些类型的会话
+    [[RCIM sharedRCIM] setUserInfoDataSource:self];
+    ChatListViewController *chatListVC = [[ChatListViewController alloc] init];
+    [chatListVC willMoveToParentViewController:self];
+    [self.viewChat addSubview:chatListVC.view];
+    [self addChildViewController:chatListVC];
+    [chatListVC didMoveToParentViewController:self];
+}
+- (void)getUserInfoWithUserId:(NSString *)userId completion:(void (^)(RCUserInfo *))completion{
+    NSDictionary *data = @{@"uid":userId};
+    [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",self.congfing.getUserInfo,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+        
+        NSLog(@"我的 getuserinfo%@",responseObject);
+        
+        UserInfoModel * infoModel = [[UserInfoModel alloc] init];
+        [infoModel analyticInterface:responseObject];
+        if(infoModel.status == 0){
+            RCUserInfo *userInfo = [[RCUserInfo alloc] init];
+            userInfo.userId = userId;
+            userInfo.name=infoModel.name;
+            userInfo.portraitUri = infoModel.avatar;
+            return completion(userInfo);
+        }
+    } failure:^(NSError *error){
+        
+    }];
+    
 }
 
 - (void)setup{
@@ -76,11 +123,20 @@
     
     self.userType = likeType;
     
+    [self.back addTarget:self action:@selector(backSelected)];
     [self.search addTarget:self action:@selector(searchSelected)];
     [self.more addTarget:self action:@selector(moreSelected)];
     [self.like addTarget:self action:@selector(likeSelected)];
     [self.likeMine addTarget:self action:@selector(likeMineSelected)];
+    [self.tabChat addTarget:self action:@selector(chatSelected)];
+    [self.tabContact addTarget:self action:@selector(contactSelected)];
     
+    self.tabView.layer.shadowRadius  = 2.5f;
+    self.tabView.layer.shadowColor   = RGBACOLOR(0, 0, 0, 0.3).CGColor;
+    self.tabView.layer.shadowOffset  = CGSizeMake(0.0f, 0.0f);
+    self.tabView.layer.shadowOpacity = 0.7f;
+    self.tabView.layer.masksToBounds = NO;
+
     [self.scrollView setContentSize:CGSizeMake(WindowWidth*2, 0)];
     self.scrollView.delegate = self;
     self.scrollView.pagingEnabled = YES;
@@ -133,6 +189,23 @@
 }
 
 #pragma amrk - OnClick
+-(void)chatSelected{
+    [self.dialogTitle setHidden:NO];
+    [self.contactTitle setHidden:YES];
+    [self.imgChat setImage:[UIImage imageNamed:@"btn_chat.png"]];
+    [self.imgContact setImage:[UIImage imageNamed:@"ico_follow_default"]];
+    [self.scrollView setHidden:YES];
+    [self.viewChat setHidden:NO];
+}
+-(void)contactSelected{
+    [self.dialogTitle setHidden:YES];
+    [self.contactTitle setHidden:NO];
+    [self.imgChat setImage:[UIImage imageNamed:@"btn_chat2.png"]];
+    [self.imgContact setImage:[UIImage imageNamed:@"ico_follow_selected"]];
+    [self.scrollView setHidden:NO];
+    [self.viewChat setHidden:YES];
+    [self loadNetworkData];
+}
 - (void)searchSelected{
     SearchAllCtr * search = GETALONESTORYBOARDPAGE(@"SearchAllCtr");
     [self.navigationController pushViewController:search animated:YES];
@@ -153,24 +226,26 @@
 #pragma mark - MoreAlertDelegate
 - (void)moreAlertSelected:(NSInteger)indexPath{
     if(indexPath == 0){
-        PublishPhotosCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotosCtr");
+        PublishPhotoCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotoCtr");
         [self.navigationController pushViewController:pulish animated:YES];
     }else if(indexPath == 1){
+        AddUserViewController *vc=[[AddUserViewController alloc] initWithNibName:@"AddUserViewController" bundle:nil];
+        [self.navigationController pushViewController:vc animated:YES];
+//        if(!self.addAlert){
+//            self.addAlert = [[AddFriendAlert alloc] init];
+//            AppDelegate * appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+//            [appDelegate.window addSubview:self.addAlert];
+//            self.addAlert.delegate = self;
+//            self.addAlert.sd_layout
+//            .leftEqualToView(appDelegate.window)
+//            .rightEqualToView(appDelegate.window)
+//            .topEqualToView(appDelegate.window)
+//            .bottomEqualToView(appDelegate.window);
+//        }
+//        [self.addAlert showAlert];
+    }else if(indexPath == 2){
         QRCodeScanCtr * qrCode = [[QRCodeScanCtr alloc] init];
         [self.navigationController pushViewController:qrCode animated:YES];
-    }else if(indexPath == 2){
-        if(!self.addAlert){
-            self.addAlert = [[AddFriendAlert alloc] init];
-            AppDelegate * appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-            [appDelegate.window addSubview:self.addAlert];
-            self.addAlert.delegate = self;
-            self.addAlert.sd_layout
-            .leftEqualToView(appDelegate.window)
-            .rightEqualToView(appDelegate.window)
-            .topEqualToView(appDelegate.window)
-            .bottomEqualToView(appDelegate.window);
-        }
-        [self.addAlert showAlert];
     }
 
 }
@@ -194,25 +269,45 @@
 
 
 #pragma mark - AttentionTableViewDelegate
-- (void)attentionTableSelect:(NSString *)uid WithTwoWay:(BOOL)twoWay{
-    
-    PersonalHomeCtr * personalHome = GETALONESTORYBOARDPAGE(@"PersonalHomeCtr");
-    personalHome.uid = uid;
+- (void)attentionTableSelect:(NSString *)uid WithName:name WithTwoWay:(BOOL)twoWay{
+    ChattingViewController *conversationVC = [[ChattingViewController alloc]init];
+    conversationVC.conversationType = ConversationType_PRIVATE;
+    conversationVC.targetId = uid;
+    conversationVC.name = name;
     if([self.userType isEqualToString:likeType]){
-        personalHome.twoWay = YES;
+        conversationVC.twoWay = YES;
     }else{
-       personalHome.twoWay = twoWay;
+        conversationVC.twoWay = twoWay;
     }
-    [self.navigationController pushViewController:personalHome animated:YES];
+    [self.navigationController pushViewController:conversationVC animated:YES];
+    
+//    PersonalHomeCtr * personalHome = GETALONESTORYBOARDPAGE(@"PersonalHomeCtr");
+//    personalHome.uid = uid;
+//    if([self.userType isEqualToString:likeType]){
+//        personalHome.twoWay = YES;
+//    }else{
+//       personalHome.twoWay = twoWay;
+//    }
+//    [self.navigationController pushViewController:personalHome animated:YES];
 }
 - (void)attentionSelected:(AttentionModel *)model;{
     
     if(model.star){
         NSLog(@"1");
-        [self starAndCancelStar:self.congfing.cancelStarUser loadData:@{@"uid":model.uid}];
+        [self starAndCancelStar:self.congfing.handleStarUser loadData:@{@"uid":model.uid, @"action":@"cancelStar"}];
     }else{
         NSLog(@"0");
-        [self starAndCancelStar:self.congfing.starUser loadData:@{@"uid":model.uid}];
+        [self starAndCancelStar:self.congfing.handleStarUser loadData:@{@"uid":model.uid,@"action":@"star"}];
+    }
+}
+- (void)concernSelected:(AttentionModel *)model;{
+    
+    if(model.concerned){
+        NSLog(@"1");
+        [self showToast:[NSString stringWithFormat:@"你已关注%@，无需重复关注。",model.name]];
+    }else{
+        NSLog(@"0");
+        [self concernUserData:@{@"uid":model.uid}];
     }
 }
 
@@ -252,17 +347,22 @@
 
 #pragma makr - AFNetworking网络加载
 - (void)loadNetworkData{
+    if ([self.userType isEqualToString:likeType]) {
+        self.likePage = 1;
+    } else if ([self.userType isEqualToString:likeType]) {
+        self.likeMinePage = 1;
+    }
     
-    NSDictionary * data =  @{@"uid":self.photosUserID,
-                             @"lastId":@"0",
-                             @"userType":self.userType};
+    NSDictionary * data =  @{@"type":self.userType,
+                             @"page":[NSString stringWithFormat:@"%ld",[self.userType isEqualToString:likeType]?self.likePage:self.likeMinePage],
+                             @"pageSize":@"30"};
     if([self.userType isEqualToString:likeType]){
         if(self.likeDataArray.count == 0)[self showLoad];
     }else{
         if(self.likeMineDataArray.count == 0) [self showLoad];
     }
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.getUsers parametric:data succed:^(id responseObject){
+    [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",self.congfing.getUsers,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
         [weakSelef.likeList.table.mj_header endRefreshing];
         [weakSelef.likeMineList.table.mj_header endRefreshing];
         [weakSelef closeLoad];
@@ -271,10 +371,83 @@
         [model analyticInterface:responseObject];
         if(model.status == 0){
             if([weakSelef.userType isEqualToString:likeType]){
+                weakSelef.likePage ++;
+                weakSelef.likeList.table.mj_footer = [MJRefreshAutoNormalFooter footerWithRefreshingBlock:^{
+                    [weakSelef loadNetworkMoreData];
+                }];
+                if(model.dataArray.count < 30){
+                    [weakSelef.likeList.table.mj_footer endRefreshingWithNoMoreData];
+                }else{
+                    [weakSelef.likeList.table.mj_footer resetNoMoreData];
+                }
                 [weakSelef.likeDataArray removeAllObjects];
                 [weakSelef.likeDataArray addObjectsFromArray:model.dataArray];
                 weakSelef.likeList.dataArray = model.dataArray;
             }else{
+                weakSelef.likeMinePage ++;
+                weakSelef.likeMineList.table.mj_footer = [MJRefreshAutoNormalFooter footerWithRefreshingBlock:^{
+                    [weakSelef loadNetworkMoreData];
+                }];
+                if(model.dataArray.count < 30){
+                    [weakSelef.likeMineList.table.mj_footer endRefreshingWithNoMoreData];
+                }else{
+                    [weakSelef.likeMineList.table.mj_footer resetNoMoreData];
+                }
+                [weakSelef.likeMineDataArray removeAllObjects];
+                [weakSelef.likeMineDataArray addObjectsFromArray:model.dataArray];
+                weakSelef.likeMineList.dataArray = model.dataArray;
+            }
+        }else{
+            [weakSelef showToast:model.message];
+        }
+        
+    } failure:^(NSError *error){
+        [weakSelef closeLoad];
+        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef.likeList.table.mj_header endRefreshing];
+        [weakSelef.likeMineList.table.mj_header endRefreshing];
+    }];
+}
+- (void)loadNetworkMoreData{
+    
+    NSDictionary * data =  @{@"type":self.userType,
+                             @"page":[NSString stringWithFormat:@"%ld",[self.userType isEqualToString:likeType]?self.likePage:self.likeMinePage],
+                             @"pageSize":@"30"};
+    
+    __weak __typeof(self)weakSelef = self;
+    [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",self.congfing.getUsers,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+        NSLog(@"%@",responseObject);
+        
+        [weakSelef.likeList.table.mj_header endRefreshing];
+        [weakSelef.likeMineList.table.mj_header endRefreshing];
+        [weakSelef closeLoad];
+        NSLog(@"%@",responseObject);
+        AttentionRequset * model = [[AttentionRequset alloc] init];
+        [model analyticInterface:responseObject];
+        if(model.status == 0){
+            if([weakSelef.userType isEqualToString:likeType]){
+                weakSelef.likePage ++;
+                weakSelef.likeList.table.mj_footer = [MJRefreshAutoNormalFooter footerWithRefreshingBlock:^{
+                    [weakSelef loadNetworkMoreData];
+                }];
+                if(model.dataArray.count < 30){
+                    [weakSelef.likeList.table.mj_footer endRefreshingWithNoMoreData];
+                }else{
+                    [weakSelef.likeList.table.mj_footer resetNoMoreData];
+                }
+                [weakSelef.likeDataArray removeAllObjects];
+                [weakSelef.likeDataArray addObjectsFromArray:model.dataArray];
+                weakSelef.likeList.dataArray = model.dataArray;
+            }else{
+                weakSelef.likeMinePage ++;
+                weakSelef.likeMineList.table.mj_footer = [MJRefreshAutoNormalFooter footerWithRefreshingBlock:^{
+                    [weakSelef loadNetworkMoreData];
+                }];
+                if(model.dataArray.count < 30){
+                    [weakSelef.likeMineList.table.mj_footer endRefreshingWithNoMoreData];
+                }else{
+                    [weakSelef.likeMineList.table.mj_footer resetNoMoreData];
+                }
                 [weakSelef.likeMineDataArray removeAllObjects];
                 [weakSelef.likeMineDataArray addObjectsFromArray:model.dataArray];
                 weakSelef.likeMineList.dataArray = model.dataArray;
@@ -295,7 +468,7 @@
     
     [self showLoad];
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:url parametric:data succed:^(id responseObject){
+    [HTTPRequest requestPUTUrl:[NSString stringWithFormat:@"%@%@",url,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
         [weakSelef closeLoad];
         NSLog(@"%@",responseObject);
         BaseModel * model = [[BaseModel alloc] init];
@@ -315,25 +488,25 @@
     
     [self showLoad];
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.concernUser parametric:data succed:^(id responseObject){
+    [HTTPRequest requestPOSTUrl:[NSString stringWithFormat:@"%@%@",self.congfing.concernUser,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
         [weakSelef closeLoad];
-        NSLog(@"%@",responseObject);
         BaseModel * model = [[BaseModel alloc] init];
         [model analyticInterface:responseObject];
         if(model.status == 0){
+            
             [weakSelef showToast:@"关注成功"];
-            PersonalHomeCtr * personalHome = GETALONESTORYBOARDPAGE(@"PersonalHomeCtr");
-            personalHome.uid = [data objectForKey:@"uid"];
-            personalHome.twoWay = YES;
-            [self.navigationController pushViewController:personalHome animated:YES];
+            //                [self.navigationController popViewControllerAnimated:YES];
+            
         }else{
+            
             [weakSelef showToast:model.message];
+            //            [weakSelef showToast:model.message];
         }
-        
-    } failure:^(NSError *error){
-        [weakSelef closeLoad];
+    } failure:^(NSError * error){
         [weakSelef showToast:NETWORKTIPS];
+        [weakSelef closeLoad];
     }];
+    
 }
 
 @end

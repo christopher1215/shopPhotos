@@ -23,6 +23,7 @@
 #import "AppDelegate.h"
 #import "ErrMsgViewController.h"
 #import "ChatLoginRequset.h"
+#import <RongIMKit/RongIMKit.h>
 
 @interface LoginCtr ()<UITextFieldDelegate>{
 //    AppDelegate *appd;
@@ -233,7 +234,21 @@
         LoginLoadModel * model = [[LoginLoadModel alloc] init];
         [model analyticInterface:responseObject];
         if(model.status == 0 || model.status == 200){
-            
+            [self setValue:self.password.text WithKey:@"password"];
+            [[RCIM sharedRCIM] connectWithToken:model.imToken     success:^(NSString *userId) {
+                NSLog(@"登陆成功。当前登录的用户ID：%@", userId);
+                int totalUnreadCount = [[RCIMClient sharedRCIMClient] getTotalUnreadCount];
+                NSLog(@"当前所有会话的未读消息数为：%d", totalUnreadCount);
+                NSDictionary * userInfo = @{ @"totalUnreadCount": [NSString stringWithFormat:@"%d", totalUnreadCount]};
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"getTotalUnreadCount" object:nil userInfo:userInfo];
+            } error:^(RCConnectErrorCode status) {
+                NSLog(@"登陆的错误码为:%d", status);
+            } tokenIncorrect:^{
+                //token过期或者不正确。
+                //如果设置了token有效期并且token过期，请重新请求您的服务器获取新的token
+                //如果没有设置token有效期却提示token错误，请检查您客户端和服务器的appkey是否匹配，还有检查您获取token的流程。
+                NSLog(@"token错误");
+            }];
             TabBarCtr * tabbar = [[TabBarCtr alloc] init];
             [weakSelef.navigationController pushViewController:tabbar animated:YES];
         }else{
@@ -259,6 +274,20 @@
         ChatLoginRequset * requset = [[ChatLoginRequset alloc] init];
         [requset analyticInterface:responseObject];
         if(requset.status == 0){
+            [[RCIM sharedRCIM] connectWithToken:requset.imToken     success:^(NSString *userId) {
+                NSLog(@"登陆成功。当前登录的用户ID：%@", userId);
+                int totalUnreadCount = [[RCIMClient sharedRCIMClient] getTotalUnreadCount];
+                NSLog(@"当前所有会话的未读消息数为：%d", totalUnreadCount);
+                NSDictionary * userInfo = @{ @"totalUnreadCount": [NSString stringWithFormat:@"%d", totalUnreadCount]};
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"getTotalUnreadCount" object:nil userInfo:userInfo];
+            } error:^(RCConnectErrorCode status) {
+                NSLog(@"登陆的错误码为:%d", status);
+            } tokenIncorrect:^{
+                //token过期或者不正确。
+                //如果设置了token有效期并且token过期，请重新请求您的服务器获取新的token
+                //如果没有设置token有效期却提示token错误，请检查您客户端和服务器的appkey是否匹配，还有检查您获取token的流程。
+                NSLog(@"token错误");
+            }];
             TabBarCtr * tabbar = [[TabBarCtr alloc] init];
             [weakSelef.navigationController pushViewController:tabbar animated:YES];
         }else if(requset.status == 303){
@@ -289,6 +318,20 @@
         ChatLoginRequset * requset = [[ChatLoginRequset alloc] init];
         [requset analyticInterface:responseObject];
         if(requset.status == 0){
+            [[RCIM sharedRCIM] connectWithToken:requset.imToken     success:^(NSString *userId) {
+                NSLog(@"登陆成功。当前登录的用户ID：%@", userId);
+                int totalUnreadCount = [[RCIMClient sharedRCIMClient] getTotalUnreadCount];
+                NSLog(@"当前所有会话的未读消息数为：%d", totalUnreadCount);
+                NSDictionary * userInfo = @{ @"totalUnreadCount": [NSString stringWithFormat:@"%d", totalUnreadCount]};
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"getTotalUnreadCount" object:nil userInfo:userInfo];
+            } error:^(RCConnectErrorCode status) {
+                NSLog(@"登陆的错误码为:%d", status);
+            } tokenIncorrect:^{
+                //token过期或者不正确。
+                //如果设置了token有效期并且token过期，请重新请求您的服务器获取新的token
+                //如果没有设置token有效期却提示token错误，请检查您客户端和服务器的appkey是否匹配，还有检查您获取token的流程。
+                NSLog(@"token错误");
+            }];
             TabBarCtr * tabbar = [[TabBarCtr alloc] init];
             [weakSelef.navigationController pushViewController:tabbar animated:YES];
         }else if(requset.status == 303){

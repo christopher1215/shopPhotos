@@ -11,7 +11,6 @@
 #import "PublicDataAnalytic.h"
 #import "HTTPRequest.h"
 #import "NSObject+StoreValue.h"
-#import "UserModel.h"
 #import "BaseNavigationCtr.h"
 #import "LoginCtr.h"
 #import "TabBarCtr.h"
@@ -24,6 +23,7 @@
 #import "RequestErrorGrab.h"
 #import "GuideViewController.h"
 #import <CommonCrypto/CommonDigest.h>
+#import <RongIMKit/RongIMKit.h>
 
 @interface AppDelegate ()
 
@@ -40,6 +40,7 @@
     [[IQKeyboardManager sharedManager] setToolbarManageBehaviour:IQAutoToolbarByPosition];
     
     [self initShareSDK];
+    [[RCIM sharedRCIM] initWithAppKey:@"25wehl3u27juw"];
     
     [self getApi];
     

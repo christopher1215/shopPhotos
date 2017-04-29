@@ -11,11 +11,16 @@
 #define ImageHeight 120
 
 @interface PhotoDetailsHeadImage : BaseView
+
 @property (strong, nonatomic) UIImageView * image;
 @property (strong, nonatomic) UIImageView * cover;
 @property (strong, nonatomic) UIView * editView;
 @property (strong, nonatomic) UIButton * settingBtn;
 @property (strong, nonatomic) UIButton * deleteBtn;
+@property (assign, nonatomic) NSInteger * indexPath;
+
 - (void)setImageCover:(BOOL)cover;
 - (void)setEditStyle:(BOOL)edit;
+
+
 @end

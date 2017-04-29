@@ -7,7 +7,6 @@
 //
 
 #import "HomePageCtr.h"
-#import "UserModel.h"
 #import "UserInfoModel.h"
 #import <UIImageView+WebCache.h>
 #import <MJRefresh.h>
@@ -25,11 +24,10 @@
 #import "AppDelegate.h"
 #import "CollectionPhotoCtr.h"
 #import "PersonalHomeCtr.h"
-#import "PublishPhotosCtr.h"
 #import "DynamicCtr.h"
 #import "MypointViewController.h"
 
-@interface HomePageCtr ()<MoreAlertDelegate,AddFriendAlertDelegate,UIImagePickerControllerDelegate>
+@interface HomePageCtr ()<MoreAlertDelegate,AddFriendAlertDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate>
 @property (weak, nonatomic) IBOutlet UIView *firstGuidView;
 @property (weak, nonatomic) IBOutlet UIView *mainView;
 @property (weak, nonatomic) IBOutlet UIImageView *headImage;
@@ -112,15 +110,15 @@
     [self.scan addTarget:self action:@selector(qrScanSelected)];
     [self.point addTarget:self action:@selector(pointSelected)];
     
-    UIBlurEffect *blur = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
-    UIVisualEffectView *effectview = [[UIVisualEffectView alloc] initWithEffect:blur];
-    effectview.alpha = 0.95;
-    [self.head addSubview:effectview];
-    effectview.sd_layout
-    .leftEqualToView(self.head)
-    .rightEqualToView(self.head)
-    .topEqualToView(self.head)
-    .bottomEqualToView(self.head);
+    //    UIBlurEffect *blur = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
+    //    UIVisualEffectView *effectview = [[UIVisualEffectView alloc] initWithEffect:blur];
+    //    effectview.alpha = 0.95;
+    //    [self.head addSubview:effectview];
+    //    effectview.sd_layout
+    //    .leftEqualToView(self.head)
+    //    .rightEqualToView(self.head)
+    //    .topEqualToView(self.head)
+    //    .bottomEqualToView(self.head);
     
     self.moreAlert = [[MoreAlert alloc] init];
     [self.view addSubview:self.moreAlert];
@@ -296,6 +294,7 @@
 
 - (void)dynamicSelected{
     DynamicCtr * dynamic = GETALONESTORYBOARDPAGE(@"DynamicCtr");
+    dynamic.isBackButton = YES;
     //    dynamic.uid = self.photosUserID;
     [self.navigationController pushViewController:dynamic animated:YES];
 }
@@ -304,7 +303,7 @@
 - (void)moreAlertSelected:(NSInteger)indexPath{
     
     if(indexPath == 0){
-        PublishPhotosCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotosCtr");
+        PublishPhotoCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotoCtr");
         [self.navigationController pushViewController:pulish animated:YES];
     }else if(indexPath == 1){
         QRCodeScanCtr * qrCode = [[QRCodeScanCtr alloc] init];
@@ -343,7 +342,7 @@
 }
 
 #pragma mark - 修改样式
-- (void)setStyle:(UserModel *)model{
+- (void)setStyle:(UserInfoModel *)model{
     
     [self.head sd_setImageWithURL:[NSURL URLWithString:model.bg_image]];
     [self.headImage sd_setImageWithURL:[NSURL URLWithString:model.avatar]];
@@ -425,14 +424,15 @@
     
     NSString * sign = @"";
     if(model.signature && model.signature.length > 0){
-        sign = [NSString stringWithFormat:@"个性签名:%@",model.signature];
+        sign = [NSString stringWithFormat:@"%@",model.signature];
     }else{
-        sign = [NSString stringWithFormat:@"个性签名:这个人很懒什么都没有留下"];
+        sign = [NSString stringWithFormat:@"这个人很懒什么都没有留下"];
     }
-    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-    paragraphStyle.lineSpacing = 3;
-    NSDictionary *attributes = @{NSFontAttributeName:[UIFont systemFontOfSize:12],NSParagraphStyleAttributeName:paragraphStyle};
-    self.signature.attributedText = [[NSAttributedString alloc] initWithString:sign attributes:attributes];
+    //    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    //    paragraphStyle.lineSpacing = 3;
+    //    NSDictionary *attributes = @{NSFontAttributeName:[UIFont systemFontOfSize:12],NSParagraphStyleAttributeName:paragraphStyle};
+    //    self.signature.attributedText = [[NSAttributedString alloc] initWithString:sign attributes:attributes];
+    self.signature.text = sign;
 }
 
 #pragma makr - AFNetworking网络加载
@@ -445,7 +445,7 @@
     [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",self.congfing.getUserInfo,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
         [weakSelef closeLoad];
         NSLog(@"1  %@",responseObject);
-        UserModel * infoModel = [[UserModel alloc] init];
+        UserInfoModel * infoModel = [[UserInfoModel alloc] init];
         [infoModel analyticInterface:responseObject];
         if(infoModel.status == 0){
             [weakSelef setStyle:infoModel];

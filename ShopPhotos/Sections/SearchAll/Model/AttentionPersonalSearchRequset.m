@@ -17,8 +17,9 @@
         
         self.status = [RequestErrorGrab getIntegetKey:@"code" toTarget:data];
         self.message = [RequestErrorGrab getStringwitKey:@"message" toTarget:data];
-        NSArray * json = [RequestErrorGrab getArrwitKey:@"data" toTarget:data];
         self.dataArray = [NSMutableArray array];
+        NSDictionary * datas = [RequestErrorGrab getDicwitKey:@"data" toTarget:data];
+        NSArray * json = [RequestErrorGrab getArrwitKey:@"users" toTarget:datas];
         if(json && json.count > 0){
             for (NSDictionary * user in json) {
                 AttentionPersonalSearchModel * model = [[AttentionPersonalSearchModel alloc] init];

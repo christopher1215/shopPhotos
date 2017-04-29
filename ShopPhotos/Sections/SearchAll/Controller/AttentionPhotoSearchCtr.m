@@ -18,6 +18,7 @@
 #import "PersonalHomeCtr.h"
 
 @interface AttentionPhotoSearchCtr ()<UICollectionViewDelegate,UICollectionViewDataSource,UIImagePickerControllerDelegate,UINavigationControllerDelegate,TOCropViewControllerDelegate,PhotosControllerDelegate,TZImagePickerControllerDelegate,AttentionPhotoSearchCellDelegate>
+@property (weak, nonatomic) IBOutlet UIView *titleBackground;
 @property (weak, nonatomic) IBOutlet UIView *back;
 @property (weak, nonatomic) IBOutlet UITextField *searchText;
 @property (weak, nonatomic) IBOutlet UIButton *search;
@@ -50,6 +51,8 @@
 }
 
 - (void)setup{
+    self.titleBackground.cornerRadius = 5;
+
     [self.back addTarget:self action:@selector(backSelected)];
     [self.search addTarget:self action:@selector(searchSelected)];
     [self.imageSearch addTarget:self action:@selector(imageSearchSelected)];
@@ -71,8 +74,15 @@
     self.photos.sd_layout
     .leftEqualToView(self.view)
     .rightEqualToView(self.view)
-    .topSpaceToView(self.view,114)
+    .topSpaceToView(self.view,64)
     .bottomEqualToView(self.view);
+}
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    if (textField == self.searchText) {
+        [self searchSelected];
+        return NO;
+    }
+    return YES;
 }
 
 #pragma mark - OnClick
@@ -197,13 +207,15 @@
     
     self.pageIndex = 1;
     NSDictionary * data = @{@"uid":self.uid,
+                            @"keyword":self.searchText.text,
+                            @"includeFriends":@"false",
+                            @"excludesUsers":@"",
                             @"page":[NSString stringWithFormat:@"%ld",self.pageIndex],
-                            @"keyWord":self.searchText.text,
                             @"pageSize":@"30"};
     
     [self showLoad];
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.getConcernsPhotos parametric:data succed:^(id responseObject){
+    [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",self.congfing.searchPhotos,[self.appd getParameterString]]  parametric:data succed:^(id responseObject){
         [weakSelef closeLoad];
         
         AlbumPhotosRequset * requset = [[AlbumPhotosRequset alloc] init];
@@ -235,13 +247,15 @@
 - (void)loadNetworkMoreData{
     
     NSDictionary * data = @{@"uid":self.uid,
+                            @"keyword":self.searchText.text,
+                            @"includeFriends":@"false",
+                            @"excludesUsers":@"",
                             @"page":[NSString stringWithFormat:@"%ld",self.pageIndex],
-                            @"keyWord":self.searchText.text,
                             @"pageSize":@"30"};
     
     [self showLoad];
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.getConcernsPhotos parametric:data succed:^(id responseObject){
+    [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",self.congfing.searchPhotos,[self.appd getParameterString]]  parametric:data succed:^(id responseObject){
         [weakSelef closeLoad];
         
         AlbumPhotosRequset * requset = [[AlbumPhotosRequset alloc] init];
@@ -273,9 +287,12 @@
     
     [self showLoad];
     __weak __typeof(self)weakSelf = self;
-    NSDictionary * data = @{@"uid":self.uid, @"getAll":@"true", @"resultCount":@"100",@"includeSelf":@"false"};
+    NSDictionary * data = @{@"uid":self.uid,
+                            @"includeFriends":@"false",
+                            @"excludesUsers":@"",
+                            @"resultCount":@"100"};
     NSData * imageData = UIImageJPEGRepresentation(self.searchImage, 0.3);
-    [HTTPRequest Manager:self.congfing.withImageSearch Method:nil dic:data file:imageData fileName:@"imageFile" requestSucced:^(id responseObject){
+    [HTTPRequest Manager:[NSString stringWithFormat:@"%@%@",self.congfing.useImageSearch,[self.appd getParameterString]] Method:nil dic:data file:imageData fileName:@"image" requestSucced:^(id responseObject){
         NSLog(@"%@",responseObject);
         PhotosSearchRequset * requset = [[PhotosSearchRequset alloc] init];
         [requset analyticInterface:responseObject];

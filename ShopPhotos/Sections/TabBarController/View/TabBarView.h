@@ -11,11 +11,11 @@
 @protocol TabBarViewDelegate <NSObject>
 
 - (void)tabbarSelect:(NSInteger)index;
-
 @end
 
 @interface TabBarView : BaseView
 
 @property (weak, nonatomic) id<TabBarViewDelegate>delegate;
+-(void)setUnreadCountBadge:(NSNotification *)noti;
 
 @end

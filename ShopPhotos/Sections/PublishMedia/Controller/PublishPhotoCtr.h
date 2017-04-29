@@ -14,6 +14,9 @@
 @interface PublishPhotoCtr : BaseViewCtr
 
 @property (strong, nonatomic) NSMutableArray * imageArray;
+@property (strong, nonatomic) UITextView * photoTitle;
+@property (strong, nonatomic) UITextView * remarksContent;
+@property (assign, nonatomic) BOOL isAdd;
 
 - (void)setClassifies:(NSString *)parent subClass:(NSString *)subclass;
 
