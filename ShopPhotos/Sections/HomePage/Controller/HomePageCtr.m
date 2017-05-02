@@ -275,7 +275,9 @@
 - (void)albumSelected{
     AlbumPhotosCtr * albumPhotos = GETALONESTORYBOARDPAGE(@"AlbumPhotosCtr");
     albumPhotos.uid = self.photosUserID;
-    albumPhotos.type = 1;
+    albumPhotos.type = @"photo";
+    albumPhotos.subClassid = -1;
+    albumPhotos.ptitle = @"所有相册";
     [self.navigationController pushViewController:albumPhotos animated:YES];
 }
 
@@ -294,7 +296,7 @@
 
 - (void)dynamicSelected{
     DynamicCtr * dynamic = GETALONESTORYBOARDPAGE(@"DynamicCtr");
-    dynamic.isBackButton = YES;
+    dynamic.isMyDynamic = YES;
     //    dynamic.uid = self.photosUserID;
     [self.navigationController pushViewController:dynamic animated:YES];
 }
@@ -433,6 +435,9 @@
     //    NSDictionary *attributes = @{NSFontAttributeName:[UIFont systemFontOfSize:12],NSParagraphStyleAttributeName:paragraphStyle};
     //    self.signature.attributedText = [[NSAttributedString alloc] initWithString:sign attributes:attributes];
     self.signature.text = sign;
+    
+    [self.point setTitle:[NSString stringWithFormat:@"积分:%ld", model.integral] forState:UIControlStateNormal];
+    [self.keep setTitle:[NSString stringWithFormat:@"收藏:%ld", model.concerned] forState:UIControlStateNormal];
 }
 
 #pragma makr - AFNetworking网络加载

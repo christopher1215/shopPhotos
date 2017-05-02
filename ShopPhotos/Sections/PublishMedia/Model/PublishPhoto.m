@@ -48,7 +48,6 @@
         index++;
     }
     
-    //[self showLoad];
     CongfingURL * config = [self getValueWithKey:ShopPhotosApi];
     __weak __typeof(self)weakSelef = self;
     [HTTPRequest requestPOSTUrl :[NSString stringWithFormat:@"%@%@",config.createPhoto1,[self.appd getParameterString]] parametric:data succed:^(id responseObject) {

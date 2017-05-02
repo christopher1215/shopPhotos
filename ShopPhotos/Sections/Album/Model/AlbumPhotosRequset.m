@@ -22,6 +22,7 @@
             self.pageCount = [RequestErrorGrab getIntegetKey:@"pageSize" toTarget:json];
             self.dataArray = [NSMutableArray array];
             NSArray * photos = [RequestErrorGrab getArrwitKey:@"photos" toTarget:json];
+            NSArray * videos = [RequestErrorGrab getArrwitKey:@"videos" toTarget:json];
             NSDictionary * photo = [RequestErrorGrab getDicwitKey:@"photo" toTarget:json];
             if(photos && photos.count > 0){
                 for(NSDictionary * photo in photos){
@@ -30,6 +31,11 @@
             }
             if (photo) {
                 [self.dataArray addObject:[self analysting:photo]];
+            }
+            if(videos && videos.count > 0){
+                for(NSDictionary * video in videos){
+                    [self.dataArray addObject:[self analysting:video]];
+                }
             }
         }
     } @catch (NSException *exception) {

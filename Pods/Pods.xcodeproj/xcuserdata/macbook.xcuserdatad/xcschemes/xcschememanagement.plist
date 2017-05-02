@@ -9,6 +9,21 @@
 			<key>orderHint</key>
 			<integer>1</integer>
 		</dict>
+		<key>CTPersistance.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>15</integer>
+		</dict>
+		<key>CTVideoPlayerView.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>16</integer>
+		</dict>
+		<key>HandyFrame.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>17</integer>
+		</dict>
 		<key>IQKeyboardManager.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -69,6 +84,11 @@
 			<key>orderHint</key>
 			<integer>13</integer>
 		</dict>
+		<key>UITextView+Placeholder.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>18</integer>
+		</dict>
 		<key>YLGIFImage.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -77,12 +97,22 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>00A4EF6912CC46580A1ADE7B8FA93D43</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>04CF549EBEEE7BC87AEAE35397184D94</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
 		<key>0659B71386995AC7EE2A305F0A360EB1</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>11991BB2CA8618E20A8A1E87B3CFABDC</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -117,7 +147,27 @@
 			<key>primary</key>
 			<true/>
 		</dict>
+		<key>73C5BB765BC400601939870C6C850349</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>783BA84667F141A977ED7AA56124FE79</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>7D840A44687DE0B39392A9CEAF9F68B8</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>8C7AE457165965D33F6B1FFF3CD9B834</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>9012EF5CEDCB0051F75B222E17A69CB0</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -128,6 +178,21 @@
 			<true/>
 		</dict>
 		<key>9E033EDB5EC0819481B0546434FA577B</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>9F26756ACE21FAA89760859A1BF9CE5C</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A15E62DC1CF772EE41DAA9D5BB915896</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A28EA8C7EC60110667075551053202FF</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -143,6 +208,11 @@
 			<true/>
 		</dict>
 		<key>D78A3657685EA0F801B16FDFD95A3810</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>E69073A3FC1B833A04EB3261D9EE6AF8</key>
 		<dict>
 			<key>primary</key>
 			<true/>

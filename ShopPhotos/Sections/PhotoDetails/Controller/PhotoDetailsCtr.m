@@ -120,10 +120,10 @@
     self.icon = [[UIImageView alloc] init];
     [userInfo addSubview:self.icon];
     self.icon.sd_layout
-    .leftEqualToView(userInfo)
+    .leftSpaceToView(userInfo,10)
     .topSpaceToView(userInfo,5)
-    .widthIs(42)
-    .heightIs(42);
+    .widthIs(35)
+    .heightIs(35);
     
     self.name = [[UILabel alloc] init];
     [self.name setTextColor:[UIColor blackColor]];
@@ -678,16 +678,18 @@
     NSInteger count = self.imageArray.count;
     NSMutableArray *photos = [NSMutableArray arrayWithCapacity:count];
     for (int i = 0; i < count; i++) {
-        PhotoImagesModel * imageModel = [self.imageArray objectAtIndex:i];
-        
-        NSString * getImageStrUrl = imageModel.bigImageUrl;
-        MJPhoto *photo = [[MJPhoto alloc] init];
-        photo.url = [NSURL URLWithString: getImageStrUrl];
-        [photos addObject:photo];
+        if (indexPath == i) {
+            PhotoImagesModel * imageModel = [self.imageArray objectAtIndex:i];
+            
+            NSString * getImageStrUrl = imageModel.bigImageUrl;
+            MJPhoto *photo = [[MJPhoto alloc] init];
+            photo.url = [NSURL URLWithString: getImageStrUrl];
+            [photos addObject:photo];
+        }
     }
     if(photos.count > 0){
         MJPhotoBrowser *browser = [[MJPhotoBrowser alloc] init];
-        browser.currentPhotoIndex = indexPath;
+        browser.currentPhotoIndex = 0;//indexPath;
         browser.photos = photos;
         [browser show];
     }

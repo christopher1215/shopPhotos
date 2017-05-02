@@ -61,7 +61,7 @@
     [self.photo setBackgroundColor:ColorHex(0XF5F5F5)];
     [self.content addSubview:self.photo];
     
-    if (isVideo == TRUE) {
+    if (isVideo == YES) {
         self.video = [[UIImageView alloc] init];
         [self.video setImage:[UIImage imageNamed:@"btn_movie"]];
         [self.video setContentMode:UIViewContentModeScaleAspectFit];

@@ -33,7 +33,7 @@
 #import "DownloadImageCtr.h"
 #import "CopyRequset.h"
 #import "AlbumPhotosModel.h"
-#import <TZVideoPlayerController.h>
+#import "SPVideoPlayer.h"
 
 @interface DynamicCtr ()<DynamicTableViewDelegate,MoreAlertDelegate,AddFriendAlertDelegate,UserInfoDrawerDelegate,ShareDelegate>
 
@@ -66,7 +66,7 @@
 - (id)init {
     self = [super init];
     
-    self.isBackButton = FALSE;
+    self.isMyDynamic = FALSE;
     return self;
 }
 
@@ -90,7 +90,7 @@
 
 - (void)setup{
     
-    if (self.isBackButton == TRUE) {
+    if (self.isMyDynamic == TRUE) {
         [_scan removeFromSuperview];
         _back = [[UIButton alloc] init];
         [_back setImage:[UIImage imageNamed:@"btn_back_black"] forState:UIControlStateNormal];
@@ -100,7 +100,7 @@
 
         [_head addSubview:_back];
         _back.sd_layout
-        .leftSpaceToView(_head,15)
+        .leftSpaceToView(_head,0)
         .bottomSpaceToView(_head,10)
         .widthIs(80)
         .heightIs(20);
@@ -114,6 +114,7 @@
     
     self.table = [[DynamicTableView alloc] init];
     self.table.delegate = self;
+    self.table.isMyDynamic = self.isMyDynamic;
     [self.view addSubview:self.table];
     
     self.table.sd_layout
@@ -461,15 +462,45 @@
         if(uid && uid.length > 0){
             [self loadUserNetworkData:@{@"uid":uid}];
         }
-    }else if(type == 2){
+    }
+    else if(type == 2){
         self.shareSelectIndex = indexPath.row;
         [self.share showAlert];
-    }else if(type == 3){
+    }
+    else if(type == 3){
         self.userInfoSelectIndex = indexPath.row;
         NSString * uid = [model.user objectForKey:@"uid"];
         if(uid && uid.length > 0){
             [self loadUserNetworkData:@{@"uid":uid}];
         }
+    }
+    else if (type == 4) { // collect
+        if ([self.photosUserID isEqualToString:[model.user objectForKey:@"uid"]]) {
+            [self showToast:@"can't collect your photos"];
+        }
+        else {
+            if (model.collected == YES) {
+                // cancel collect
+                if ([model.type isEqualToString:@"photo"]) [self cancelCollectPhotos:@{@"photosId[0]":model.Id}];
+                if ([model.type isEqualToString:@"video"]) [self cancelCollectVideos:@{@"videosId[0]":model.Id}];
+                
+            }
+            else {
+                // add collect
+                if ([model.type isEqualToString:@"photo"]) [self collectPhoto:@{@"photoId":model.Id}];
+                if ([model.type isEqualToString:@"video"]) [self collectVideo:@{@"videoId":model.Id}];
+            }
+        }
+    }
+    else if (type == 5) { // chat
+        NSLog(@"%ld", type);
+    }
+    else if (type == 6) { // pengyou qiu
+        NSLog(@"%ld", type);
+    }
+    else if (type == 7) { // delete
+        if ([model.type isEqualToString:@"photo"]) [self deleteMyPhotos:@{@"photosId[0]":model.Id}];
+        if ([model.type isEqualToString:@"video"]) [self deleteMyVideos:@{@"videosId[0]":model.Id}];
     }
 }
 
@@ -498,7 +529,12 @@
     }
     else {
         // click video
-        TZVideoPlayerController *videoPlayer = [[TZVideoPlayerController alloc] init];
+        SPVideoPlayer *videoView = [[SPVideoPlayer alloc] init];
+        videoView.frame = CGRectMake(0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
+        [self.view addSubview:videoView];
+        
+        AlbumPhotosModel * model = [self.dataArray objectAtIndex:indexPath.row];
+        [videoView playVideo:model.video];
     }
 }
 
@@ -523,7 +559,16 @@
                             @"pageSize":@"20"};
     NSLog(@"%@",data);
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",self.congfing.getNewDynamics,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+
+    NSString *serverApi = @"";
+    if (self.isMyDynamic) {
+        serverApi = self.congfing.getUserDynamics;
+    }
+    else {
+        serverApi = self.congfing.getNewDynamics;
+    }
+    
+    [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",serverApi,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
         
         NSLog(@"%@",responseObject);
         [weakSelef.table.table.mj_header endRefreshing];
@@ -561,7 +606,16 @@
                             @"pageSize":@"20"};
     NSLog(@"%@",data);
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",self.congfing.getNewDynamics,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+    
+    NSString *serverApi = @"";
+    if (self.isMyDynamic) {
+        serverApi = self.congfing.getUserDynamics;
+    }
+    else {
+        serverApi = self.congfing.getNewDynamics;
+    }
+    
+    [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",serverApi,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
         
         NSLog(@"%@",responseObject);
         [weakSelef.table.table.mj_footer endRefreshing];
@@ -715,7 +769,7 @@
                 }]];
                 [weakSelef presentViewController:alert animated:YES completion:nil];
             }else{                
-                [weakSelef collectPhotoData:@{@"photosId":[NSString stringWithFormat:@"%@,",[data objectForKey:@"photoId"]]}];
+                [weakSelef collectPhoto:@{@"photosId":[NSString stringWithFormat:@"%@,",[data objectForKey:@"photoId"]]}];
             }
             
         }else{
@@ -727,20 +781,39 @@
     }];
 }
 
-- (void)collectPhotoData:(NSDictionary *)data{
-    
-    NSLog(@"%@",data);
-    NSLog(@"%@",self.congfing.collectPhotos);
-    
+- (void)collectPhoto:(NSDictionary *)data{
     [self showLoad];
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.collssssCopy parametric:data succed:^(id responseObject){
+    
+    [HTTPRequest requestPOSTUrl:[NSString stringWithFormat:@"%@%@",self.congfing.collectPhoto,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
         [weakSelef closeLoad];
         NSLog(@"%@",responseObject);
         BaseModel * model = [[BaseModel alloc] init];
         [model analyticInterface:responseObject];
         if(model.status == 0){
             [weakSelef showToast:@"收藏成功"];
+            [weakSelef loadNetworkData];
+        }else{
+            [weakSelef showToast:model.message];
+        }
+        
+    } failure:^(NSError *error){
+        [weakSelef closeLoad];
+        [weakSelef showToast:NETWORKTIPS];
+    }];
+}
+- (void)collectVideo:(NSDictionary *)data{
+    
+    [self showLoad];
+    __weak __typeof(self)weakSelef = self;
+    [HTTPRequest requestPOSTUrl:[NSString stringWithFormat:@"%@%@",self.congfing.collectVideo,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+        [weakSelef closeLoad];
+        NSLog(@"%@",responseObject);
+        BaseModel * model = [[BaseModel alloc] init];
+        [model analyticInterface:responseObject];
+        if(model.status == 0){
+            [weakSelef showToast:@"收藏成功"];
+            [weakSelef loadNetworkData];
         }else{
             [weakSelef showToast:model.message];
         }
@@ -754,12 +827,73 @@
     
     [self showLoad];
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.cancelCollectPhotos parametric:data succed:^(id responseObject){
+    [HTTPRequest requestDELETEUrl:[NSString stringWithFormat:@"%@%@",self.congfing.cancelCollectPhotos,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
         [weakSelef closeLoad];
         NSLog(@"%@",responseObject);
         BaseModel * model = [[BaseModel alloc] init];
         if(model.status == 0){
             [weakSelef showToast:@"取消收藏成功"];
+            [weakSelef loadNetworkData];
+        }else{
+            [weakSelef showToast:model.message];
+        }
+    } failure:^(NSError *error){
+        [weakSelef closeLoad];
+        [weakSelef showToast:NETWORKTIPS];
+    }];
+}
+
+- (void)cancelCollectVideos:(NSDictionary * )data{
+    
+    [self showLoad];
+    __weak __typeof(self)weakSelef = self;
+    [HTTPRequest requestDELETEUrl:[NSString stringWithFormat:@"%@%@",self.congfing.cancelCollectVideos,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+        [weakSelef closeLoad];
+        NSLog(@"%@",responseObject);
+        BaseModel * model = [[BaseModel alloc] init];
+        if(model.status == 0){
+            [weakSelef showToast:@"取消收藏成功"];
+            [weakSelef loadNetworkData];
+        }else{
+            [weakSelef showToast:model.message];
+        }
+    } failure:^(NSError *error){
+        [weakSelef closeLoad];
+        [weakSelef showToast:NETWORKTIPS];
+    }];
+}
+
+- (void)deleteMyPhotos:(NSDictionary * )data{
+    
+    [self showLoad];
+    __weak __typeof(self)weakSelef = self;
+    [HTTPRequest requestDELETEUrl:[NSString stringWithFormat:@"%@%@",self.congfing.deletePhotos,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+        [weakSelef closeLoad];
+        NSLog(@"%@",responseObject);
+        BaseModel * model = [[BaseModel alloc] init];
+        if(model.status == 0){
+            [weakSelef showToast:@"取消收藏成功"];
+            [weakSelef loadNetworkData];
+        }else{
+            [weakSelef showToast:model.message];
+        }
+    } failure:^(NSError *error){
+        [weakSelef closeLoad];
+        [weakSelef showToast:NETWORKTIPS];
+    }];
+}
+
+- (void)deleteMyVideos:(NSDictionary * )data{
+    
+    [self showLoad];
+    __weak __typeof(self)weakSelef = self;
+    [HTTPRequest requestDELETEUrl:[NSString stringWithFormat:@"%@%@",self.congfing.deleteVideos,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+        [weakSelef closeLoad];
+        NSLog(@"%@",responseObject);
+        BaseModel * model = [[BaseModel alloc] init];
+        if(model.status == 0){
+            [weakSelef showToast:@"取消收藏成功"];
+            [weakSelef loadNetworkData];
         }else{
             [weakSelef showToast:model.message];
         }

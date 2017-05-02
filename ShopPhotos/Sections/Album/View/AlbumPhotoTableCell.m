@@ -51,6 +51,9 @@
     [self.shadowt setBackgroundColor:ColorHexA(0XCCCCCC,1)];
     [self.contentView addSubview:self.shadowt];
   */
+    for (UIView *sv in self.content.subviews) {
+        [sv removeFromSuperview];
+    }
     self.content = [[UIView alloc] init];
     [self.contentView addSubview:self.content];
     
@@ -174,16 +177,6 @@
     }else{
          [self.select setImage:[UIImage imageNamed:@"btn_circle_default"]];
     }
-/*
-    if(self.showPrice){
-        [self.prize setHidden:NO];
-    }else{
-        if(model.showPrice){
-            [self.prize setHidden:NO];
-        }else{
-            [self.prize setHidden:YES];
-        }
-    }  */
 }
 
 - (void)selectedClick{

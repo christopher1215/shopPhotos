@@ -34,9 +34,10 @@
 @property (weak, nonatomic) IBOutlet UIButton *back;
 @property (weak, nonatomic) IBOutlet UIButton *edit;
 @property (weak, nonatomic) IBOutlet UIButton *search;
+@property (weak, nonatomic) IBOutlet UILabel *pageTitle;
+
 @property (strong, nonatomic) AlbumPhotoTableView * table;
 @property (assign, nonatomic) NSInteger page;
-@property (weak, nonatomic) IBOutlet UILabel *pageTitle;
 @property (strong, nonatomic) MoreAlert * moreAlert;
 @property (strong, nonatomic) NSMutableArray * dataArray;
 @property (strong, nonatomic) PhotosEditView * editHead;
@@ -92,16 +93,17 @@
 - (void)createAutoLayout{
     
     self.page = 1;
+
+    self.table = [[AlbumPhotoTableView alloc] init];
     
-    if(self.type == 1){
-        [self.pageTitle setText:@"所有相册"];
-    }else if(self.type == 2){
-        [self.pageTitle setText:@"我的推荐"];
+    if([self.type isEqualToString:@"photo"]){
+        self.table.isVideo = NO;
+    }
+    else if([self.type isEqualToString:@"video"]){
+        self.table.isVideo = YES;
     }
     
-    self.table = [[AlbumPhotoTableView alloc] init];
     self.table.delegate = self;
-    self.table.showPrice = YES;
     [self.view addSubview:self.table];
     
     self.table.sd_layout
@@ -109,6 +111,11 @@
     .rightEqualToView(self.view)
     .topSpaceToView(self.view,64)
     .bottomEqualToView(self.view);
+    
+    [self.pageTitle setText:_ptitle];
+    if ([_pageTitle.text isEqualToString:@"所有相册"] == NO) {
+        [_back setTitle:@"返回" forState:UIControlStateNormal];
+    }
     
     __weak __typeof(self)weakSelef = self;
     self.table.photos.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
@@ -332,9 +339,24 @@
                             @"pageSize":@"30",
                             @"keyWord":@"false"};
 //                            @"subclassification_id":@"0"};
-    
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",self.congfing.getUserPhotos,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+    
+    NSString *serverApi = @"";
+    if ([self.type isEqualToString:@"photo"]) {
+        if (_subClassid > -1) {
+            serverApi = self.congfing.getSubclassPhotos;
+            data = @{@"subclassId":[NSString stringWithFormat:@"%ld",_subClassid],
+                     @"page":[NSString stringWithFormat:@"%ld",self.page],
+                     @"pageSize":@"30"};
+        }
+        else {
+            serverApi = self.congfing.getUserPhotos;
+        }
+    }
+    else if ([self.type isEqualToString:@"video"]){
+        serverApi = self.congfing.getUserVideos;
+    }
+    [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",serverApi,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
         NSLog(@"1  %@",responseObject);
 
         [weakSelef.table.photos.mj_header endRefreshing];
@@ -373,7 +395,15 @@
                             @"subclassification_id":@"0"};
     
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",self.congfing.getUserPhotos,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+    NSString *serverApi = @"";
+    if ([self.type isEqualToString:@"photo"]) {
+        serverApi = self.congfing.getUserPhotos;
+    }
+    else if ([self.type isEqualToString:@"video"]){
+        serverApi = self.congfing.getUserVideos;
+    }
+    [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",serverApi,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+        
         NSLog(@"%@",responseObject);
         
         [weakSelef.table.photos.mj_footer endRefreshing];

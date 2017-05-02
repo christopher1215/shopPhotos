@@ -9,8 +9,9 @@
 #import "BaseViewCtr.h"
 
 @interface AlbumPhotosCtr : BaseViewCtr
-@property (assign, nonatomic) NSInteger type;
+@property (assign, nonatomic) NSString * type;
 @property (strong, nonatomic) NSString * uid;
-
+@property (assign, nonatomic) NSInteger subClassid;
+@property (assign, nonatomic) NSString * ptitle;
 
 @end

@@ -12,7 +12,6 @@
 @protocol DynamicTableViewDelegate <NSObject>
 
 - (void)cellSelectType:(NSInteger)type tableViewCelelIndexPath:(NSIndexPath *)indexPath;
-
 - (void)cellImageSelected:(NSInteger)tag TabelViewCellIndexPath:(NSIndexPath *)indexPath;
 
 - (void)dynamicTableCellSelected:(NSIndexPath *)indexPath;
@@ -21,6 +20,7 @@
 @interface DynamicTableView : BaseView
 @property (weak, nonatomic) id<DynamicTableViewDelegate>delegate;
 @property (strong, nonatomic) UITableView * table;
+@property (assign, nonatomic) BOOL isMyDynamic;
 
 - (void)loadData:(NSArray *)dataArray;
 - (void)loadMoreData:(NSArray *)dataArray;

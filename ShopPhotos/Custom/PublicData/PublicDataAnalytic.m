@@ -66,13 +66,18 @@
             congfing.resetPassword2 = [RequestErrorGrab getStringwitKey:@"resetPassword2" toTarget:api];
             congfing.getCount = [RequestErrorGrab getStringwitKey:@"getCount" toTarget:api];
             congfing.getNewDynamics = [RequestErrorGrab getStringwitKey:@"getNewDynamics" toTarget:api];
+            
+            congfing.getUserDynamics = [RequestErrorGrab getStringwitKey:@"getUserDynamics" toTarget:api];
+            
             congfing.publishedFeedback = [RequestErrorGrab getStringwitKey:@"publishedFeedback" toTarget:api];
             congfing.getClassifies = [RequestErrorGrab getStringwitKey:@"getClassifies" toTarget:api];
             congfing.getUsers = [RequestErrorGrab getStringwitKey:@"getUsers" toTarget:api];
             congfing.getUserPhotos = [RequestErrorGrab getStringwitKey:@"getUserPhotos" toTarget:api];
+            congfing.getUserVideos = [RequestErrorGrab getStringwitKey:@"getUserVideos" toTarget:api];
             congfing.getRecommendPhotos = [RequestErrorGrab getStringwitKey:@"getRecommendPhotos" toTarget:api];
             congfing.batchPhotos = [RequestErrorGrab getStringwitKey:@"batchPhotos" toTarget:api];
             congfing.deletePhotos = [RequestErrorGrab getStringwitKey:@"deletePhotos" toTarget:api];
+            congfing.deleteVideos = [RequestErrorGrab getStringwitKey:@"deleteVideos" toTarget:api];
             congfing.getNotices = [RequestErrorGrab getStringwitKey:@"getNotices" toTarget:api];
             congfing.deleteNotices = [RequestErrorGrab getStringwitKey:@"deleteNotices" toTarget:api];
             congfing.getCollectPhotos = [RequestErrorGrab getStringwitKey:@"getCollectPhotos" toTarget:api];
@@ -122,15 +127,20 @@
             congfing.isAllow = [RequestErrorGrab getStringwitKey:@"isAllow" toTarget:api];
             congfing.hasCollectPhoto = [RequestErrorGrab getStringwitKey:@"hasCollectPhoto" toTarget:api];
             congfing.collectPhotos = [RequestErrorGrab getStringwitKey:@"collectPhotos" toTarget:api];
+            congfing.collectPhoto = [RequestErrorGrab getStringwitKey:@"collectPhoto" toTarget:api];
+            congfing.collectVideo = [RequestErrorGrab getStringwitKey:@"collectVideo" toTarget:api];
+            congfing.collssssCopy = [RequestErrorGrab getStringwitKey:@"collectPhotos" toTarget:api];
             
             congfing.cancelCollectPhotos = [RequestErrorGrab getStringwitKey:@"cancelCollectPhotos" toTarget:api];
-            congfing.collssssCopy = [RequestErrorGrab getStringwitKey:@"collectPhotos" toTarget:api];
+            congfing.cancelCollectVideos = [RequestErrorGrab getStringwitKey:@"cancelCollectVideos" toTarget:api];
             congfing.setIcon = [RequestErrorGrab getStringwitKey:@"setIcon" toTarget:api];
             congfing.appWithWeChatLogin = [RequestErrorGrab getStringwitKey:@"appWithWeChatLogin" toTarget:api];
             congfing.appWithQQLogin = [RequestErrorGrab getStringwitKey:@"appWithQQLogin" toTarget:api];
             congfing.activeAccount = [RequestErrorGrab getStringwitKey:@"activeAccount" toTarget:api];
             congfing.updateToken = [RequestErrorGrab getStringwitKey:@"updateToken" toTarget:api];
             congfing.sendCopyRequest = [RequestErrorGrab getStringwitKey:@"sendCopyRequest" toTarget:api];
+            congfing.getSubclassPhotos = [RequestErrorGrab getStringwitKey:@"getSubclassPhotos" toTarget:api];
+            
             
             //            }
             //

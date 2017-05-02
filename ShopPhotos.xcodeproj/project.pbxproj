@@ -297,6 +297,7 @@
 		8DA234021EB44D6A0091277B /* TabBarItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DA233FD1EB44D6A0091277B /* TabBarItem.m */; };
 		8DA234031EB44D6A0091277B /* TabBarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DA233FF1EB44D6A0091277B /* TabBarView.m */; };
 		8DA234051EB44F180091277B /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DA234041EB44F180091277B /* VideoToolbox.framework */; };
+		8DA234081EB4C1960091277B /* SPVideoPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DA234071EB4C1960091277B /* SPVideoPlayer.m */; };
 		8DDF4E261E8FCC8E0096295D /* SPAlertCtrl.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDF4E251E8FCC8E0096295D /* SPAlertCtrl.m */; };
 		8DFD628A1EB19F8800A9473B /* PublishVideoCtr.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DFD62891EB19F8800A9473B /* PublishVideoCtr.m */; };
 		8DFD628C1EB19F9100A9473B /* PublishVideoCtr.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8DFD628B1EB19F9100A9473B /* PublishVideoCtr.storyboard */; };
@@ -801,6 +802,8 @@
 		8DA233FE1EB44D6A0091277B /* TabBarView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TabBarView.h; sourceTree = "<group>"; };
 		8DA233FF1EB44D6A0091277B /* TabBarView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TabBarView.m; sourceTree = "<group>"; };
 		8DA234041EB44F180091277B /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = System/Library/Frameworks/VideoToolbox.framework; sourceTree = SDKROOT; };
+		8DA234071EB4C1960091277B /* SPVideoPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SPVideoPlayer.m; path = VideoPlayer/SPVideoPlayer.m; sourceTree = "<group>"; };
+		8DA234091EB4C1AB0091277B /* SPVideoPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SPVideoPlayer.h; path = VideoPlayer/SPVideoPlayer.h; sourceTree = "<group>"; };
 		8DDF4E241E8F59FC0096295D /* SPAlertCtrl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPAlertCtrl.h; sourceTree = "<group>"; };
 		8DDF4E251E8FCC8E0096295D /* SPAlertCtrl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPAlertCtrl.m; sourceTree = "<group>"; };
 		8DFD62881EB19F8800A9473B /* PublishVideoCtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PublishVideoCtr.h; sourceTree = "<group>"; };
@@ -886,6 +889,7 @@
 		48458FF71E27706400BC29D8 /* Custom */ = {
 			isa = PBXGroup;
 			children = (
+				8DA234061EB4C14F0091277B /* VideoPlayer */,
 				8DA2326A1EB442290091277B /* RongCloud */,
 				8D92FA041EA5BC150062DEAC /* DDKit */,
 				8D92F9E71EA5BBE90062DEAC /* ImageSlider */,
@@ -2506,6 +2510,15 @@
 			path = View;
 			sourceTree = "<group>";
 		};
+		8DA234061EB4C14F0091277B /* VideoPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				8DA234071EB4C1960091277B /* SPVideoPlayer.m */,
+				8DA234091EB4C1AB0091277B /* SPVideoPlayer.h */,
+			);
+			name = VideoPlayer;
+			sourceTree = "<group>";
+		};
 		ADBECD21DE856C35C2F9BF85 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -2938,6 +2951,7 @@
 				8DA233F01EB44C920091277B /* UserInfoDrawerCtr.m in Sources */,
 				484591CF1E27706500BC29D8 /* PhotosController.m in Sources */,
 				484592311E27706500BC29D8 /* PhotoDetailsFooter.m in Sources */,
+				8DA234081EB4C1960091277B /* SPVideoPlayer.m in Sources */,
 				8DA234001EB44D6A0091277B /* TabBarCtr.m in Sources */,
 				8DA233C11EB44C910091277B /* ReadQRCode.m in Sources */,
 				8D92FA1D1EA5BC150062DEAC /* NSDate+DDKit.m in Sources */,

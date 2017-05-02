@@ -54,6 +54,9 @@
 @property (strong, nonatomic) NSString * getCount;
 // 获取用户动态
 @property (strong, nonatomic) NSString * getNewDynamics;
+
+@property (strong, nonatomic) NSString * getUserDynamics;
+
 // 用户反馈提交
 @property (strong, nonatomic) NSString * publishedFeedback;
 // 获取用户相册分类、子分类
@@ -139,8 +142,12 @@
 @property (strong, nonatomic) NSString * getSubclasses;
 // 取消收藏相册
 @property (strong, nonatomic) NSString * cancelCollectPhotos;
+@property (strong, nonatomic) NSString * cancelCollectVideos;
 // 收藏相册
 @property (strong, nonatomic) NSString * collectPhotos;
+@property (strong, nonatomic) NSString * collectPhoto;
+@property (strong, nonatomic) NSString * collectVideo;
+
 @property (strong, nonatomic) NSString * collssssCopy;
 // 修改用户头像
 @property (strong, nonatomic) NSString * setIcon;
@@ -170,6 +177,7 @@
 @property (strong, nonatomic) NSString * deleteMoments;
 @property (strong, nonatomic) NSString * deletePhoto;
 @property (strong, nonatomic) NSString * deletePhotos;
+@property (strong, nonatomic) NSString * deleteVideos;
 @property (strong, nonatomic) NSString * downloadPageUrl;
 @property (strong, nonatomic) NSString * forwardingToMoment;
 @property (strong, nonatomic) NSString * forwardingToPhoto;
@@ -177,7 +185,8 @@
 @property (strong, nonatomic) NSString * getCapacity;
 @property (strong, nonatomic) NSString * getConcernMoments;
 @property (strong, nonatomic) NSString * getMoments;
-@property (strong, nonatomic) NSString * getSubclassCover;
+@property (strong, nonatomic) NSString * getSubclassPhotos;
+@property (strong, nonatomic) NSString * getUserVideos;
 @property (strong, nonatomic) NSString * handleRecommends;
 @property (strong, nonatomic) NSString * hasCollectPhoto;
 @property (strong, nonatomic) NSString * index;

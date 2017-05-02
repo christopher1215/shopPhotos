@@ -14,7 +14,6 @@ static NSString * CellID = @"DynamicViewCell";
 @protocol DynamicViewCellDelegate <NSObject>
 
 - (void)cellSelectType:(NSInteger)type tableViewCelelIndexPath:(NSIndexPath *)indexPath;
-
 - (void)cellImageSelected:(NSInteger)tag TabelViewCellIndexPath:(NSIndexPath *)indexPath;
 
 @end
@@ -24,5 +23,8 @@ static NSString * CellID = @"DynamicViewCell";
 @property (weak, nonatomic) id<DynamicViewCellDelegate>delegate;
 @property (strong, nonatomic) NSIndexPath * indexPath;
 @property (strong, nonatomic) DynamicModel * model;
+@property (assign, nonatomic) BOOL isMyDynamic;
+
+- (void)createAutoLayout;
 
 @end

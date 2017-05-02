@@ -68,7 +68,7 @@
                   authType:(NSString *)authType;
 
 /**
- *  设置Facebook应用信息
+ *  设置Facebook应用信息 不需要使用facebook客户端分享
  *
  *  @param apiKey       应用标识
  *  @param appSecret    应用密钥
@@ -78,13 +78,15 @@
                         appSecret:(NSString *)appSecret
                          authType:(NSString *)authType;
 
+
 /**
- *  设置Facebook应用信息
- *
- *  @param apiKey       应用标识
- *  @param appSecret    应用密钥
- *  @param displayName  分享后显示的app名称 需与facebook后台配置一致 使用SSO分享必须
- *  @param authType     授权方式。值可以是：SSDKAuthTypeSSO、SSDKAuthTypeWeb、SSDKAuthTypeBoth，分别代表SSO、网页授权、SSO＋网页授权。
+ 设置Facebook应用信息 使用facebook客户端分享使用此方法 displayName必须
+ 
+ @since ver 3.6.0
+ @param apiKey 应用标识
+ @param appSecret 应用密钥
+ @param displayName 分享后显示的app名称 需与facebook后台配置一致 使用facebook客户端分享必须
+ @param authType 授权方式。值可以是：SSDKAuthTypeSSO、SSDKAuthTypeWeb、SSDKAuthTypeBoth，分别代表SSO、网页授权、SSO＋网页授权。
  */
 - (void)SSDKSetupFacebookByApiKey:(NSString *)apiKey
                         appSecret:(NSString *)appSecret
@@ -98,7 +100,6 @@
  *  @param appKey        应用标识
  *  @param appSecret     应用密钥
  *  @param redirectUri   回调地址
- *  authType      授权方式。值可以是：SSDKAuthTypeSSO、SSDKAuthTypeWeb、SSDKAuthTypeBoth，分别代表SSO、网页授权、SSO＋网页授权。
  */
 - (void)SSDKSetupTencentWeiboByAppKey:(NSString *)appKey
                             appSecret:(NSString *)appSecret
@@ -268,7 +269,6 @@
  *
  *  @param applicationId 应用标识
  *  @param secretKey     应用密钥
- *  authType    授权方式。值可以是：SSDKAuthTypeSSO、SSDKAuthTypeWeb、SSDKAuthTypeBoth，分别代表SSO、网页授权、SSO＋网页授权。
  */
 - (void)SSDKSetupVKontakteByApplicationId:(NSString *)applicationId
                                 secretKey:(NSString *)secretKey;
@@ -334,4 +334,9 @@
 - (void)SSDKSetupYouTubeByClientId:(NSString *)clientId
                       clientSecret:(NSString *)clientSecret
                        redirectUri:(NSString *)redirectUri;
+/**
+ *  设置Line应用信息
+ *  @param authType  授权方式。值可以是：SSDKAuthTypeSSO、SSDKAuthTypeWeb、SSDKAuthTypeBoth，分别代表SSO、网页授权、SSO＋网页授权。
+ */
+- (void)SSDKSetupLineAuthType:(NSString *)authType;
 @end

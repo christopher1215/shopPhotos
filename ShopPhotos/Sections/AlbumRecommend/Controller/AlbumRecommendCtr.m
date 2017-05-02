@@ -94,7 +94,7 @@
 
     self.table = [[AlbumPhotoTableView alloc] init];
     self.table.delegate = self;
-    self.table.showPrice = YES;
+    self.table.isVideo = NO;
     [self.view addSubview:self.table];
     
     __weak __typeof(self)weakSelef = self;

@@ -22,6 +22,12 @@
 @property (strong, nonatomic) UIView * shareView;
 @property (strong, nonatomic) UILabel *share;
 @property (strong, nonatomic) UIView * line;
+
+@property (strong, nonatomic) UIButton *btn_message;
+@property (strong, nonatomic) UIButton *btn_favorite;
+@property (strong, nonatomic) UIButton *btn_pyq;
+@property (strong, nonatomic) UIButton *btn_delete;
+
 @end
 
 @implementation DynamicViewCell
@@ -31,13 +37,16 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
          self.selectionStyle = UITableViewCellSelectionStyleNone;
-        [self createAutoLayout];
     }
     
     return self;
 }
 
-- (void)createAutoLayout{
+- (void)createAutoLayout {
+    
+    for (UIView *subview in self.content.subviews) {
+        [subview removeFromSuperview];
+    }
     
     self.content = [[UIView alloc] init];
     [self.contentView addSubview:self.content];
@@ -51,10 +60,10 @@
     [self.icon addTarget:self action:@selector(iconSelected)];
     [self.content addSubview:self.icon];
     self.icon.sd_layout
-    .leftEqualToView(self.content)
+    .leftSpaceToView(self.content,10)
     .topSpaceToView(self.content,5)
-    .widthIs(42)
-    .heightIs(42);
+    .widthIs(35)
+    .heightIs(35);
     
     self.name = [[UILabel alloc] init];
     [self.name setTextColor:[UIColor blackColor]];
@@ -81,7 +90,7 @@
     [self.content addSubview:self.images];
     self.images.sd_layout
     .leftEqualToView(self.content)
-    .topSpaceToView(self.icon,6)
+    .topSpaceToView(self.icon,15)
     .rightEqualToView(self.content)
     .heightIs(100);
 
@@ -139,35 +148,64 @@
     .rightSpaceToView(self.content,0)
     .heightIs(50);
     
-    UIButton *btn_message = [[UIButton alloc] init];
-    [btn_message setBackgroundColor:[UIColor clearColor]];
-    [btn_message setBackgroundImage:[UIImage imageNamed:@"ico_message"] forState:UIControlStateNormal];
-    [self.shareView addSubview:btn_message];
-    btn_message.sd_layout
-    .leftEqualToView(_shareView)
-    .topSpaceToView(_shareView,15)
-    .widthIs(16)
-    .heightIs(16);
-    
-    UIButton *btn_favorite = [[UIButton alloc] init];
-    [btn_favorite setBackgroundColor:[UIColor clearColor]];
-    [btn_favorite setBackgroundImage:[UIImage imageNamed:@"btn_favorite"] forState:UIControlStateNormal];
-    [self.shareView addSubview:btn_favorite];
-    btn_favorite.sd_layout
-    .leftSpaceToView(btn_message,20)
-    .topSpaceToView(_shareView,15)
-    .widthIs(16)
-    .heightIs(16);
-    
-    UIButton *btn_pyq = [[UIButton alloc] init];
-    [btn_pyq setBackgroundColor:[UIColor clearColor]];
-    [btn_pyq setBackgroundImage:[UIImage imageNamed:@"btn_pyq_b"] forState:UIControlStateNormal];
-    [self.shareView addSubview:btn_pyq];
-    btn_pyq.sd_layout
-    .leftSpaceToView(btn_favorite,20)
-    .topSpaceToView(_shareView,15)
-    .widthIs(16)
-    .heightIs(16);
+    if (self.isMyDynamic == NO) {
+        _btn_message = [[UIButton alloc] init];
+        [_btn_message setBackgroundColor:[UIColor clearColor]];
+        [_btn_message setBackgroundImage:[UIImage imageNamed:@"ico_message"] forState:UIControlStateNormal];
+        [_btn_message addTarget:self action:@selector(chatSelected)];
+        [self.shareView addSubview:_btn_message];
+        _btn_message.sd_layout
+        .leftEqualToView(_shareView)
+        .topSpaceToView(_shareView,15)
+        .widthIs(16)
+        .heightIs(16);
+        
+        _btn_favorite = [[UIButton alloc] init];
+        [_btn_favorite setBackgroundColor:[UIColor clearColor]];
+        [_btn_favorite setBackgroundImage:[UIImage imageNamed:@"btn_favorite"] forState:UIControlStateNormal];
+        [_btn_favorite addTarget:self action:@selector(collectSelected)];
+        [self.shareView addSubview:_btn_favorite];
+        _btn_favorite.sd_layout
+        .leftSpaceToView(_btn_message,20)
+        .topSpaceToView(_shareView,15)
+        .widthIs(16)
+        .heightIs(16);
+        
+        _btn_pyq = [[UIButton alloc] init];
+        [_btn_pyq setBackgroundColor:[UIColor clearColor]];
+        [_btn_pyq setBackgroundImage:[UIImage imageNamed:@"btn_pyq_b"] forState:UIControlStateNormal];
+        [_btn_pyq addTarget:self action:@selector(pyqSelected)];
+        [self.shareView addSubview:_btn_pyq];
+        _btn_pyq.sd_layout
+        .leftSpaceToView(_btn_favorite,20)
+        .topSpaceToView(_shareView,15)
+        .widthIs(16)
+        .heightIs(16);
+    }
+    else {
+        _btn_pyq = [[UIButton alloc] init];
+        [_btn_pyq setBackgroundColor:[UIColor clearColor]];
+        [_btn_pyq setBackgroundImage:[UIImage imageNamed:@"btn_pyq_b"] forState:UIControlStateNormal];
+        [_btn_pyq addTarget:self action:@selector(pyqSelected)];
+        [self.shareView addSubview:_btn_pyq];
+        _btn_pyq.sd_layout
+        .leftEqualToView(_shareView)
+        .topSpaceToView(_shareView,15)
+        .widthIs(16)
+        .heightIs(16);
+        
+        _btn_delete = [[UIButton alloc] init];
+        [_btn_delete setBackgroundColor:[UIColor clearColor]];
+        [_btn_delete setBackgroundImage:[UIImage imageNamed:@"btn_delete"] forState:UIControlStateNormal];
+        [_btn_delete addTarget:self action:@selector(deleteSelected)];
+        [self.shareView addSubview:_btn_delete];
+        _btn_delete.sd_layout
+        .leftSpaceToView(_btn_pyq,20)
+        .topSpaceToView(_shareView,15)
+        .widthIs(16)
+        .heightIs(16);
+    }
+
     
     self.share = [[UILabel alloc] init];
     [self.share setFont:Font(19)];
@@ -196,30 +234,16 @@
 
 - (void)setModel:(AlbumPhotosModel *)model{
     
-    [self.icon sd_setImageWithURL:[NSURL URLWithString:[model.user objectForKey:@"icon"]]];
+    [self.icon sd_setImageWithURL:[NSURL URLWithString:[model.user objectForKey:@"avatar"]]];
     self.icon.layer.cornerRadius = _icon.frame.size.width/2;
     self.icon.layer.masksToBounds = TRUE;
     
     [self.name setText:[model.user objectForKey:@"name"]];
     [self.date setText:[NSString stringWithFormat:@"%@ 上传",model.dateDiff]];
     
-    //NSString *
-    /*
-    if(!model.showPrice){
-        //NSMutableAttributedString * attrText = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@",model.title]];
-        self.text.text = model.title;
-    }else{
-        NSMutableAttributedString * attrText = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@",model.title]];
-        
-        [attrText addAttribute:NSFontAttributeName
-                         value:[UIFont fontWithName:@"Helvetica" size:18]
-                         range:NSMakeRange(0, model.price.length+1)];
-        [attrText addAttribute:NSForegroundColorAttributeName
-                         value:[UIColor darkGrayColor]
-                         range:NSMakeRange(0, model.price.length+1)];
-        
-        self.text.attributedText = attrText ;
-    }*/
+    if (model.collected == NO) {
+        [self.btn_favorite setBackgroundImage:[UIImage imageNamed:@"btn_favorite_b"] forState:UIControlStateNormal];
+    }
     
     self.text.text = model.title;
     // ,model.descriptionText
@@ -259,10 +283,10 @@
     .heightIs(100);
 
     UIButton *videoPlayButton = [[UIButton alloc] initWithFrame:CGRectMake(image.frame.size.width/4, image.frame.size.height/4, image.frame.size.width/2, image.frame.size.height/2)];
-    [image addSubview:videoPlayButton];
+    [self.images addSubview:videoPlayButton];
     [videoPlayButton setBackgroundImage:[UIImage imageNamed:@"btn_movie"] forState:UIControlStateNormal];
     videoPlayButton.sd_cornerRadius = [NSNumber numberWithDouble:5.0];
-    [videoPlayButton addTarget:self action:@selector(videoSelected)];
+    [videoPlayButton addTarget:self action:@selector(videoSelected:) forControlEvents:UIControlEventTouchUpInside];
     
     [self.images setContentSize:CGSizeMake(110,0)];
 }
@@ -308,13 +332,29 @@
     [self useDeleagate:3];
 }
 
+- (void)collectSelected {
+    [self useDeleagate:4];
+}
+
+- (void)chatSelected {
+    [self useDeleagate:5];
+}
+
+- (void)pyqSelected {
+    [self useDeleagate:6];
+}
+
+- (void)deleteSelected {
+    [self useDeleagate:7];
+}
+
 - (void)imageSelected:(UITapGestureRecognizer *)tap{
     if(self.delegate && [self.delegate respondsToSelector:@selector(cellImageSelected:TabelViewCellIndexPath:)]){
         [self.delegate cellImageSelected:tap.view.tag-100 TabelViewCellIndexPath:self.indexPath];
     }
 }
 
-- (void)videoSelected {
+- (void)videoSelected:(UIButton *)_sender {
     if(self.delegate && [self.delegate respondsToSelector:@selector(cellImageSelected:TabelViewCellIndexPath:)]){
         [self.delegate cellImageSelected:-1 TabelViewCellIndexPath:self.indexPath];
     }
@@ -323,7 +363,6 @@
 - (void)useDeleagate:(NSInteger)type{
     
     if(self.delegate && [self.delegate respondsToSelector:@selector(cellSelectType:tableViewCelelIndexPath:)]){
-        
         [self.delegate cellSelectType:type tableViewCelelIndexPath:self.indexPath];
     }
 }

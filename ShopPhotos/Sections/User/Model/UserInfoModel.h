@@ -21,6 +21,8 @@
 @property (strong, nonatomic) NSString * bg_image;
 @property (strong, nonatomic) NSString * name_abbr;
 @property (strong, nonatomic) NSString * email;
+@property (assign, nonatomic) NSInteger integral;
+@property (assign, nonatomic) NSInteger concerned;
 @property (strong, nonatomic) NSDictionary * settings;
 - (void)analyticInterface:(NSDictionary *)data;
 

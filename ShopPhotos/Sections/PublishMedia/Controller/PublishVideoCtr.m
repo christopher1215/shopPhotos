@@ -1086,7 +1086,7 @@ typedef NS_ENUM( NSInteger, AVCamLivePhotoMode ) {
     
     //    [self clearSelected:NO];
     [self showToast:@"正在上传,请保存网络通畅"];
-    
+    [self showLoad];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSData *imageData =  [self compressOriginalImage:self.coverImage toMaxDataSizeKBytes:300];
         NSData *videoData = [NSData dataWithContentsOfFile:self.videoUrl];
@@ -1099,9 +1099,11 @@ typedef NS_ENUM( NSInteger, AVCamLivePhotoMode ) {
         
         // 耗时的操作
         PublishVideo * task = [[PublishVideo alloc] init];
+        
         [task startTask:postData complete:^(BOOL stuta) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 //回调或者说是通知主线程刷新，
+                [self closeLoad];
                 if(stuta){
                     [self showToast:@"上传成功"];
                     NSError *error;

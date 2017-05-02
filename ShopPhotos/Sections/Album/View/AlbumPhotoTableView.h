@@ -20,7 +20,7 @@
 
 @property (weak, nonatomic) id<AlbumPhotoTableViewDelegate>delegate;
 @property (strong, nonatomic)UICollectionView * photos;
-@property (assign, nonatomic) BOOL showPrice;
+@property (assign, nonatomic) BOOL isVideo;
 - (void)loadData:(NSArray *)dataArray;
 - (void)loadMoreData:(NSArray *)dataArray;
 

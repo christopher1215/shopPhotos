@@ -77,9 +77,8 @@
 {
     static NSString * CellIdentifier = @"AlbumPhotoTableCellID";
     StaticCollectionViewCell * cell = [collectionView dequeueReusableCellWithReuseIdentifier:CellIdentifier forIndexPath:indexPath];
-    [cell createAutoLayout:FALSE cellType:1];
+    [cell createAutoLayout:self.isVideo cellType:1];
     cell.indexPath = indexPath;
-//    cell.showPrice = self.showPrice;
     if(!cell.delegate)cell.delegate = self;
     cell.model = [self.dataArray objectAtIndex:indexPath.row];
     return cell;

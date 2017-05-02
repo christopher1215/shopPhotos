@@ -478,7 +478,7 @@
     [self showToast:@"正在上传,请保存网络通畅"];
     [self.content setContentOffset:CGPointMake(0, 0) animated:YES];
     
-    
+    [self showLoad];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSMutableArray * imageDatas = [NSMutableArray array];
         int index = 0;
@@ -496,9 +496,11 @@
         
         // 耗时的操作
         PublishPhoto * task = [[PublishPhoto alloc] init];
+        
         [task startTask:postData complete:^(BOOL stuta){
             dispatch_async(dispatch_get_main_queue(), ^{
                 //回调或者说是通知主线程刷新，
+                [self closeLoad];
                 if(stuta){
                     [self showToast:@"上传成功"];
                 }else{

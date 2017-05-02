@@ -9,6 +9,7 @@
 #import "AlbumClassCtr.h"
 #import "AlbumClassTable.h"
 #import "AlbumClassModel.h"
+#import "AlbumPhotosCtr.h"
 #import "MoreAlert.h"
 #import "SearchAllCtr.h"
 #import "ChangeClassAlert.h"
@@ -353,18 +354,36 @@
 }
 
 - (void)albumClassTableHeadSelected:(NSInteger )index {
+    AlbumClassTableModel * model = [self.dataArray objectAtIndex:index];
     if (_isSubClass == NO) {
-        AlbumClassTableModel * model = [self.dataArray objectAtIndex:index];
-        AlbumClassCtr * albumClass = GETALONESTORYBOARDPAGE(@"AlbumClassCtr");
-        albumClass.isSubClass = YES;
-        albumClass.uid = _uid;
-        albumClass.parentModel = model;
-        albumClass.isFromUploadPhoto = _isFromUploadPhoto;
-        albumClass.publish = _publish;
-        if (_isFromUploadPhoto) {
-//            _needGoparent = YES;
+        if (model.isVideo) {
+            AlbumPhotosCtr * albumPhotos = GETALONESTORYBOARDPAGE(@"AlbumPhotosCtr");
+            albumPhotos.type = @"video";
+            albumPhotos.uid = _uid;
+            albumPhotos.subClassid = -1;
+            albumPhotos.ptitle = @"视频列表";
+            [self.navigationController pushViewController:albumPhotos animated:YES];
         }
-        [self.navigationController pushViewController:albumClass animated:YES];
+        else{
+            AlbumClassCtr * albumClass = GETALONESTORYBOARDPAGE(@"AlbumClassCtr");
+            albumClass.isSubClass = YES;
+            albumClass.uid = _uid;
+            albumClass.parentModel = model;
+            albumClass.isFromUploadPhoto = _isFromUploadPhoto;
+            albumClass.publish = _publish;
+            if (_isFromUploadPhoto) {
+                //            _needGoparent = YES;
+            }
+            [self.navigationController pushViewController:albumClass animated:YES];
+        }
+    }
+    else {
+        AlbumPhotosCtr * albumPhotos = GETALONESTORYBOARDPAGE(@"AlbumPhotosCtr");
+        albumPhotos.type = @"photo";
+        albumPhotos.uid = _uid;
+        albumPhotos.subClassid = model.Id;
+        albumPhotos.ptitle = model.name;
+        [self.navigationController pushViewController:albumPhotos animated:YES];
     }
 }
 
@@ -511,30 +530,27 @@
     
     [self showLoad];
     
-    NSDictionary *data = nil;
     NSString *url = nil;
     CongfingURL * config = [self getValueWithKey:ShopPhotosApi];
-    NSMutableString *strClassifies = [[NSMutableString alloc] init];
-    [strClassifies setString:@"["];
-
+    
+    NSMutableDictionary * data = [[NSMutableDictionary alloc] init];
+    NSInteger index = 0;
     if (_isSubClass) {
         for(AlbumClassTableSubModel * subModel in self.dataArray) {
             if (subModel.delChecked) {
-                [strClassifies appendFormat:@"%ld,",subModel.Id];
+                [data setValue:[NSString stringWithFormat:@"%ld",subModel.Id] forKey:[NSString stringWithFormat:@"subclassesId[%ld]",index]];
             }
+            index++;
         }
-        [strClassifies replaceCharactersInRange:NSMakeRange(strClassifies.length-1, 1) withString:@"]"];
-        data = @{@"subclassesId":strClassifies};
         url = config.deleteSubclasses;
     }
     else {
         for(AlbumClassTableModel * model in self.dataArray) {
             if (model.delChecked) {
-                [strClassifies appendFormat:@"%ld,",model.Id];
+                [data setValue:[NSString stringWithFormat:@"%ld",model.Id] forKey:[NSString stringWithFormat:@"classifiesId[%ld]",index]];
             }
+            index++;
         }
-        [strClassifies replaceCharactersInRange:NSMakeRange(strClassifies.length-1, 1) withString:@"]"];
-        data = @{@"classifiesId":strClassifies};
         url = config.deleteClassifies;
     }
     __weak __typeof(self)weakSelef = self;

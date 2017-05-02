@@ -71,6 +71,8 @@
     DynamicViewCell * cell = [tableView dequeueReusableCellWithIdentifier:CellID forIndexPath:indexPath];
     if(!cell.delegate)cell.delegate = self;
     cell.indexPath = indexPath;
+    cell.isMyDynamic = self.isMyDynamic;
+    [cell createAutoLayout];
     cell.model = [self.dataArray objectAtIndex:indexPath.row];
     return cell;
     
@@ -101,5 +103,6 @@
         [self.delegate cellImageSelected:tag TabelViewCellIndexPath:indexPath];
     }
 }
+
 
 @end

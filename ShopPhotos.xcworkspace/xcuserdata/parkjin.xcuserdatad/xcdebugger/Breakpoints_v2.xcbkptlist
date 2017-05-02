@@ -25,13 +25,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ShopPhotos/Sections/Album/View/AlbumPhotoTableCell.m"
-            timestampString = "514703714.164542"
+            filePath = "ShopPhotos/Sections/PublishMedia/View/VideoRecordView.m"
+            timestampString = "514961281.36176"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "191"
-            endingLineNumber = "191"
-            landmarkName = "-selectedClick"
+            startingLineNumber = "266"
+            endingLineNumber = "266"
+            landmarkName = "-configureSession"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -41,13 +41,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ShopPhotos/Sections/PublishMedia/View/VideoRecordView.m"
-            timestampString = "514961281.36176"
+            filePath = "ShopPhotos/Sections/AlbumClass/View/AlbumClassTable.m"
+            timestampString = "515179248.324832"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "266"
-            endingLineNumber = "266"
-            landmarkName = "-configureSession"
+            startingLineNumber = "90"
+            endingLineNumber = "90"
+            landmarkName = "-tableView:cellForRowAtIndexPath:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

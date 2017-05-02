@@ -28,6 +28,14 @@
  */
 - (void)SSDKEnableUseClientShare;
 
+
+/**
+ 可设置新浪微博使用高级接口进行分享（即应用内使用 statuses/update 和 statuses/upload_url_text这两个高级接口进行分享）
+ statuses/update 原为普通接口 2017年6月30日后修改为高级接口 应用内普通分享接口改变为 statuses/share 
+ statuses/share 规则 http://open.weibo.com/wiki/2/statuses/share
+ */
+- (void)SSDKEnableAdvancedInterfaceShare;
+
 /**
  *  设置分享参数
  *
@@ -161,6 +169,7 @@
  *
  *  分享文件时：
  *  设置type为SSDKContentTypeFile（例如.mp3、.mp4、.pdf、.docx的分享），设置title、sourceFileExtension、sourceFileData，以及thumbImage参数，如果尚未设置thumbImage则会从image参数中读取图片并对图片进行缩放操作参数
+ 
  */
 - (void)SSDKSetupWeChatParamsByText:(NSString *)text
                               title:(NSString *)title
@@ -176,6 +185,27 @@
                                type:(SSDKContentType)type
                  forPlatformSubType:(SSDKPlatformType)platformSubType;
 
+//3.6.3 为微信小程序分享增加
+/**
+ 设置微信小程序分享
+
+ @param title 标题
+ @param description 详细说明
+ @param webpageUrl 网址（6.5.6以下版本微信会自动转化为分享链接 必填）
+ @param path 跳转到页面路径
+ @param thumbImage 缩略图 （必填）
+ @param userName 小程序的userName（必填）
+ @param platformSubType 分享自平台 微信小程序暂只支持 SSDKPlatformSubTypeWechatSession（微信好友分享）
+ */
+- (void)SSDKSetupWeChatParamsByTitle:(NSString *)title
+                         description:(NSString *)description
+                          webpageUrl:(NSURL *)webpageUrl
+                                path:(NSString *)path
+                          thumbImage:(id)thumbImage
+                            userName:(NSString *)userName
+                  forPlatformSubType:(SSDKPlatformType)platformSubType;
+
+
 /**
  *  设置Twitter分享参数
  *
@@ -190,6 +220,27 @@
                             latitude:(double)latitude
                            longitude:(double)longitude
                                 type:(SSDKContentType)type;
+
+
+
+/**
+ Twitter 视频分享
+
+ @param text 分享内容
+ @param video 本地文件地址
+ @param latitude 地理位置，纬度
+ @param longitude 地理位置，经度
+ @param str 自定义标示 用于方便管理上传过程 建议使用 （平台_xxx 如: Twitter_0001）
+ 视频的规格要求
+ https://dev.twitter.com/rest/media/uploading-media.html Video specifications and recommendations
+ */
+- (void)SSDKSetupTwitterParamsByText:(NSString *)text
+                               video:(NSURL*)video
+                            latitude:(double)latitude
+                           longitude:(double)longitude
+                                 tag:(NSString *)str;
+
+
 
 /**
  *  设置QQ分享参数
@@ -414,6 +465,16 @@
 - (void)SSDKSetupInstagramByImage:(id)image
                  menuDisplayPoint:(CGPoint)point;
 
+
+
+/**
+ 设置Instagram 视频分享参数 video 视频地址 可以为相册地址 或 本地文件地址
+
+ @param video 视频地址 可以为相册地址 或 本地文件地址
+ 使用相册地址时 注：为了效果需要确保其为相册的最新文件
+ */
+- (void)SSDKSetupInstagramByVideo:(NSURL *)video;
+
 /**
  *  设置LinkedIn分享参数
  *
@@ -437,7 +498,7 @@
  *  设置Tumblr分享参数
  *
  *  @param text  分享文本
- *  @param image 分享图片，只能够是网络图片，传入类型可以为NSString（图片路径）， NSURL（图片路径）。
+ *  @param image 分享图片，分享图片 可以为UIImage、NSString（图片路径）、NSURL（图片路径）、SSDKImage，仅在type为Image时有效。
  *  @param url   分享链接
  *  @param title 标题
  *  @param blogName 博客名称，如果为nil，则默认分享到默认博客中。
@@ -755,6 +816,31 @@
                                           video:(id)video
                                            type:(SSDKContentType)type;
 
+
+
+/**
+ 设置Facebook Messenger分享参数 WebPage类型时 image参数 仅支持单张网络图片
+
+ @since ver 3.6.0
+ @param title WebPage类型 标题
+ @param url   WebPage类型 网址
+ @param text  WebPage类型 链接的引用说明
+ @param images 分享图片，可以为UIImage、NSString（图片路径）、NSURL（图片路径）、SSDKImage。NSArray 图片数组
+              WebPage类型仅支持单张 网络图片
+ @param gif   分享GIF图片，可以为UIImage、NSString（图片路径）、NSURL（图片路径）、SSDKImage。
+ @param audio 分享音频, 可以为NSData、NSString、NSURL（文件路径）、SSDKData。
+ @param video 分享视频, 可以为NSData、NSString、NSURL（文件路径）、SSDKData。
+ @param type  分享类型，支持Image、Audio、Video WebPage
+ */
+- (void)SSDKSetupFacebookMessengerParamsByTitle:(NSString *)title
+                                            url:(NSURL *)url
+                                      quoteText:(NSString *)text
+                                         images:(id)images
+                                            gif:(id)gif
+                                          audio:(id)audio
+                                          video:(id)video
+                                           type:(SSDKContentType)type;
+
 /**
  *  设置Ding Talk分享参数
  *
@@ -774,7 +860,7 @@
 /**
  设置 美拍分享参数
 
- @param url  必须是相册地址
+ @param url  相册地址 或 本地图片 视频 路径
  @param type 分享类型，仅支持Image、Video Auto的自动类型判断需要 MeiPaiConnector.framework 进行支持
  */
 - (void)SSDKSetupMeiPaiParamsByUrl:(NSURL *)url

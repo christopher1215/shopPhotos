@@ -33,6 +33,8 @@
                 self.signature = [RequestErrorGrab getStringwitKey:@"signature" toTarget:user];
                 self.wechat = [RequestErrorGrab getStringwitKey:@"wechat" toTarget:user];
                 self.email = [RequestErrorGrab getStringwitKey:@"email" toTarget:user];
+                self.concerned = [RequestErrorGrab getIntegetKey:@"concerned" toTarget:user];
+                self.integral = [RequestErrorGrab getIntegetKey:@"integral" toTarget:user];
             }
         }
     } @catch (NSException *exception) {

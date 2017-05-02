@@ -9,6 +9,21 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>CTPersistance.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>CTVideoPlayerView.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>HandyFrame.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>IQKeyboardManager.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -69,6 +84,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>UITextView+Placeholder.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>YLGIFImage.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -77,12 +97,22 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>00A4EF6912CC46580A1ADE7B8FA93D43</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>04CF549EBEEE7BC87AEAE35397184D94</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
 		<key>0659B71386995AC7EE2A305F0A360EB1</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>11991BB2CA8618E20A8A1E87B3CFABDC</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -102,11 +132,6 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>574619F003B16D34DA6681C6430DCAAE</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
 		<key>586F2DFA9BDCC6675C2546793A69E5CC</key>
 		<dict>
 			<key>primary</key>
@@ -117,12 +142,22 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>8C7AE457165965D33F6B1FFF3CD9B834</key>
+		<key>73C5BB765BC400601939870C6C850349</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>971AE800EE60B1E5BBCE18713289B616</key>
+		<key>783BA84667F141A977ED7AA56124FE79</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>7D840A44687DE0B39392A9CEAF9F68B8</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>9012EF5CEDCB0051F75B222E17A69CB0</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -132,17 +167,22 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>C72539CBB626075E3737BEA573E58007</key>
+		<key>9F26756ACE21FAA89760859A1BF9CE5C</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>D6D83EA3FF0AE1A1CD218F4B2B2786D8</key>
+		<key>A15E62DC1CF772EE41DAA9D5BB915896</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>D78A3657685EA0F801B16FDFD95A3810</key>
+		<key>A28EA8C7EC60110667075551053202FF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>E69073A3FC1B833A04EB3261D9EE6AF8</key>
 		<dict>
 			<key>primary</key>
 			<true/>
