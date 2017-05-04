@@ -21,9 +21,11 @@
 #define publishNameKey @"publishName"
 #define descriptionKey @"description"
 
-typedef void(^CompletePulish)(BOOL statu);
+typedef void(^CompletePublish)(id responseObj);
 
 @interface PublishPhoto : NSObject
 
-- (void)startTask:(NSDictionary *)data complete:(CompletePulish)completeStatu;
+@property (assign, nonatomic) BOOL isAdd;
+- (void)startTask:(NSDictionary *)data complete:(CompletePublish)completeStatu;
+
 @end

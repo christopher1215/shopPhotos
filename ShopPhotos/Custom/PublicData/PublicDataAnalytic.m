@@ -57,6 +57,8 @@
             congfing.concernUser = [RequestErrorGrab getStringwitKey:@"concernUser" toTarget:api];
             congfing.handleStarUser = [RequestErrorGrab getStringwitKey:@"handleStarUser" toTarget:api];
             congfing.searchPhotos = [RequestErrorGrab getStringwitKey:@"searchPhotos" toTarget:api];
+            congfing.advancedSearch = [RequestErrorGrab getStringwitKey:@"advancedSearch" toTarget:api];
+            congfing.deletePhotoImage = [RequestErrorGrab getStringwitKey:@"deletePhotoImage" toTarget:api];
             
             congfing.appLogin = [RequestErrorGrab getStringwitKey:@"appLogin" toTarget:api];
             congfing.captcha = [RequestErrorGrab getStringwitKey:@"captcha" toTarget:api];
@@ -64,11 +66,10 @@
             congfing.registerUser  = [RequestErrorGrab getStringwitKey:@"registerUser" toTarget:api];
             congfing.sendAuthCode = [RequestErrorGrab getStringwitKey:@"sendAuthCode" toTarget:api];
             congfing.resetPassword2 = [RequestErrorGrab getStringwitKey:@"resetPassword2" toTarget:api];
-            congfing.getCount = [RequestErrorGrab getStringwitKey:@"getCount" toTarget:api];
+            congfing.getCounts = [RequestErrorGrab getStringwitKey:@"getCounts" toTarget:api];
             congfing.getNewDynamics = [RequestErrorGrab getStringwitKey:@"getNewDynamics" toTarget:api];
             
             congfing.getUserDynamics = [RequestErrorGrab getStringwitKey:@"getUserDynamics" toTarget:api];
-            
             congfing.publishedFeedback = [RequestErrorGrab getStringwitKey:@"publishedFeedback" toTarget:api];
             congfing.getClassifies = [RequestErrorGrab getStringwitKey:@"getClassifies" toTarget:api];
             congfing.getUsers = [RequestErrorGrab getStringwitKey:@"getUsers" toTarget:api];

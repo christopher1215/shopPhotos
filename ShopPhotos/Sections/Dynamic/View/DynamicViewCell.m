@@ -36,7 +36,7 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-         self.selectionStyle = UITableViewCellSelectionStyleNone;
+        self.selectionStyle = UITableViewCellSelectionStyleNone;
     }
     
     return self;
@@ -75,7 +75,7 @@
     .topSpaceToView(self.content,5)
     .rightEqualToView(self.content)
     .heightIs(20);
-
+    
     self.date = [[UILabel alloc] init];
     [self.date setFont:Font(13)];
     [self.date setTextColor:ColorHex(0X808080)];
@@ -93,9 +93,9 @@
     .topSpaceToView(self.icon,15)
     .rightEqualToView(self.content)
     .heightIs(100);
-
+    
     UILabel *morePhoto = [[UILabel alloc] init];
-    [morePhoto setText:@"更多"];
+    [morePhoto setText:@"详情"];
     [morePhoto setTextColor:ColorHex(0x579bd5)];
     [morePhoto setFont:Font(14)];
     [morePhoto setBackgroundColor:[UIColor clearColor]];
@@ -105,6 +105,7 @@
     .rightEqualToView(self.content)
     .topSpaceToView(self.images,5)
     .heightIs(18);
+    //[morePhoto setHidden:YES];
     
     self.text = [[UILabel alloc] init];
     [self.text setFont:Font(15)];
@@ -117,7 +118,7 @@
     .rightEqualToView(self.content)
     .topSpaceToView(morePhoto,6)
     .heightIs(40);
-
+    
     UILabel *viewAllText = [[UILabel alloc] init];
     [viewAllText setText:@"展开"];
     [viewAllText setTextColor:ColorHex(0x579bd5)];
@@ -129,6 +130,7 @@
     .rightEqualToView(self.content)
     .topSpaceToView(self.text,3)
     .heightIs(18);
+    [viewAllText setHidden:YES];
     
     self.line = [[UIView alloc] init];
     [self.line setBackgroundColor:ColorHex(0Xeeeeee)];
@@ -138,7 +140,7 @@
     .rightEqualToView(self.content)
     .topSpaceToView(viewAllText,10)
     .heightIs(1);
-
+    
     self.shareView = [[UIView alloc] init];
     [self.shareView setBackgroundColor:[UIColor clearColor]];
     [self.content addSubview:_shareView];
@@ -151,36 +153,39 @@
     if (self.isMyDynamic == NO) {
         _btn_message = [[UIButton alloc] init];
         [_btn_message setBackgroundColor:[UIColor clearColor]];
-        [_btn_message setBackgroundImage:[UIImage imageNamed:@"ico_message"] forState:UIControlStateNormal];
+        [_btn_message setImage:[UIImage imageNamed:@"ico_message"] forState:UIControlStateNormal];
         [_btn_message addTarget:self action:@selector(chatSelected)];
         [self.shareView addSubview:_btn_message];
         _btn_message.sd_layout
         .leftEqualToView(_shareView)
-        .topSpaceToView(_shareView,15)
-        .widthIs(16)
-        .heightIs(16);
+        .topSpaceToView(_shareView,8)
+        .widthIs(30)
+        .heightIs(30);
+        _btn_message.contentEdgeInsets = UIEdgeInsetsMake(7, 7, 7, 7);
         
         _btn_favorite = [[UIButton alloc] init];
         [_btn_favorite setBackgroundColor:[UIColor clearColor]];
-        [_btn_favorite setBackgroundImage:[UIImage imageNamed:@"btn_favorite"] forState:UIControlStateNormal];
+        [_btn_favorite setImage:[UIImage imageNamed:@"btn_favorite"] forState:UIControlStateNormal];
         [_btn_favorite addTarget:self action:@selector(collectSelected)];
         [self.shareView addSubview:_btn_favorite];
         _btn_favorite.sd_layout
-        .leftSpaceToView(_btn_message,20)
-        .topSpaceToView(_shareView,15)
-        .widthIs(16)
-        .heightIs(16);
+        .leftSpaceToView(_btn_message,13)
+        .topSpaceToView(_shareView,8)
+        .widthIs(30)
+        .heightIs(30);
+        [_btn_favorite setImageEdgeInsets: UIEdgeInsetsMake(7, 7, 7, 7)];
         
         _btn_pyq = [[UIButton alloc] init];
         [_btn_pyq setBackgroundColor:[UIColor clearColor]];
-        [_btn_pyq setBackgroundImage:[UIImage imageNamed:@"btn_pyq_b"] forState:UIControlStateNormal];
+        [_btn_pyq setImage:[UIImage imageNamed:@"btn_pyq_b"] forState:UIControlStateNormal];
         [_btn_pyq addTarget:self action:@selector(pyqSelected)];
         [self.shareView addSubview:_btn_pyq];
         _btn_pyq.sd_layout
-        .leftSpaceToView(_btn_favorite,20)
-        .topSpaceToView(_shareView,15)
-        .widthIs(16)
-        .heightIs(16);
+        .leftSpaceToView(_btn_favorite,13)
+        .topSpaceToView(_shareView,8)
+        .widthIs(30)
+        .heightIs(30);
+        _btn_pyq.contentEdgeInsets = UIEdgeInsetsMake(7, 7, 7, 7);
     }
     else {
         _btn_pyq = [[UIButton alloc] init];
@@ -205,7 +210,7 @@
         .widthIs(16)
         .heightIs(16);
     }
-
+    
     
     self.share = [[UILabel alloc] init];
     [self.share setFont:Font(19)];
@@ -242,7 +247,7 @@
     [self.date setText:[NSString stringWithFormat:@"%@ 上传",model.dateDiff]];
     
     if (model.collected == NO) {
-        [self.btn_favorite setBackgroundImage:[UIImage imageNamed:@"btn_favorite_b"] forState:UIControlStateNormal];
+        [self.btn_favorite setImage:[UIImage imageNamed:@"btn_favorite_b"] forState:UIControlStateNormal];
     }
     
     self.text.text = model.title;
@@ -281,7 +286,7 @@
     .topEqualToView(self.images)
     .widthIs(100)
     .heightIs(100);
-
+    
     UIButton *videoPlayButton = [[UIButton alloc] initWithFrame:CGRectMake(image.frame.size.width/4, image.frame.size.height/4, image.frame.size.width/2, image.frame.size.height/2)];
     [self.images addSubview:videoPlayButton];
     [videoPlayButton setBackgroundImage:[UIImage imageNamed:@"btn_movie"] forState:UIControlStateNormal];

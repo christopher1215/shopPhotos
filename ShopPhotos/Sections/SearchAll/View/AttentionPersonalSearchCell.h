@@ -15,4 +15,10 @@
 
 @property (strong, nonatomic) AttentionPersonalSearchModel * model;
 
+@property (strong, nonatomic) UIImageView * icon;
+@property (strong, nonatomic) UILabel * name;
+@property (strong, nonatomic) UIView * line;
+@property (strong, nonatomic) UIImageView * accessory;
+
+
 @end

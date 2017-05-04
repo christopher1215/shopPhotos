@@ -10,10 +10,14 @@
 
 @interface HomePageCountModel : BaseModel
 
-@property (strong, nonatomic) NSString * collectsCount;
-@property (strong, nonatomic) NSString * noticesCount;
-@property (strong, nonatomic) NSString * totalCapacity;
+@property (assign, nonatomic) NSInteger collectPhotosCount;
+@property (assign, nonatomic) NSInteger collectVideosCount;
+@property (assign, nonatomic) NSInteger noticesCount;
+@property (assign, nonatomic) NSInteger conernsCount;
+@property (assign, nonatomic) NSInteger passiveConcernsCount;
+@property (assign, nonatomic) NSInteger integral;
+@property (assign, nonatomic) NSInteger capacity;
+@property (assign, nonatomic) NSInteger unfinishedOrdersCount;
 @property (strong, nonatomic) NSString * used;
-
 
 @end

@@ -58,15 +58,15 @@
     [self.contentView addSubview:self.content];
     
     self.icon = [[UIImageView alloc] init];
-    [self.icon setContentMode:UIViewContentModeScaleAspectFit];
+//    [self.icon setContentMode:UIViewContentModeScaleAspectFit];
     [self.icon setBackgroundColor:ColorHex(0XF5F5F5)];
     [self.content addSubview:self.icon];
     
     self.title = [[UILabel alloc] init];
     self.title.numberOfLines = 1;
     [self.title setFont:Font(15)];
-    [self.title setTextColor:ColorHex(0X222222)];
-    [self.title setBackgroundColor:[UIColor clearColor]];
+    [self.title setTextColor:[UIColor darkGrayColor]];
+    [self.title setBackgroundColor:[UIColor whiteColor]];
     [self.content addSubview:self.title];
 /*
     self.prize = [[UILabel alloc] init];
@@ -82,7 +82,7 @@
     self.share = [[UILabel alloc] init];
     [self.share setFont:Font(19)];
     [self.share setText:@"..."];
-//    [self.share addTarget:self action:@selector(shareClicked)];
+    [self.share addTarget:self action:@selector(shareClicked)];
     self.share.textAlignment = NSTextAlignmentLeft;
     [self.content addSubview:self.share];
     
@@ -111,19 +111,20 @@
     .leftEqualToView(self.contentView)
     .topEqualToView(self.contentView)
     .bottomEqualToView(self.contentView)
-    .rightSpaceToView(self.contentView,6);
+    .rightEqualToView(self.contentView);
     
     self.icon.sd_layout
     .leftEqualToView(self.content)
     .rightEqualToView(self.content)
     .topEqualToView(self.content)
-    .heightIs(140);
+    .heightIs((WindowWidth - 15)/2);
+    self.icon.cornerRadius = 5;
     
     self.title.sd_layout
     .leftSpaceToView(self.content,5)
     .rightSpaceToView(self.content,5)
     .topSpaceToView(self.icon,10)
-    .heightIs(17);
+    .heightIs(20);
 /*
     self.prize.sd_layout
     .leftSpaceToView(self.content,5)
@@ -132,16 +133,16 @@
     .bottomSpaceToView(self.content,0);
     */
     self.btn_pyq.sd_layout
-    .leftSpaceToView(self.content,3)
-    .topSpaceToView(self.title,10)
-    .bottomSpaceToView(self.content,3)
-    .widthEqualToHeight();
+    .leftSpaceToView(self.content,5)
+    .topSpaceToView(self.title,5)
+    .widthIs(25)
+    .heightIs(25);
     
     self.share.sd_layout
-    .rightSpaceToView(self.content,2)
-    .bottomSpaceToView(self.content,10)
+    .rightSpaceToView(self.content,5)
+    .topSpaceToView(self.title,5)
     .widthIs(20)
-    .heightIs(20);
+    .heightIs(25);
 
     self.selectView.sd_layout
     .leftEqualToView(self.contentView)

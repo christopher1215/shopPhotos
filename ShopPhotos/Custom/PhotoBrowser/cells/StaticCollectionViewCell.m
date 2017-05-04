@@ -53,39 +53,40 @@
     // 1: 自己的相册列表样式
     // 2: 收藏的相册样式
     // 3: 在他人个人中心查看他人相册
+    for (UIView *sv in self.content.subviews) {
+        [sv removeFromSuperview];
+    }
     self.content = [[UIView alloc] init];
     [self.contentView addSubview:self.content];
     
     self.photo = [[UIImageView alloc] init];
-    [self.photo setContentMode:UIViewContentModeScaleAspectFit];
+    //    [self.photo setContentMode:UIViewContentModeScaleAspectFit];
     [self.photo setBackgroundColor:ColorHex(0XF5F5F5)];
     [self.content addSubview:self.photo];
     
     if (isVideo == YES) {
         self.video = [[UIImageView alloc] init];
         [self.video setImage:[UIImage imageNamed:@"btn_movie"]];
-        [self.video setContentMode:UIViewContentModeScaleAspectFit];
+        //        [self.video setContentMode:UIViewContentModeScaleAspectFit];
         [self.content addSubview:self.video];
     }
     
     self.title = [[UILabel alloc] init];
     self.title.numberOfLines = 1;
-    [self.title setFont:Font(15)];
-    [self.title setTextColor:ColorHex(0X222222)];
-    [self.title setBackgroundColor:[UIColor clearColor]];
+    [self.title setFont:Font(13)];
+    [self.title setTextColor:[UIColor darkGrayColor]];
+    [self.title setBackgroundColor:[UIColor whiteColor]];
     [self.content addSubview:self.title];
-
+    
     if (type == 2) {
         self.userIcon = [[UIImageView  alloc] init];
         [self.userIcon setBackgroundColor:[UIColor clearColor]];
         [self.userIcon addTarget:self action:@selector(userSelected)];
-        self.userIcon.layer.borderColor = [UIColor.whiteColor CGColor];
-        self.userIcon.layer.cornerRadius = self.userIcon.width/2;
-        self.userIcon.layer.masksToBounds = YES;
+        self.userIcon.cornerRadius = self.userIcon.width/2;
         [self.content addSubview:self.userIcon];
         
         self.userName = [[UILabel alloc] init];
-        [self.userName setFont:Font(15)];
+        [self.userName setFont:Font(14)];
         [self.userName addTarget:self action:@selector(userSelected)];
         [self.userName setBackgroundColor:[UIColor clearColor]];
         [self.content addSubview:self.userName];
@@ -121,13 +122,14 @@
     .leftEqualToView(self.contentView)
     .topEqualToView(self.contentView)
     .bottomEqualToView(self.contentView)
-    .rightSpaceToView(self.contentView,6);
+    .rightEqualToView(self.contentView);
     
     self.photo.sd_layout
     .leftEqualToView(self.content)
     .rightEqualToView(self.content)
     .topEqualToView(self.content)
-    .heightIs(140);
+    .heightIs((WindowWidth - 15)/2);
+    self.photo.cornerRadius = 5;
     
     if (isVideo == TRUE) {
         self.video.sd_layout
@@ -141,40 +143,40 @@
     .leftSpaceToView(self.content,5)
     .rightSpaceToView(self.content,5)
     .topSpaceToView(self.photo,10)
-    .heightIs(17);
+    .heightIs(20);
     
     self.share.sd_layout
-    .rightSpaceToView(self.content,2)
-    .bottomSpaceToView(self.content,10)
+    .rightSpaceToView(self.content,5)
+    .topSpaceToView(self.title,5)
     .widthIs(20)
-    .heightIs(20);
+    .heightIs(25);
     
     if (type == 2) {
         self.userIcon.sd_layout
-        .leftSpaceToView(self.content,3)
-        .topSpaceToView(self.title,10)
-        .bottomSpaceToView(self.content,3)
-        .widthEqualToHeight();
+        .leftSpaceToView(self.content,5)
+        .topSpaceToView(self.title,5)
+        .widthIs(25)
+        .heightIs(25);
+        self.userIcon.cornerRadius = 12.5f;
         
         self.userName.sd_layout
-        .leftSpaceToView(self.userIcon,0)
-        .rightSpaceToView(self.share,10)
-        .topSpaceToView(self.title,10)
-        .bottomSpaceToView(self.content,3);
-//        .heightIs(30);
+        .leftSpaceToView(self.userIcon,5)
+        .topSpaceToView(self.title,5)
+        .rightSpaceToView(self.content,30)
+        .heightIs(25);
     }
     else {
         self.btn_pyq.sd_layout
-        .leftSpaceToView(self.content,3)
-        .topSpaceToView(self.title,10)
-        .bottomSpaceToView(self.content,3)
-        .widthEqualToHeight();
+        .leftSpaceToView(self.content,5)
+        .topSpaceToView(self.title,5)
+        .widthIs(25)
+        .heightIs(25);
         
         self.btn_favorite.sd_layout
         .leftSpaceToView(self.btn_pyq,15)
-        .topSpaceToView(self.title,10)
-        .bottomSpaceToView(self.content,3)
-        .widthEqualToHeight();
+        .topSpaceToView(self.title,5)
+        .widthIs(25)
+        .heightIs(25);
     }
     
     

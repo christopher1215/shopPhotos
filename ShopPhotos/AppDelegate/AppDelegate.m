@@ -24,7 +24,6 @@
 #import "GuideViewController.h"
 #import <CommonCrypto/CommonDigest.h>
 #import <RongIMKit/RongIMKit.h>
-
 @interface AppDelegate ()
 
 @property (strong, nonatomic) NSTimer * updateToken;
@@ -49,7 +48,6 @@
     //    self.updateToken =  [NSTimer scheduledTimerWithTimeInterval:300 target:self selector:@selector(updateTokenUse) userInfo:nil repeats:YES];
     return YES;
 }
-
 
 - (void)updateTokenUse{
     
@@ -153,6 +151,7 @@
                                          }
                                      }] resume];
 }
+
 - (NSString *)getParameterString{
     NSString *timestamps = TimeStamp;
     NSString *ak = ACCESS_KEY;

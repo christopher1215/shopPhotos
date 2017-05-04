@@ -17,6 +17,7 @@
 @property (strong, nonatomic) NSString * srcUrl;
 @property (assign, nonatomic) UIImage *photo;
 @property (assign, nonatomic) BOOL isCover;
+@property (assign, nonatomic) BOOL isNew;
 @property (assign, nonatomic) BOOL edit;
 
 @end

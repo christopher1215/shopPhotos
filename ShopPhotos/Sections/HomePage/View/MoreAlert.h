@@ -13,7 +13,8 @@ typedef NS_ENUM(NSInteger,AlertModeType) {
     OptionModel = 1,
     PhotosModel,
     PhotosClassModel,
-    SortOrder
+    SortOrder,
+    HomeModel
 };
 
 @protocol MoreAlertDelegate <NSObject>

@@ -122,7 +122,7 @@
     
     self.moreAlert = [[MoreAlert alloc] init];
     [self.view addSubview:self.moreAlert];
-    self.moreAlert.mode = OptionModel;
+    self.moreAlert.mode = HomeModel;
     self.moreAlert.delegate = self;
     [self.moreAlert setHidden:YES];
     self.moreAlert.sd_layout
@@ -191,27 +191,7 @@
             NSLog(@"%@",error.userInfo);
             [self showToast:@"修改失败"];
         }];
-        
-        //        [HTTPRequest requestPUTUrl:[NSString stringWithFormat:@"%@%@",self.congfing.updateUserImage,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
-        //            [weakSelef closeLoad];
-        //            NSLog(@"%@",responseObject);
-        //
-        //            BaseModel * model = [[BaseModel alloc] init];
-        //            [model analyticInterface:responseObject];
-        //            if(model.status == 0){
-        //                [weakSelef showToast:@"修改成功"];
-        //                [self loadNetworkData:@{@"uid":weakSelef.photosUserID}];
-        //
-        //            }else{
-        //                [self showToast:model.message];
-        //            }
-        //        } failure:^(NSError * error){
-        //            [weakSelef closeLoad];
-        //            NSLog(@"%@",error.userInfo);
-        //            [self showToast:@"修改失败"];
-        //        }];
     }
-    
 }
 
 - (IBAction)hideFirstGuide:(id)sender {
@@ -234,11 +214,10 @@
     collecttion.uid = self.photosUserID;
     collecttion.str_from = @"首页";
     [self.navigationController pushViewController:collecttion animated:YES];
-    
 }
 
 - (void) qrScanSelected{
-    [self moreAlertSelected:1];
+    [self moreAlertSelected:2];
 }
 
 - (void) pointSelected {
@@ -307,10 +286,10 @@
     if(indexPath == 0){
         PublishPhotoCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotoCtr");
         [self.navigationController pushViewController:pulish animated:YES];
-    }else if(indexPath == 1){
+    }else if(indexPath == 2){
         QRCodeScanCtr * qrCode = [[QRCodeScanCtr alloc] init];
         [self.navigationController pushViewController:qrCode animated:YES];
-    }else if(indexPath == 2){
+    }else if(indexPath == 1){
         if(!self.addAlert){
             self.addAlert = [[AddFriendAlert alloc] init];
             AppDelegate * appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
@@ -469,14 +448,14 @@
 }
 
 - (void)loadNetworkCount{
-    //    __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.getCount parametric:nil succed:^(id responseObject){
+    __weak __typeof(self)weakSelef = self;
+    [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",self.congfing.getCounts,[self.appd getParameterString]] parametric:nil succed:^(id responseObject){
         NSLog(@"2  %@",responseObject);
         HomePageCountModel * model = [[HomePageCountModel alloc] init];
         [model analyticInterface:responseObject];
         if(model.status == 0){
-            //            [weakSelef.keep setText:[NSString stringWithFormat:@"%@\n收藏",model.collectsCount]];
-            //            [weakSelef.message setText:[NSString stringWithFormat:@"%@\n消息",model.noticesCount]];
+            [weakSelef.keep setTitle:[NSString stringWithFormat:@"收藏:%ld",(model.collectPhotosCount + model.collectVideosCount)] forState:UIControlStateNormal];
+            [weakSelef.point setTitle:[NSString stringWithFormat:@"积分:%ld",model.integral] forState:UIControlStateNormal];
         }
     } failure:nil];
 }

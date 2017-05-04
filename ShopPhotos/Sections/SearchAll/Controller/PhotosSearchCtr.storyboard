@@ -113,12 +113,42 @@
                                     <constraint firstAttribute="trailing" secondItem="aXS-3h-f9Q" secondAttribute="trailing" id="y8C-LW-jzm"/>
                                 </constraints>
                             </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GgR-cP-Inj">
+                                <rect key="frame" x="0.0" y="64" width="375" height="45"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="自己的相册" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LpA-oD-d1V">
+                                        <rect key="frame" x="16" y="15" width="67" height="16"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                        <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Zak-3l-a0m">
+                                        <rect key="frame" x="0.0" y="44" width="375" height="1"/>
+                                        <color key="backgroundColor" red="0.93333333330000001" green="0.93333333330000001" blue="0.93333333330000001" alpha="1" colorSpace="calibratedRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="1" id="5y4-ZZ-lhm"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstItem="LpA-oD-d1V" firstAttribute="leading" secondItem="GgR-cP-Inj" secondAttribute="leading" constant="16" id="GZL-dJ-Nzm"/>
+                                    <constraint firstAttribute="bottom" secondItem="Zak-3l-a0m" secondAttribute="bottom" id="Jab-ZK-XL1"/>
+                                    <constraint firstAttribute="height" constant="45" id="NLh-PF-A8S"/>
+                                    <constraint firstItem="Zak-3l-a0m" firstAttribute="leading" secondItem="GgR-cP-Inj" secondAttribute="leading" id="TJ1-Ih-MkG"/>
+                                    <constraint firstItem="LpA-oD-d1V" firstAttribute="centerY" secondItem="GgR-cP-Inj" secondAttribute="centerY" id="f3P-NC-idQ"/>
+                                    <constraint firstAttribute="trailing" secondItem="Zak-3l-a0m" secondAttribute="trailing" id="tVB-WK-G6r"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" red="0.93333333333333335" green="0.93333333333333335" blue="0.93333333333333335" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
+                            <constraint firstItem="GgR-cP-Inj" firstAttribute="leading" secondItem="c15-N8-1eo" secondAttribute="leading" id="2zG-e7-dhA"/>
+                            <constraint firstItem="GgR-cP-Inj" firstAttribute="top" secondItem="Ykg-N6-K6M" secondAttribute="bottom" id="5sK-XH-jlH"/>
                             <constraint firstAttribute="trailing" secondItem="Ykg-N6-K6M" secondAttribute="trailing" id="7ka-B9-PrS"/>
                             <constraint firstItem="Ykg-N6-K6M" firstAttribute="leading" secondItem="c15-N8-1eo" secondAttribute="leading" id="CbW-Tl-Y2k"/>
                             <constraint firstItem="Ykg-N6-K6M" firstAttribute="top" secondItem="c15-N8-1eo" secondAttribute="top" id="av7-gd-l7l"/>
+                            <constraint firstAttribute="trailing" secondItem="GgR-cP-Inj" secondAttribute="trailing" id="nde-yd-LEU"/>
                         </constraints>
                     </view>
                     <connections>
@@ -126,6 +156,7 @@
                         <outlet property="imageSearch" destination="Cfh-bp-Rvu" id="mco-Ub-7Fj"/>
                         <outlet property="searchText" destination="2wh-fd-EJs" id="a8B-St-FQl"/>
                         <outlet property="titleBackground" destination="ZRI-p5-5Hn" id="kAx-xq-X51"/>
+                        <outlet property="viewCaption" destination="GgR-cP-Inj" id="caZ-EY-7m0"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8xA-Zz-dyU" userLabel="First Responder" sceneMemberID="firstResponder"/>

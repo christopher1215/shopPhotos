@@ -15,6 +15,7 @@
 @protocol AttentionPhotoSearchCellDelegate  <NSObject>
 
 - (void)userContenSelected:(NSIndexPath *)indexPath;
+- (void)shareClicked:(NSIndexPath *)indexPath;
 
 @end
 

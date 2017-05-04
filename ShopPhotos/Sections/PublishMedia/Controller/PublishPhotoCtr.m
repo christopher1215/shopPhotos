@@ -14,7 +14,9 @@
 #import "PublishPhoto.h"
 #import "AlbumClassCtr.h"
 #import <UIImageView+WebCache.h>
-
+#import "AlbumPhotosRequset.h"
+#import "AlbumPhotosModel.h"
+#import "PhotoImagesRequset.h"
 //#import <UITextView+Placeholder.h>
 
 @interface PublishPhotoCtr ()<UIScrollViewDelegate,UITextViewDelegate,TZImagePickerControllerDelegate>
@@ -37,15 +39,22 @@
 
 @property (strong, nonatomic) NSString* classify_id;
 @property (strong, nonatomic) NSString* subclassification_id;
+@property (strong, nonatomic) NSMutableArray *addImageArray;
 
 @end
 
 @implementation PublishPhotoCtr
 
-- (NSMutableArray *)imageArray{
+- (NSMutableArray *)imageArray {
     if(!_imageArray)
-        _imageArray = [NSMutableArray array];
+        _imageArray = [[NSMutableArray alloc] init];
     return _imageArray;
+}
+
+- (NSMutableArray *)addImageArray {
+    if(!_addImageArray)
+        _addImageArray = [[NSMutableArray alloc] init];
+    return _addImageArray;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -59,6 +68,7 @@
     [self.btn_ok addTarget:self action:@selector(publishSelected)];
     self.content.delegate = self;
     [self imageArray];
+    [self addImageArray];
     [self createAutoLayout];
 }
 
@@ -377,9 +387,11 @@
 
 
 - (void)deleteSelected:(UIButton *)button{
+    
     NSLog(@"%ld",button.superview.superview.tag);
-    [_imageArray removeObjectAtIndex:button.superview.superview.tag];
-    [self drawImages];
+    
+    PhotoImagesModel *imageModel = [_imageArray objectAtIndex:button.superview.superview.tag];
+    [self deletePhotoImage:@{@"imageId":imageModel.Id,@"photoId":self.photoId}];
 }
 
 - (void)settingSelected:(UIButton *)button{
@@ -451,60 +463,78 @@
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:str preferredStyle:UIAlertControllerStyleAlert];
         [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault handler:nil]];
         [alert addAction:[UIAlertAction actionWithTitle:@"继续上传" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action){
-            [self postImage];
+            [self postImage:self.imageArray];
             
         }]];
         [self presentViewController:alert animated:YES completion:nil];
     }else{
-        [self postImage];
+        [self postImage:self.imageArray];
     }
 }
 
-- (void)postImage{
+- (void)postImage:(NSArray *)imageArray{
     // 保存当前信息
     NSMutableDictionary * postData = [[NSMutableDictionary alloc] init];
-    
 //    _classify_id = @"父亲_2";
 //    _subclassification_id = @"子_22";
     
     NSString * recommendText = _recommendSwitch.on?@"1":@"0";
-    [postData setValue:recommendText forKey:@"recommend"];
-    [postData setValue:_classify_id forKey:@"classifyName"];
-    [postData setValue:_subclassification_id forKey:@"subclassName"];
-    [postData setValue:self.photoTitle.text forKey:@"title"];
-    [postData setValue:self.remarksContent.text forKey:@"description"];
+    
+    if (self.isAdd == NO) {
+        [postData setValue:recommendText forKey:@"recommend"];
+        [postData setValue:_classify_id forKey:@"classifyName"];
+        [postData setValue:_subclassification_id forKey:@"subclassName"];
+        [postData setValue:self.photoTitle.text forKey:@"title"];
+        [postData setValue:self.remarksContent.text forKey:@"description"];
+        [self showToast:@"正在上传,请保存网络通畅"];
+    }
+    else {
+        [postData setValue:self.photoId forKey:@"photoId"];
+        [self showToast:@"正在添加,请保存网络通畅"];
+    }
     
 //    [self clearSelected:NO];
-    [self showToast:@"正在上传,请保存网络通畅"];
     [self.content setContentOffset:CGPointMake(0, 0) animated:YES];
     
     [self showLoad];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSMutableArray * imageDatas = [NSMutableArray array];
         int index = 0;
-        for(PhotoImagesModel * imageModel in _imageArray){
-            NSData *imageData =  [self compressOriginalImage:imageModel.photo toMaxDataSizeKBytes:300];
-            [imageDatas addObject:imageData];
-            NSLog(@"size == %ld",imageData.length);
-            if (imageModel.isCover) {
-                [postData setValue:[NSString stringWithFormat:@"%d",index] forKey:@"idxCover"];
+        for(PhotoImagesModel * imageModel in imageArray){
+            if (imageModel.isNew == YES) {
+                NSData *imageData = [self compressOriginalImage:imageModel.photo toMaxDataSizeKBytes:300];
+                [imageDatas addObject:imageData];
+                NSLog(@"size == %ld",imageData.length);
+                if (imageModel.isCover) {
+                    [postData setValue:[NSString stringWithFormat:@"%d",index] forKey:@"idxCover"];
+                }
+                index ++;
             }
-            index ++;
         }
         
         [postData setValue:imageDatas forKey:@"images"];
         
         // 耗时的操作
         PublishPhoto * task = [[PublishPhoto alloc] init];
-        
-        [task startTask:postData complete:^(BOOL stuta){
+        task.isAdd = self.isAdd;
+        [task startTask:postData complete:^(id responseObj){
             dispatch_async(dispatch_get_main_queue(), ^{
                 //回调或者说是通知主线程刷新，
                 [self closeLoad];
-                if(stuta){
-                    [self showToast:@"上传成功"];
-                }else{
-                    [self showToast:@"上传失败，请检查网络是否通畅，或者重新尝试"];
+                if(responseObj != nil){
+                    if (self.isAdd == NO) {
+                        [self showToast:@"上传成功"];
+                    }
+                    else {
+                        
+                        [self showToast:@"添加成功"];
+                    }
+                } else {
+                    if (self.isAdd == NO) {
+                        [self showToast:@"上传失败，请检查网络是否通畅，或者重新尝试"];
+                    }else{
+                        [self showToast:@"添加失败，请检查网络是否通畅，或者重新尝试"];
+                    }
                 }
             });
         }];
@@ -553,20 +583,34 @@
     imagePickerVc.allowPickingOriginalPhoto = YES;
     imagePickerVc.photoWidth = 960;
     imagePickerVc.photoPreviewMaxWidth = 960;
-    [imagePickerVc setDidFinishPickingPhotosHandle:^(NSArray<UIImage *> *photos,NSArray *assets,BOOL isSelectOriginalPhoto) {
-        if(assets && assets.count >0) {
-            for (UIImage *image in photos) {
-                PhotoImagesModel * imageModel = [[PhotoImagesModel alloc] init];
-                imageModel.photo = image;
-                imageModel.isCover = NO;
-                imageModel.edit= YES;
-                [_imageArray addObject:imageModel];
-            }
-        }
-        [self drawImages];
-        
-    }];
+    
+    [_addImageArray removeAllObjects];
+    
+    [imagePickerVc setDidFinishPickingPhotosHandle:^(NSArray<UIImage *> *photos,NSArray *assets,BOOL isSelectOriginalPhoto) {}];
     [self presentViewController:imagePickerVc animated:YES completion:nil];
+}
+
+//- (void) imagePickerController:(TZImagePickerController *)picker didFinishPickingPhotos:(NSArray<UIImage *> *)photos sourceAssets:(NSArray *)assets isSelectOriginalPhoto:(BOOL)isSelectOriginalPhoto {};
+- (void) imagePickerController:(TZImagePickerController *)picker didFinishPickingPhotos:(NSArray<UIImage *> *)photos sourceAssets:(NSArray *)assets isSelectOriginalPhoto:(BOOL)isSelectOriginalPhoto infos:(NSArray<NSDictionary *> *)infos {
+
+    if(assets && assets.count >0) {
+        for (UIImage *photo in photos) {
+            PhotoImagesModel * imageModel = [[PhotoImagesModel alloc] init];
+//            NSLog(@"path: %@",[[info objectForKey:@"PHImageFileURLKey"] absoluteString]);
+//            imageModel.photo = [UIImage imageWithData:[NSData dataWithContentsOfURL:[info objectForKey:@"PHImageFileURLKey"]]];
+            imageModel.photo = photo;
+            imageModel.isCover = NO;
+            imageModel.edit = YES;
+            imageModel.isNew = YES;
+            [_imageArray addObject:imageModel];
+        }
+    }
+    
+    [self drawImages];
+    
+    if (self.isAdd == YES) {
+        [self postImage:_imageArray];
+    }
 }
 
 - (void) selectClass {
@@ -585,5 +629,60 @@
     _subclassification_id = [NSString stringWithString:subclass];
     [_photoClassContent setText:[NSString stringWithFormat:@"%@/%@",parent,subclass]];
 }
+
+- (void) deletePhotoImage:(NSDictionary *)data{
+    __weak __typeof(self)weakSelef = self;
+    [HTTPRequest requestDELETEUrl:[NSString stringWithFormat:@"%@%@",self.congfing.deletePhotoImage,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+        [weakSelef closeLoad];
+        NSLog(@"%@",responseObject);
+        BaseModel * model = [[BaseModel alloc] init];
+        if(model.status == 0){
+            [weakSelef showToast:@"删除成功"];
+            [weakSelef loadNetworkData];
+        }else{
+            [weakSelef showToast:model.message];
+        }
+    } failure:^(NSError *error){
+        [weakSelef closeLoad];
+        [weakSelef showToast:NETWORKTIPS];
+    }];
+}
+
+- (void)loadNetworkData{
+    
+    [self showLoad];
+    //[self showLoad];
+    
+    NSDictionary * data = @{@"photoId":self.photoId};
+    __weak __typeof(self)weakSelef = self;
+    // 获取相册详情内容
+
+    [HTTPRequest requestGETUrl :[NSString stringWithFormat:@"%@%@",self.congfing.getPhoto,[self.appd getParameterString]] parametric:data succed:^(id responseObject) {
+        [weakSelef closeLoad];
+        NSLog(@"获取相册详情内容 -- >%@",responseObject);
+        AlbumPhotosRequset * requset = [[AlbumPhotosRequset alloc] init];
+        [requset analyticInterface:responseObject];
+        if(requset.status == 0){
+            AlbumPhotosModel *data = [requset.dataArray objectAtIndex:0];
+            PhotoImagesRequset * requset = [[PhotoImagesRequset alloc] init];
+            [requset analyticInterface:data.images];
+            if(requset.status == 0){
+                [self.imageArray removeAllObjects];
+                [self.imageArray addObjectsFromArray:requset.dataArray];
+                for (PhotoImagesModel *imageModel in self.imageArray) {
+                    imageModel.edit = YES;
+                    imageModel.isNew = NO;
+                }
+                [self drawImages];
+            }
+        }else{
+            [weakSelef showToast:requset.message];
+        }
+    } failure:^(NSError *error){
+        [weakSelef closeLoad];
+        [weakSelef showToast:NETWORKTIPS];
+    }];
+}
+
 
 @end

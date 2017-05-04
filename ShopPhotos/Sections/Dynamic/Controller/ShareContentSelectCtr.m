@@ -33,7 +33,6 @@
     [super didReceiveMemoryWarning];
 }
 
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.imageArray = [NSMutableArray array];
@@ -56,8 +55,6 @@
     .topSpaceToView(self.view ,64)
     .bottomSpaceToView(self.view,50);
 }
-
-
 
 - (void)backSelected{
     [self.navigationController popViewControllerAnimated:YES];
@@ -88,8 +85,6 @@
     for(DynamicImagesModel * model in self.dataArray){
         if(!model.select) [self.imageArray addObject:model.bigImageUrl];
     }
-    
-    
     
     if(self.imageArray.count == 0){
         SPAlert(@"请选择图片",self);

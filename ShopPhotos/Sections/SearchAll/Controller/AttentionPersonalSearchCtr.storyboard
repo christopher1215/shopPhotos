@@ -113,9 +113,39 @@
                                     <constraint firstItem="nLc-GO-1AP" firstAttribute="top" secondItem="WtV-VP-ZCD" secondAttribute="top" constant="26" id="wYN-hc-b3z"/>
                                 </constraints>
                             </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Y2U-K5-Ygk">
+                                <rect key="frame" x="0.0" y="64" width="375" height="45"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="我关注的人" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0lX-ov-PCj">
+                                        <rect key="frame" x="16" y="15" width="67" height="16"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                        <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NEs-ex-noi">
+                                        <rect key="frame" x="0.0" y="44" width="375" height="1"/>
+                                        <color key="backgroundColor" red="0.93333333330000001" green="0.93333333330000001" blue="0.93333333330000001" alpha="1" colorSpace="calibratedRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="1" id="d4u-BD-g2j"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstItem="0lX-ov-PCj" firstAttribute="centerY" secondItem="Y2U-K5-Ygk" secondAttribute="centerY" id="AEt-Iq-kCw"/>
+                                    <constraint firstItem="NEs-ex-noi" firstAttribute="leading" secondItem="Y2U-K5-Ygk" secondAttribute="leading" id="R55-Kh-Vx5"/>
+                                    <constraint firstAttribute="trailing" secondItem="NEs-ex-noi" secondAttribute="trailing" id="RnV-lM-SFD"/>
+                                    <constraint firstAttribute="height" constant="45" id="W7R-YW-OSa"/>
+                                    <constraint firstAttribute="bottom" secondItem="NEs-ex-noi" secondAttribute="bottom" id="ZJs-q0-Cph"/>
+                                    <constraint firstItem="0lX-ov-PCj" firstAttribute="leading" secondItem="Y2U-K5-Ygk" secondAttribute="leading" constant="16" id="vOI-hE-npw"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" red="0.93333333333333335" green="0.93333333333333335" blue="0.93333333333333335" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
+                            <constraint firstItem="Y2U-K5-Ygk" firstAttribute="leading" secondItem="gDW-uC-xM7" secondAttribute="leading" id="3h5-fi-ISp"/>
+                            <constraint firstAttribute="trailing" secondItem="Y2U-K5-Ygk" secondAttribute="trailing" id="Fqk-st-bzn"/>
+                            <constraint firstItem="Y2U-K5-Ygk" firstAttribute="top" secondItem="WtV-VP-ZCD" secondAttribute="bottom" id="Uam-HZ-nzB"/>
                             <constraint firstItem="WtV-VP-ZCD" firstAttribute="leading" secondItem="gDW-uC-xM7" secondAttribute="leading" id="h6M-Bs-3c0"/>
                             <constraint firstItem="WtV-VP-ZCD" firstAttribute="top" secondItem="gDW-uC-xM7" secondAttribute="top" id="jvv-sr-j3d"/>
                             <constraint firstAttribute="trailing" secondItem="WtV-VP-ZCD" secondAttribute="trailing" id="vUv-Jo-WT3"/>
@@ -125,11 +155,12 @@
                         <outlet property="back" destination="4AW-1Z-Yny" id="Jlz-fv-ZaJ"/>
                         <outlet property="searchText" destination="6yV-nd-RQd" id="cf7-Pf-C98"/>
                         <outlet property="titleBackground" destination="Q35-eO-4xR" id="QWN-Kb-C4p"/>
+                        <outlet property="viewCaption" destination="Y2U-K5-Ygk" id="eBy-cA-kkQ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="U9V-c9-h3f" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-89" y="132"/>
+            <point key="canvasLocation" x="-90.400000000000006" y="131.78410794602701"/>
         </scene>
     </scenes>
     <resources>

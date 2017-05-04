@@ -11,6 +11,17 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "-[AlbumPhotosCtr getPhotoImages]:AlbumPhotosCtr.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.imageArray">
+            </PersistentString>
+            <PersistentString
+               value = "[RequestErrorGrab getArrwitKey:@&quot;images&quot; toTarget:model]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "__33-[PublishVideo postImageToQiniu:]_block_invoke.113:PublishVideo.m">
          <PersistentStrings>
             <PersistentString
@@ -19,18 +30,18 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "-[HomePageCtr loadNetworkData:]:HomePageCtr.m">
+         contextName = "-[PublicDataAnalytic analyticInterface:]:PublicDataAnalytic.m">
          <PersistentStrings>
             <PersistentString
-               value = "self.congfing.getUserInfo">
+               value = "congfing.getUserDynamics">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "__35-[PublishPhotoCtr addPublishImage:]_block_invoke:PublishPhotoCtr.m">
+         contextName = "-[HomePageCtr loadNetworkData:]:HomePageCtr.m">
          <PersistentStrings>
             <PersistentString
-               value = "self.imageArray.count">
+               value = "self.congfing.getUserInfo">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -60,7 +71,7 @@
          contextName = "__29-[PublishVideoCtr saveVideo:]_block_invoke_2:PublishVideoCtr.m">
       </ContextState>
       <ContextState
-         contextName = "-[PublishPhotoCtr drawImages]:PublishPhotoCtr.m">
+         contextName = "__35-[PublishPhotoCtr addPublishImage:]_block_invoke:PublishPhotoCtr.m">
          <PersistentStrings>
             <PersistentString
                value = "self.imageArray.count">
@@ -68,10 +79,10 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "-[PublicDataAnalytic analyticInterface:]:PublicDataAnalytic.m">
+         contextName = "-[PublishPhotoCtr drawImages]:PublishPhotoCtr.m">
          <PersistentStrings>
             <PersistentString
-               value = "congfing.getUserDynamics">
+               value = "self.imageArray.count">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

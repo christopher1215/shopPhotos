@@ -97,7 +97,7 @@
         [_back setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         [_back setTitle:@"首页" forState:UIControlStateNormal];
         [_back.titleLabel setFont:[UIFont fontWithName:@"Helvetica" size:17]];
-
+        
         [_head addSubview:_back];
         _back.sd_layout
         .leftSpaceToView(_head,0)
@@ -121,7 +121,7 @@
     .leftEqualToView(self.view)
     .rightEqualToView(self.view)
     .topSpaceToView(self.view,64)
-    .bottomSpaceToView(self.view,49);
+    .bottomSpaceToView(self.view,0);
     
     self.userInfo = GETALONESTORYBOARDPAGE(@"UserInfoDrawerCtr");
     self.userInfo.delegate = self;
@@ -232,7 +232,7 @@
         }
         [self.addAlert showAlert];
     }
-
+    
 }
 
 #pragma mark - AddFriendAlertDelegate
@@ -257,7 +257,7 @@
 - (void)userInfoDrawerHeadSelected:(NSInteger)type{
     
     if(type == 1){
-//        DynamicModel * model = [self.dataArray objectAtIndex:self.userInfoSelectIndex];
+        //        DynamicModel * model = [self.dataArray objectAtIndex:self.userInfoSelectIndex];
         AlbumPhotosModel * model = [self.dataArray objectAtIndex:self.userInfoSelectIndex];
         NSMutableArray *photos = [NSMutableArray array];
         MJPhoto * photo = [[MJPhoto alloc] init];
@@ -272,7 +272,7 @@
     }
 }
 - (void)userInfoDrawerCellSelected:(UserInfoModel *)model WithType:(NSInteger)type{
-
+    
     NSLog(@"--%@ -- %@",model.wechat,model.qq);
     
     if(type == 0){
@@ -282,9 +282,9 @@
         personalHome.twoWay = YES;
         [self.navigationController pushViewController:personalHome animated:YES];
         
-    }else if(type == 1){  
+    }else if(type == 1){
     }else if(type == 2){
-    
+        
         NSString * chatStr = model.wechat;
         if(chatStr && chatStr.length > 0){
             UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
@@ -505,7 +505,7 @@
 }
 
 - (void)cellImageSelected:(NSInteger)tag TabelViewCellIndexPath:(NSIndexPath *)indexPath{
-
+    
     if (tag > -1) {
         AlbumPhotosModel * model = [self.dataArray objectAtIndex:indexPath.row];
         NSInteger count = model.images.count;
@@ -547,7 +547,7 @@
     if(uid && ![uid isEqualToString:self.photosUserID]){
         photoDetails.persona = YES;
     }
-        
+    
     [self.navigationController pushViewController:photoDetails animated:YES];
 }
 
@@ -559,7 +559,7 @@
                             @"pageSize":@"20"};
     NSLog(@"%@",data);
     __weak __typeof(self)weakSelef = self;
-
+    
     NSString *serverApi = @"";
     if (self.isMyDynamic) {
         serverApi = self.congfing.getUserDynamics;
@@ -572,7 +572,7 @@
         
         NSLog(@"%@",responseObject);
         [weakSelef.table.table.mj_header endRefreshing];
-//        DynamicRequset * requset = [[DynamicRequset alloc] init];
+        //        DynamicRequset * requset = [[DynamicRequset alloc] init];
         AlbumPhotosRequset * requset = [[AlbumPhotosRequset alloc] init];
         [requset analyticInterface:responseObject];
         if(requset.status == 0){
@@ -621,7 +621,7 @@
         [weakSelef.table.table.mj_footer endRefreshing];
         AlbumPhotosRequset * requset = [[AlbumPhotosRequset alloc] init];
         
-//        DynamicRequset * requset = [[DynamicRequset alloc] init];
+        //        DynamicRequset * requset = [[DynamicRequset alloc] init];
         [requset analyticInterface:responseObject];
         if(requset.status == 0){
             weakSelef.pageIndex ++;
@@ -699,10 +699,10 @@
                 AlbumPhotosModel * model = [weakSelef.dataArray objectAtIndex:self.shareSelectIndex];
                 PublishPhotoCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotoCtr");
                 /*
-                pulish.is_copy = YES;
-                pulish.photoTitleText = model.title;
-                pulish.imageCopy = [[NSMutableArray alloc] initWithArray:model.images];
-                */
+                 pulish.is_copy = YES;
+                 pulish.photoTitleText = model.title;
+                 pulish.imageCopy = [[NSMutableArray alloc] initWithArray:model.images];
+                 */
                 [weakSelef.navigationController pushViewController:pulish animated:YES];
             }else{
                 
@@ -716,7 +716,7 @@
                 
                 [weakSelef presentViewController:alert animated:YES completion:nil];
             }
-
+            
         }else{
             [weakSelef showToast:model.message];
         }
@@ -768,7 +768,7 @@
                     
                 }]];
                 [weakSelef presentViewController:alert animated:YES completion:nil];
-            }else{                
+            }else{
                 [weakSelef collectPhoto:@{@"photosId":[NSString stringWithFormat:@"%@,",[data objectForKey:@"photoId"]]}];
             }
             

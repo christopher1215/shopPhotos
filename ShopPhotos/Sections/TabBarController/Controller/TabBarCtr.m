@@ -102,7 +102,7 @@
                 }];
             }]];
             
-            [actionSheet addAction:[UIAlertAction actionWithTitle:@"上传图片" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
+            [actionSheet addAction:[UIAlertAction actionWithTitle:@"上传图片" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
                 // Distructive button tapped.
                 PublishPhotoCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotoCtr");
                 [self.navigationController pushViewController:pulish animated:YES];

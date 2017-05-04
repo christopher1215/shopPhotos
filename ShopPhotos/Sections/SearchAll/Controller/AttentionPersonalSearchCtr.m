@@ -18,6 +18,7 @@
 @property (weak, nonatomic) IBOutlet UIView *back;
 @property (weak, nonatomic) IBOutlet UITextField *searchText;
 @property (weak, nonatomic) IBOutlet UIView *search;
+@property (weak, nonatomic) IBOutlet UIView *viewCaption;
 @property (strong, nonatomic) NSMutableArray * dataArray;
 @property (strong, nonatomic) UICollectionView * photos;
 @property (assign, nonatomic) NSInteger pageIndex;
@@ -65,7 +66,7 @@
     self.photos.sd_layout
     .leftEqualToView(self.view)
     .rightEqualToView(self.view)
-    .topSpaceToView(self.view,64)
+    .topSpaceToView(self.viewCaption,0)
     .bottomEqualToView(self.view);
 }
 

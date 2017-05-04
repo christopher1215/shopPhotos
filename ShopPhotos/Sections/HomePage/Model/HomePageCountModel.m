@@ -18,9 +18,14 @@
         self.message = [RequestErrorGrab getStringwitKey:@"message" toTarget:data];
         if(self.status) return;
         NSDictionary * json = [RequestErrorGrab getDicwitKey:@"data" toTarget:data];
-        self.collectsCount =  [NSString stringWithFormat:@"%ld",[RequestErrorGrab getIntegetKey:@"collectsCount" toTarget:json]];
-        self.noticesCount = [NSString stringWithFormat:@"%ld",[RequestErrorGrab getIntegetKey:@"noticesCount" toTarget:json]];
-        self.totalCapacity = [RequestErrorGrab getStringwitKey:@"totalCapacity" toTarget:json];
+        self.collectPhotosCount =  [RequestErrorGrab getIntegetKey:@"collectPhotosCount" toTarget:json];
+        self.collectVideosCount =  [RequestErrorGrab getIntegetKey:@"collectVideosCount" toTarget:json];
+        self.noticesCount =  [RequestErrorGrab getIntegetKey:@"noticesCount" toTarget:json];
+        self.conernsCount =  [RequestErrorGrab getIntegetKey:@"conernsCount" toTarget:json];
+        self.passiveConcernsCount =  [RequestErrorGrab getIntegetKey:@"passiveConcernsCount" toTarget:json];
+        self.integral = [RequestErrorGrab getIntegetKey:@"integral" toTarget:json];
+        self.capacity = [RequestErrorGrab getIntegetKey:@"capacity" toTarget:json];
+        self.unfinishedOrdersCount = [RequestErrorGrab getIntegetKey:@"unfinishedOrdersCount" toTarget:json];
         self.used = [RequestErrorGrab getStringwitKey:@"used" toTarget:json];
         
     } @catch (NSException *exception) {

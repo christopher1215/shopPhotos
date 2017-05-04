@@ -23,14 +23,16 @@
         if(json && json.count > 0){
             for (NSDictionary * user in json) {
                 AttentionPersonalSearchModel * model = [[AttentionPersonalSearchModel alloc] init];
-                model.date = [RequestErrorGrab getStringwitKey:@"date" toTarget:user];
+                model.address = [RequestErrorGrab getStringwitKey:@"address" toTarget:user];
                 model.name = [RequestErrorGrab getStringwitKey:@"name" toTarget:user];
                 model.qq = [RequestErrorGrab getStringwitKey:@"qq" toTarget:user];
-                model.tel = [RequestErrorGrab getStringwitKey:@"tel" toTarget:user];
-                model.weixin = [RequestErrorGrab getStringwitKey:@"weixin" toTarget:user];
-                model.icon = [RequestErrorGrab getStringwitKey:@"icon" toTarget:user];
-                model.itmeID = [RequestErrorGrab getIntegetKey:@"id" toTarget:user];
+                model.phone = [RequestErrorGrab getStringwitKey:@"phone" toTarget:user];
+                model.wechat = [RequestErrorGrab getStringwitKey:@"wechat" toTarget:user];
+                model.avatar = [RequestErrorGrab getStringwitKey:@"avatar" toTarget:user];
+                model.bg_image = [RequestErrorGrab getStringwitKey:@"bg_image" toTarget:user];
+                model.signature = [RequestErrorGrab getStringwitKey:@"signature" toTarget:user];
                 model.uid = [RequestErrorGrab getStringwitKey:@"uid" toTarget:user];
+                model.settings = [RequestErrorGrab getDicwitKey:@"settings" toTarget:user];
                 [self.dataArray addObject:model];
             }
         }

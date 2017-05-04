@@ -355,7 +355,7 @@
 
 - (void)shareClicked:(NSIndexPath *)indexPath {
     self.itmeSelectedIndex = indexPath.row;
-    [self showLoad];
+//    [self showLoad];
     [self getPhotoImages];
     [self.shareView showAlert];
 }
@@ -731,23 +731,25 @@
 }
 
 - (void)getPhotoImages{
-    AlbumPhotosModel * model = [self.dataArray objectAtIndex:self.itmeSelectedIndex];
-    
-    NSDictionary * detailPhotodata = @{@"photoId":model.Id};
-    __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.getPhotoImages parametric:detailPhotodata succed:^(id responseObject){
-        [weakSelef closeLoad];
-        NSLog(@"获取相册图片 -- >%@",responseObject);
-        PhotoImagesRequset * requset = [[PhotoImagesRequset alloc] init];
-        [requset analyticInterface:responseObject];
-        if(requset.status == 0){
-            [weakSelef.imageArray removeAllObjects];
-            [weakSelef.imageArray addObjectsFromArray:requset.dataArray];
-        }
-    } failure:^(NSError *error){
-        [weakSelef showToast:NETWORKTIPS];
-        //[weakSelef closeLoad];
-    }];
+    NSDictionary * model = [self.dataArray objectAtIndex:self.itmeSelectedIndex];
+    self.imageArray = [RequestErrorGrab getArrwitKey:@"images" toTarget:model];
+//    AlbumPhotosModel * model = [self.dataArray objectAtIndex:self.itmeSelectedIndex];
+//    
+//    NSDictionary * detailPhotodata = @{@"photoId":model.Id};
+//    __weak __typeof(self)weakSelef = self;
+//    [HTTPRequest requestPOSTUrl:self.congfing.getPhotoImages parametric:detailPhotodata succed:^(id responseObject){
+//        [weakSelef closeLoad];
+//        NSLog(@"获取相册图片 -- >%@",responseObject);
+//        PhotoImagesRequset * requset = [[PhotoImagesRequset alloc] init];
+//        [requset analyticInterface:responseObject];
+//        if(requset.status == 0){
+//            [weakSelef.imageArray removeAllObjects];
+//            [weakSelef.imageArray addObjectsFromArray:requset.dataArray];
+//        }
+//    } failure:^(NSError *error){
+//        [weakSelef showToast:NETWORKTIPS];
+//        //[weakSelef closeLoad];
+//    }];
 }
 
 @end

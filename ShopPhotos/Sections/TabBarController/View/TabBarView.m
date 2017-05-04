@@ -12,7 +12,7 @@
 #import <RongIMKit/RongIMKit.h>
 #import "NSObject+StoreValue.h"
 
-@interface TabBarView ()
+@interface TabBarView ()<RCIMConnectionStatusDelegate, RCIMReceiveMessageDelegate>
 
 @property (strong, nonatomic) TabBarItem * selectTabBar;
 @property (strong, nonatomic) TabBarItem * contactTabBar;
@@ -36,6 +36,17 @@
     NSLog(@"当前所有会话的未读消息数为：%d", totalUnreadCount);
     [self.contactTabBar setUnreadCountBadge:totalUnreadCount];
 }
+- (void)onRCIMConnectionStatusChanged:(RCConnectionStatus)status{
+    NSLog(@"%@", status);
+}
+
+- (void)onRCIMReceiveMessage:(RCMessage *)message left:(int)left{
+    int totalUnreadCount = [[RCIMClient sharedRCIMClient] getTotalUnreadCount];
+    NSLog(@"当前所有会话的未读消息数为：%d", totalUnreadCount);
+    NSDictionary * userInfo = @{ @"totalUnreadCount": [NSString stringWithFormat:@"%d", totalUnreadCount]};
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"getTotalUnreadCount" object:nil userInfo:userInfo];
+}
+
 - (void)createAutoLayout{
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setUnreadCountBadge:) name:@"getTotalUnreadCount" object:nil];
     [self setBackgroundColor:[UIColor clearColor]];

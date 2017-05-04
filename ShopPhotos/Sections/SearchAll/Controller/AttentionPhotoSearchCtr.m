@@ -23,6 +23,7 @@
 @property (weak, nonatomic) IBOutlet UITextField *searchText;
 @property (weak, nonatomic) IBOutlet UIButton *search;
 @property (weak, nonatomic) IBOutlet UIImageView *imageSearch;
+@property (weak, nonatomic) IBOutlet UIView *viewCaption;
 
 @property (strong, nonatomic) NSMutableArray * dataArray;
 @property (strong, nonatomic) UICollectionView * photos;
@@ -67,15 +68,16 @@
     self.photos = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:layout];
     self.photos.delegate=self;
     self.photos.dataSource=self;
-    [self.photos setBackgroundColor:ColorHex(0Xeeeeee)];
+    [self.photos setBackgroundColor:ColorHex(0Xffffff)];
     [self.photos registerClass:[AttentionPhotoSearchCell class] forCellWithReuseIdentifier:AttentionPhotoSearchCellID];
     [self.view addSubview:self.photos];
     
     self.photos.sd_layout
     .leftEqualToView(self.view)
     .rightEqualToView(self.view)
-    .topSpaceToView(self.view,64)
+    .topSpaceToView(self.viewCaption,0)
     .bottomEqualToView(self.view);
+    self.photos.contentInset = UIEdgeInsetsMake(5, 5, 5, 5);
 }
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
     if (textField == self.searchText) {
@@ -180,10 +182,15 @@
 #pragma mark --UICollectionViewDelegateFlowLayout
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    return CGSizeMake((WindowWidth-45)/2, 250);
+    return CGSizeMake((WindowWidth-15)/2, 70 + (WindowWidth - 15)/2);
 }
 -(UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section{
-    return UIEdgeInsetsMake(10, 15, 10, 15);
+    return UIEdgeInsetsMake(5, 0, 5, 0);
+}
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
+{
+    
+    return 5;
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
@@ -208,8 +215,8 @@
     self.pageIndex = 1;
     NSDictionary * data = @{@"uid":self.uid,
                             @"keyword":self.searchText.text,
-                            @"includeFriends":@"false",
-                            @"excludesUsers":@"",
+                            @"includeFriends":@"1",
+                            @"excludesUsers[0]":self.uid,
                             @"page":[NSString stringWithFormat:@"%ld",self.pageIndex],
                             @"pageSize":@"30"};
     
@@ -248,8 +255,8 @@
     
     NSDictionary * data = @{@"uid":self.uid,
                             @"keyword":self.searchText.text,
-                            @"includeFriends":@"false",
-                            @"excludesUsers":@"",
+                            @"includeFriends":@"1",
+                            @"excludesUsers[0]":self.uid,
                             @"page":[NSString stringWithFormat:@"%ld",self.pageIndex],
                             @"pageSize":@"30"};
     
@@ -288,8 +295,8 @@
     [self showLoad];
     __weak __typeof(self)weakSelf = self;
     NSDictionary * data = @{@"uid":self.uid,
-                            @"includeFriends":@"false",
-                            @"excludesUsers":@"",
+                            @"includeFriends":@"1",
+                            @"excludesUsers[0]":self.uid,
                             @"resultCount":@"100"};
     NSData * imageData = UIImageJPEGRepresentation(self.searchImage, 0.3);
     [HTTPRequest Manager:[NSString stringWithFormat:@"%@%@",self.congfing.useImageSearch,[self.appd getParameterString]] Method:nil dic:data file:imageData fileName:@"image" requestSucced:^(id responseObject){

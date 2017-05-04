@@ -18,16 +18,15 @@
 #import "CreatePhoto2Model.h"
 #define PublishURL @"http://upload.qiniu.com"
 
-
 @interface PublishPhoto ()
 @property (strong, nonatomic) NSMutableDictionary * postData;
-@property (strong, nonatomic) CompletePulish completeStatu;
-@property (strong, nonatomic)AppDelegate *appd;
+@property (strong, nonatomic) CompletePublish completeStatu;
+@property (strong, nonatomic) AppDelegate *appd;
 @end
 
 @implementation PublishPhoto
 
-- (void)startTask:(NSDictionary *)data complete:(CompletePulish)completeStatu {
+- (void)startTask:(NSDictionary *)data complete:(CompletePublish)completeStatu {
     _completeStatu = completeStatu;
     NSLog(@"---- > %@",self);
     _appd = (AppDelegate*)[UIApplication sharedApplication].delegate;
@@ -50,7 +49,15 @@
     
     CongfingURL * config = [self getValueWithKey:ShopPhotosApi];
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl :[NSString stringWithFormat:@"%@%@",config.createPhoto1,[self.appd getParameterString]] parametric:data succed:^(id responseObject) {
+    NSString *serverApi = @"";
+    if (self.isAdd == YES) {
+        serverApi = config.addImageToPhoto1;
+    }
+    else{
+        serverApi = config.createPhoto1;
+    }
+    
+    [HTTPRequest requestPOSTUrl :[NSString stringWithFormat:@"%@%@",serverApi,[self.appd getParameterString]] parametric:data succed:^(id responseObject) {
         NSLog(@"%@",responseObject);
         CreatePhotosRequset * requset = [[CreatePhotosRequset alloc] init];
         [requset analyticInterface:responseObject];
@@ -61,7 +68,7 @@
             [weakSelef postImageToQiniu:postData];
         }
     } failure:^(NSError *error){
-        _completeStatu(NO);
+        _completeStatu(nil);
     }];
 }
 
@@ -72,6 +79,7 @@
     NSMutableString  * imageName = [[NSMutableString alloc] init];
     NSMutableString * dataSize = [[NSMutableString alloc] init];
     NSMutableArray *aryRet = [[NSMutableArray alloc] init];
+    
     if(images && images.count > 0){
         NSInteger index = 0;
        __block NSInteger count = 0;
@@ -89,9 +97,18 @@
             NSDictionary * postData = @{@"key":key,
                                        @"token":[data objectForKey:@"token"]};
             CongfingURL * config = [self getValueWithKey:ShopPhotosApi];
+            
+            NSString *serverApi = @"";
+            if (self.isAdd == YES) {
+                serverApi = config.addImageToPhoto2;
+            }
+            else{
+                serverApi = config.createPhoto2;
+            }
+            
             AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
             manager.requestSerializer.timeoutInterval = 300;
-            [manager POST:config.createPhoto2 parameters:postData constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
+            [manager POST:serverApi parameters:postData constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
                 NSString *fileName = [NSString  stringWithFormat:@"%@.png", [self getDateSetting]];
                 if(imageData){
                     [formData appendPartWithFileData:imageData name:@"file" fileName:fileName mimeType:@"image/jpeg"];
@@ -105,18 +122,47 @@
                 [aryRet addObject:@{@"hash":model.hhash,@"key":model.key}];
                 if ((index+1) == images.count) {
                     [self.postData setValue:aryRet forKey:@"imagekeys"];
-                    [self savePhotos];
+                    if (self.isAdd == NO) {
+                        [self savePhotos];
+                    }
+                    else {
+                        [self addPhotos];
+                    }
                 }
             }failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
                 NSLog(@"%@",error.userInfo);
                 //[weakSelef closeLoad];
                 //[weakSelef showToast:@"上传失败"];
-                _completeStatu(NO);
+                _completeStatu(nil);
             }];
             
             index ++;
         }
     }
+}
+
+- (void)addPhotos{
+    NSArray *imageinfoArray = [self.postData objectForKey:@"imagekeys"];
+    int index = 0;
+    NSMutableDictionary * data = [[NSMutableDictionary alloc] init];
+    
+    [data setValue:[self.postData objectForKey:@"photoId"] forKey:@"photoId"];
+    for(NSDictionary *imgInfo in imageinfoArray) {
+        [data setValue:[imgInfo objectForKey:@"key"] forKey:[NSString stringWithFormat:@"imagesName[%d]",index]];
+        
+        index++;
+    }
+    
+    CongfingURL * config = [self getValueWithKey:ShopPhotosApi];
+    //    __weak __typeof(self)weakSelef = self;
+    [HTTPRequest requestPOSTUrl :[NSString stringWithFormat:@"%@%@",config.addImageToPhoto3,[self.appd getParameterString]] parametric:data succed:^(id responseObject) {
+        //[weakSelef closeLoad];
+        NSLog(@"添加成功%@",responseObject);
+        _completeStatu(responseObject);
+        
+    } failure:^(NSError *error){
+        _completeStatu(nil);
+    }];
 }
 
 - (void)savePhotos{
@@ -151,12 +197,12 @@
         //[weakSelef closeLoad];
         NSLog(@"上传成功%@",responseObject);
         //[weakSelef showToast:@"上传成功"];
-        _completeStatu(YES);
+        _completeStatu(responseObject);
         
     } failure:^(NSError *error){
         //[weakSelef closeLoad];
        // [weakSelef showToast:@"上传失败"];
-        _completeStatu(NO);
+        _completeStatu(nil);
     }];
 }
 

@@ -26,21 +26,23 @@
         NSDictionary * json = [RequestErrorGrab getDicwitKey:@"data" toTarget:data];
         if(json && json.count > 0){
         
-            NSArray * user = [RequestErrorGrab getArrwitKey:@"users" toTarget:json];
             NSArray * photos = [RequestErrorGrab getArrwitKey:@"photos" toTarget:json];
             NSArray * selfPhotos = [RequestErrorGrab getArrwitKey:@"selfPhotos" toTarget:json];
+            NSArray * user = [RequestErrorGrab getArrwitKey:@"users" toTarget:json];
             
             if(user && user.count > 0){
                 for (NSDictionary * userDic in user) {
                     AttentionPersonalSearchModel * model = [[AttentionPersonalSearchModel alloc] init];
-                    model.date = [RequestErrorGrab getStringwitKey:@"date" toTarget:userDic];
+                    model.address = [RequestErrorGrab getStringwitKey:@"address" toTarget:userDic];
                     model.name = [RequestErrorGrab getStringwitKey:@"name" toTarget:userDic];
                     model.qq = [RequestErrorGrab getStringwitKey:@"qq" toTarget:userDic];
-                    model.tel = [RequestErrorGrab getStringwitKey:@"tel" toTarget:userDic];
-                    model.weixin = [RequestErrorGrab getStringwitKey:@"weixin" toTarget:userDic];
-                    model.icon = [RequestErrorGrab getStringwitKey:@"icon" toTarget:userDic];
-                    model.itmeID = [RequestErrorGrab getIntegetKey:@"id" toTarget:userDic];
+                    model.phone = [RequestErrorGrab getStringwitKey:@"phone" toTarget:userDic];
+                    model.wechat = [RequestErrorGrab getStringwitKey:@"wechat" toTarget:userDic];
+                    model.avatar = [RequestErrorGrab getStringwitKey:@"avatar" toTarget:userDic];
+                    model.bg_image = [RequestErrorGrab getStringwitKey:@"bg_image" toTarget:userDic];
+                    model.signature = [RequestErrorGrab getStringwitKey:@"signature" toTarget:userDic];
                     model.uid = [RequestErrorGrab getStringwitKey:@"uid" toTarget:userDic];
+                    model.settings = [RequestErrorGrab getDicwitKey:@"settings" toTarget:userDic];
                     [self.users addObject:model];
                 }
             }
@@ -48,14 +50,12 @@
             if(photos && photos.count > 0){
                 for(NSDictionary * photo in photos){
                     AlbumPhotosModel * model = [[AlbumPhotosModel alloc] init];
-                    model.title = [RequestErrorGrab getStringwitKey:@"name" toTarget:photo];
-//                    model.big = [RequestErrorGrab getStringwitKey:@"big" toTarget:photo];
+                    model.title = [RequestErrorGrab getStringwitKey:@"title" toTarget:photo];
                     model.cover = [RequestErrorGrab getStringwitKey:@"cover" toTarget:photo];
-                    model.createdAt = [RequestErrorGrab getStringwitKey:@"date" toTarget:photo];
+                    model.createdAt = [RequestErrorGrab getStringwitKey:@"createdAt" toTarget:photo];
                     model.Id = [NSString stringWithFormat:@"%ld",[RequestErrorGrab getIntegetKey:@"id" toTarget:photo]];
-//                    model. = [RequestErrorGrab getStringwitKey:@"source" toTarget:photo];
                     model.user = [RequestErrorGrab getDicwitKey:@"user" toTarget:photo];
-                    model.collected = [RequestErrorGrab getIntegetKey:@"isCollected" toTarget:photo];
+                    model.collected = [RequestErrorGrab getIntegetKey:@"collected" toTarget:photo];
                     model.recommend = [RequestErrorGrab getBooLwitKey:@"recommend" toTarget:photo];
                     [self.photos addObject:model];
                 }
@@ -65,14 +65,14 @@
                 
                 for(NSDictionary * photo in selfPhotos){
                     AlbumPhotosModel * model = [[AlbumPhotosModel alloc] init];
-                    model.title = [RequestErrorGrab getStringwitKey:@"name" toTarget:photo];
-//                    model.big = [RequestErrorGrab getStringwitKey:@"big" toTarget:photo];
+                    model.title = [RequestErrorGrab getStringwitKey:@"title" toTarget:photo];
                     model.cover = [RequestErrorGrab getStringwitKey:@"cover" toTarget:photo];
-                    model.createdAt = [RequestErrorGrab getStringwitKey:@"date" toTarget:photo];
+                    model.createdAt = [RequestErrorGrab getStringwitKey:@"createdAt" toTarget:photo];
                     model.Id = [NSString stringWithFormat:@"%ld",[RequestErrorGrab getIntegetKey:@"id" toTarget:photo]];
                     model.user = [RequestErrorGrab getDicwitKey:@"user" toTarget:photo];
                     model.collected = [RequestErrorGrab getIntegetKey:@"collected" toTarget:photo];
                     model.recommend = [RequestErrorGrab getBooLwitKey:@"recommend" toTarget:photo];
+
                     [self.selfPhotos addObject:model];
                 }
 

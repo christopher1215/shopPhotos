@@ -37,21 +37,34 @@
     [self addSubview:self.alert];
     
     self.alertWidth = 120;
-    self.alertHeight = 135;
+    
     
     NSArray * titleArray;
     if(mode == OptionModel){
         titleArray = @[@"上传相册",@"添加用户",@"扫一扫"];
         //        titleArray = @[@"上传相册",@"添加用户"];
         [self.alert setBackgroundColor:ColorHexA(0X333333,0.9)];
+        self.alertHeight = 135;
         self.alert.sd_layout
         .rightSpaceToView(self,10)
         .topSpaceToView(self,64)
         .widthIs(self.alertWidth)
         .heightIs(self.alertHeight);
-        
-    }else if(mode == PhotosModel){
+    }
+    else if (mode == HomeModel){
+        titleArray = @[@"上传相册",@"添加用户"];
+        self.alertHeight = 90;
+//        [self.alert setBackgroundColor:ColorHexA(0X333333,0.9)];
+        [self.alert setBackgroundColor:ColorHexA(0xffffff,0.9)];
+        self.alert.sd_layout
+        .rightSpaceToView(self,10)
+        .topSpaceToView(self,64)
+        .widthIs(self.alertWidth)
+        .heightIs(self.alertHeight);
+    }
+    else if(mode == PhotosModel){
         titleArray = @[@"编辑",@"上传相册"];
+        self.alertHeight = 90;
         self.alert.sd_layout
         .rightSpaceToView(self,10)
         .topSpaceToView(self,64)
@@ -60,6 +73,7 @@
         
     }else if(mode == PhotosClassModel){
         titleArray = @[@"编辑",@"新建分类"];
+        self.alertHeight = 90;
         self.alert.sd_layout
         .rightSpaceToView(self,10)
         .topSpaceToView(self,64)
@@ -67,6 +81,7 @@
         .heightIs(self.alertHeight);
     }else if (mode == SortOrder){
         titleArray = @[@"按文件名称",@"按创建日期"];
+        self.alertHeight = 90;
         self.alert.sd_layout
         .leftSpaceToView(self,10)
         .topSpaceToView(self,100)
@@ -82,8 +97,8 @@
         [button setBackgroundColor:[UIColor clearColor]];
         [button setTitle:[titleArray objectAtIndex:index] forState:UIControlStateNormal];
         [button.titleLabel setFont:[UIFont systemFontOfSize:15]];
-        if(mode == OptionModel){
-            [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        if(mode == HomeModel){
+            [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         }
         else {
             [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
@@ -99,7 +114,7 @@
         .heightIs(39.5);
         if(index != titleArray.count - 1){
             UIView * line = [[UIView alloc] init];
-            if(mode == OptionModel){
+            if(mode == HomeModel){
                 [line setBackgroundColor:ColorHex(0Xcccccc)];
             }
             else {

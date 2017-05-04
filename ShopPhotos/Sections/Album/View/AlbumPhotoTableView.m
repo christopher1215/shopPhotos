@@ -50,10 +50,12 @@
  
     
     self.photos.sd_layout
-    .leftEqualToView(self)
-    .rightEqualToView(self)
-    .topSpaceToView(self,0)
-    .bottomEqualToView(self);
+    .leftSpaceToView(self,5)
+    .rightSpaceToView(self,5)
+    .topSpaceToView(self,5)
+    .bottomSpaceToView(self,5);
+    
+    //self.photos.contentInset = UIEdgeInsetsMake(5, 5, 5, 5);
 }
 
 - (void)loadData:(NSArray *)dataArray{
@@ -87,10 +89,15 @@
 #pragma mark --UICollectionViewDelegateFlowLayout
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    return CGSizeMake((WindowWidth-15)/2, 200);
+    return CGSizeMake((WindowWidth-15)/2, 70 + (WindowWidth - 15)/2);
 }
 -(UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section{
-    return UIEdgeInsetsMake(5, 5, 5, 0);
+    return UIEdgeInsetsMake(5, 0, 5, 0);
+}
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
+{
+    
+    return 5;
 }
 
 #pragma mark --UICollectionViewDelegate
@@ -127,6 +134,7 @@
     }
 }
 
-- (void)collectionUserSelecte:(NSIndexPath *)indexPath {}
+- (void)collectionUserSelecte:(NSIndexPath *)indexPath {
+}
 
 @end

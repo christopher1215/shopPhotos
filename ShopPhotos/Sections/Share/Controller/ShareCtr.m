@@ -62,11 +62,9 @@
     [self useDelegate:2];
 }
 
-
 - (void)qqSelected{
     [self useDelegate:3];
 }
-
 
 - (void)photoCopySelcted{
     [self useDelegate:4];

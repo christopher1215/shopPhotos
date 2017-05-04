@@ -17,6 +17,7 @@
 @property (strong, nonatomic) UITextView * photoTitle;
 @property (strong, nonatomic) UITextView * remarksContent;
 @property (assign, nonatomic) BOOL isAdd;
+@property (strong, nonatomic) NSString * photoId;
 
 - (void)setClassifies:(NSString *)parent subClass:(NSString *)subclass;
 

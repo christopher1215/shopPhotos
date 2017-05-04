@@ -37,6 +37,7 @@
 @property (strong, nonatomic) NSString * handleCopyRequest;
 @property (strong, nonatomic) NSString * handleStarUser;
 @property (strong, nonatomic) NSString * searchPhotos;
+@property (strong, nonatomic) NSString * deletePhotoImage;
 //----------------------tcg-------------------------//
 @property (strong, nonatomic) NSString * token;
 // 用户登入
@@ -51,7 +52,7 @@
 // 忘记密码 找回密码
 @property (strong, nonatomic) NSString * resetPassword2;
 // 获取消息 收藏 数量
-@property (strong, nonatomic) NSString * getCount;
+@property (strong, nonatomic) NSString * getCounts;
 // 获取用户动态
 @property (strong, nonatomic) NSString * getNewDynamics;
 

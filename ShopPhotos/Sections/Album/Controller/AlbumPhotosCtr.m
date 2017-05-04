@@ -52,7 +52,7 @@
 
 @implementation AlbumPhotosCtr
 
-- (NSMutableArray *)imageArray{
+- (NSMutableArray *)imageArray {
     if(!_imageArray) _imageArray = [NSMutableArray array];
     return _imageArray;
 }
@@ -61,7 +61,6 @@
 
     if(!_dataArray) _dataArray = [NSMutableArray array];
     return _dataArray;
-
 }
 
 - (void)didReceiveMemoryWarning {
@@ -85,6 +84,8 @@
 
 - (void)setup{
     
+    [self dataArray];
+    [self imageArray];
     [self.back addTarget:self action:@selector(backSelected)];
     [self.edit addTarget:self action:@selector(addSelected)];
     [self.search addTarget:self action:@selector(searchSelected)];
@@ -145,7 +146,7 @@
     
     self.editOption = [UIButton buttonWithType:UIButtonTypeSystem];
     [self.editOption setTitle:@"删除" forState:UIControlStateNormal];
-    [self.editOption setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [self.editOption setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
     [self.editOption setBackgroundColor:[UIColor whiteColor]];
     [self.view addSubview:self.editOption];
     [self.editOption addTarget:self action:@selector(photosOptionSelected) forControlEvents:UIControlEventTouchUpInside];
@@ -176,6 +177,21 @@
     .rightSpaceToView(topView,0)
     .topSpaceToView(topView,0)
     .bottomSpaceToView(topView,0);
+    
+    self.shareView = GETALONESTORYBOARDPAGE(@"ShareCtr");
+    self.shareView.delegate = self;
+    [self.view addSubview:self.shareView.view];
+    [self.shareView.view setHidden:YES];
+    [self.shareView closeAlert];
+    
+    self.qrAlert = [[DynamicQRAlert alloc] init];
+    [self.view addSubview:_qrAlert];
+    [_qrAlert setHidden:YES];
+    _qrAlert.sd_layout
+    .leftEqualToView(self.view)
+    .rightEqualToView(self.view)
+    .topEqualToView(self.view)
+    .bottomEqualToView(self.view);
 }
 
 #pragma mark - OnClick
@@ -207,14 +223,10 @@
         }
     }
     
-    NSMutableString * cancelIDs = [NSMutableString string];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
     for(NSInteger index = 0; index<editArray.count;index++){
-        AlbumPhotosModel * mdoel = [editArray objectAtIndex:index];
-        if(index!=0){
-            [cancelIDs appendString:[NSString stringWithFormat:@"*%@",mdoel.Id]];
-        }else{
-            [cancelIDs appendString:mdoel.Id];
-        }
+        AlbumPhotosModel * model = [editArray objectAtIndex:index];
+        [data setValue:model.Id forKey:[NSString stringWithFormat:@"photosId[%ld]",index]];
     }
     
     if(editArray.count == 0){
@@ -222,7 +234,6 @@
         return;
     }
     // 删除
-    NSDictionary * data = @{@"photo_ids":cancelIDs};
     
     __weak __typeof(self)weakSelef = self;
     NSString * msg = [NSString stringWithFormat:@"确定删除%ld项",editArray.count];
@@ -326,7 +337,7 @@
 
 - (void)shareClicked:(NSIndexPath *)indexPath {
     self.itmeSelectedIndex = indexPath.row;
-    [self showLoad];
+//    [self showLoad];
     [self getPhotoImages];
     [self.shareView showAlert];
 }
@@ -431,7 +442,8 @@
 - (void)loadDeletePhotos:(NSDictionary *)data{
     [self showLoad];
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.deletePhotos parametric:data succed:^(id responseObject){
+    [HTTPRequest requestDELETEUrl:[NSString stringWithFormat:@"%@%@",self.congfing.deletePhotos,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+
         [weakSelef closeLoad];
         NSLog(@"%@",responseObject);
         
@@ -476,7 +488,7 @@
         {
             
             NSMutableArray * images = [NSMutableArray array];
-            for(PhotoImagesModel * imageModel in self.imageArray){
+            for(PhotoImagesModel * imageModel in _imageArray){
                 DynamicImagesModel * model = [[DynamicImagesModel alloc] init];
                 model.bigImageUrl = imageModel.bigImageUrl;
                 model.thumbnailUrl = imageModel.thumbnailUrl;
@@ -530,9 +542,10 @@
             break;
         case 7:// 查看二维码
         {
-            self.qrAlert.titleText = model.title;
-            self.qrAlert.contentText = [NSString stringWithFormat:@"%@%@/photo/detail/%@",URLHead,self.uid,model.title];
-            [self.qrAlert showAlert];
+            
+            _qrAlert.titleText = model.title;
+            _qrAlert.contentText = [NSString stringWithFormat:@"%@%@/photo/detail/%@",URLHead,self.uid,model.title];
+            [_qrAlert showAlert];
         }
             
             break;
@@ -672,22 +685,20 @@
         CopyRequset * model = [[CopyRequset alloc] init];
         [model analyticInterface:responseObject];
         if(model.status == 0){
-            
             if(model.allow){
-                PublishPhotoCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotoCtr");
+                PublishPhotoCtr * publish = GETALONESTORYBOARDPAGE(@"PublishPhotoCtr");
                 AlbumPhotosModel * albumModel = [self.dataArray objectAtIndex:self.itmeSelectedIndex];
                 /*
-                pulish.is_copy = YES;
-                pulish.photoTitleText = albumModel.title;
-                pulish.photoTitleText = @"";
-                pulish.imageCopy = [[NSMutableArray alloc] initWithArray:self.imageArray];*/
-                [weakSelef.navigationController pushViewController:pulish animated:YES];
+                publish.is_copy = YES;
+                publish.photoTitleText = albumModel.title;
+                publish.photoTitleText = @"";
+                publish.imageCopy = [[NSMutableArray alloc] initWithArray:self.imageArray];
+                 */
+                [weakSelef.navigationController pushViewController:publish animated:YES];
             }else{
-                
                 UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:@"对方设置了限制复制，是否发送请求复制" preferredStyle:UIAlertControllerStyleAlert];
                 [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
-                [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action){
-                    
+                [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                     [weakSelef sendCopyRequest:data];
                     
                 }]];
@@ -705,24 +716,24 @@
     }];
 }
 
-- (void)getPhotoImages{
+- (void) getPhotoImages {
+    
     AlbumPhotosModel * model = [self.dataArray objectAtIndex:self.itmeSelectedIndex];
     
-    NSDictionary * detailPhotodata = @{@"photoId":model.Id};
-    __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.getPhotoImages parametric:detailPhotodata succed:^(id responseObject){
-        [weakSelef closeLoad];
-        NSLog(@"获取相册图片 -- >%@",responseObject);
-        PhotoImagesRequset * requset = [[PhotoImagesRequset alloc] init];
-        [requset analyticInterface:responseObject];
-        if(requset.status == 0){
-            [weakSelef.imageArray removeAllObjects];
-            [weakSelef.imageArray addObjectsFromArray:requset.dataArray];
+    for(NSDictionary * image in model.images){
+        PhotoImagesModel * model = [[PhotoImagesModel alloc] init];
+        model.Id = [NSString stringWithFormat:@"%ld",[RequestErrorGrab getIntegetKey:@"id" toTarget:image]];
+        //                model.imageLink_id = [NSString stringWithFormat:@"%ld",[RequestErrorGrab getIntegetKey:@"imageLink_id" toTarget:images]];
+        model.thumbnailUrl = [RequestErrorGrab getStringwitKey:@"thumbnailUrl" toTarget:image];
+        model.bigImageUrl = [RequestErrorGrab getStringwitKey:@"bigImageUrl" toTarget:image];
+        model.srcUrl = [RequestErrorGrab getStringwitKey:@"srcUrl" toTarget:image];
+        model.isCover = [RequestErrorGrab getBooLwitKey:@"isCover" toTarget:image];
+        if (model.isCover) {
+            [_imageArray insertObject:model atIndex:0];
+        }else{
+            [_imageArray addObject:model];
         }
-    } failure:^(NSError *error){
-        [weakSelef showToast:NETWORKTIPS];
-        //[weakSelef closeLoad];
-    }];
+    }
 }
 
 @end

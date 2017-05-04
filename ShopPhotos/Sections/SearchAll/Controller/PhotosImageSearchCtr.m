@@ -188,9 +188,12 @@
     
     [self showLoad];
     __weak __typeof(self)weakSelf = self;
-    NSDictionary * data = @{@"uid":self.uid, @"getAll":@"true", @"resultCount":@"100",@"includeSelf":@"true"};
+    NSDictionary * data = @{@"uid":self.uid,
+//                            @"loc":@"0,0,0,0",
+                            @"resultCount":@"100",
+                            @"includeFriends":@"1"};
     NSData * imageData = UIImageJPEGRepresentation(self.searchImage, 0.3);
-    [HTTPRequest Manager:self.congfing.useImageSearch Method:nil dic:data file:imageData fileName:@"imageFile" requestSucced:^(id responseObject){
+    [HTTPRequest Manager:self.congfing.useImageSearch Method:nil dic:data file:imageData fileName:@"image" requestSucced:^(id responseObject){
         NSLog(@"%@",responseObject);
         PhotosSearchRequset * requset = [[PhotosSearchRequset alloc] init];
         [requset analyticInterface:responseObject];

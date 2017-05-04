@@ -44,9 +44,10 @@
 
 - (IBAction)publishPhotoSelected:(id)sender {
 
-    PublishPhotoCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotoCtr");
+    PublishPhotoCtr * publish = GETALONESTORYBOARDPAGE(@"PublishPhotoCtr");
 //    pulish.imageArray = nil;
-    [self presentViewController:pulish animated:YES completion:nil];
+    publish.isAdd = NO;
+    [self presentViewController:publish animated:YES completion:nil];
 //    [self dismissViewControllerAnimated:NO completion:Nil];
 }
 

@@ -44,7 +44,7 @@
     
     self.deleteBtn = [UIButton buttonWithType:UIButtonTypeSystem];
     [self.deleteBtn setTitle:@"删除" forState:UIControlStateNormal];
-    [self.deleteBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [self.deleteBtn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
     [self.deleteBtn setBackgroundColor:[UIColor whiteColor]];
     [self.deleteBtn addTarget:self action:@selector(deleteSelected) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:self.deleteBtn];

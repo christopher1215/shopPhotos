@@ -17,7 +17,7 @@
 
 @interface ChatLoginCtr ()<UIScrollViewDelegate>{
     ErrMsgViewController *popupErrVC;
-
+    
 }
 
 @property (weak, nonatomic) IBOutlet UIView *back;
@@ -58,7 +58,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-   
+    
     popupErrVC = [[ErrMsgViewController alloc] initWithNibName:@"ErrMsgViewController" bundle:nil];
     [self setup];
     
@@ -76,7 +76,7 @@
     self.content.pagingEnabled = YES;
     self.content.showsVerticalScrollIndicator = NO;
     self.content.showsHorizontalScrollIndicator = NO;
-
+    
 }
 
 - (void)createAutoLayout{
@@ -91,7 +91,7 @@
     
     self.phone = [[ResetEnterView alloc] init];
     [self.phone setStyle:GeneralEnter];
-//    self.phone.iconName = @"ico_phone";
+    //    self.phone.iconName = @"ico_phone";
     self.phone.enter.placeholder = @"请输入手机号";
     [regView addSubview:self.phone];
     self.phone.sd_layout
@@ -109,7 +109,7 @@
     .topSpaceToView(self.phone,10)
     .widthIs(150)
     .heightIs(45);
-
+    
     self.captcha = [[UITextField alloc] init];
     self.captcha.placeholder = @"图片验证吗";
     self.captcha.textAlignment = NSTextAlignmentCenter;
@@ -120,11 +120,11 @@
     .rightSpaceToView(regView,0)
     .topSpaceToView(self.phone,10)
     .heightIs(45);
-
+    
     self.phoneCode = [[ResetEnterView alloc] init];
     [self.phoneCode setStyle:SendEnter];
     [self.phoneCode.send addTarget:self action:@selector(sendPhoneCode) forControlEvents:UIControlEventTouchUpInside];
-//    self.phoneCode.iconName = @"ico_message";
+    //    self.phoneCode.iconName = @"ico_message";
     self.phoneCode.enter.placeholder = @"请输入验证码";
     [regView addSubview:self.phoneCode];
     self.phoneCode.sd_layout
@@ -135,7 +135,7 @@
     
     self.password = [[ResetEnterView alloc] init];
     [self.password setStyle:GeneralEnter];
-//    self.password.iconName = @"ico_password";
+    //    self.password.iconName = @"ico_password";
     self.password.enter.secureTextEntry = YES;
     self.password.enter.placeholder = @"请输入密码";
     [regView addSubview:self.password];
@@ -147,7 +147,7 @@
     
     self.againPassword = [[ResetEnterView alloc] init];
     [regView addSubview:self.againPassword];
-//    self.againPassword.iconName = @"ico_password";
+    //    self.againPassword.iconName = @"ico_password";
     self.againPassword.enter.placeholder = @"请再次确认没密码";
     self.againPassword.enter.secureTextEntry = YES;
     [self.againPassword setStyle:GeneralEnter];
@@ -177,10 +177,12 @@
     UILabel *lblLicExp = [[UILabel alloc] init];
     lblLicExp.text = @"点击确定表示同意";
     [lblLicExp  setFont:[UIFont systemFontOfSize:15]];
+    [lblLicExp setTextColor:[UIColor lightGrayColor]];
     [licView addSubview:lblLicExp];
     lblLicExp.sd_layout
     .topSpaceToView(licView,0)
     .bottomSpaceToView(licView,0)
+    .widthIs(130)
     .leftSpaceToView(licView,0);
     
     self.btnLic = [UIButton buttonWithType:UIButtonTypeSystem];
@@ -192,14 +194,14 @@
     .bottomSpaceToView(licView,0)
     .rightSpaceToView(licView,0)
     .leftSpaceToView(lblLicExp,0);
-
+    
     [regView addSubview:licView];
     licView.sd_layout
     .topSpaceToView(self.regSure,20)
     .heightIs(30)
-    .widthIs(250)
-    .centerXIs(0);
-
+    .widthIs(200)
+    .centerXEqualToView(regView);
+    
     UIView * uootuView = [[UIView alloc] init];
     [uootuView setBackgroundColor:[UIColor whiteColor]];
     [self.content addSubview:uootuView];
@@ -211,7 +213,7 @@
     
     self.uAccount = [[ResetEnterView alloc] init];
     [self.uAccount setStyle:GeneralEnter];
-//    self.uAccount.iconName = @"ico_user";
+    //    self.uAccount.iconName = @"ico_user";
     self.uAccount.enter.placeholder = @"请输入有图账号";
     [uootuView addSubview:self.uAccount];
     self.uAccount.sd_layout
@@ -223,7 +225,7 @@
     self.uPassword = [[ResetEnterView alloc] init];
     [uootuView addSubview:self.uPassword];
     [self.uPassword setStyle:GeneralEnter];
-//    self.uPassword.iconName = @"ico_password";
+    //    self.uPassword.iconName = @"ico_password";
     self.uPassword.enter.placeholder = @"请输入有图密码";
     self.uPassword.enter.secureTextEntry = YES;
     self.uPassword.sd_layout
@@ -273,8 +275,8 @@
 }
 
 - (void)regOptionSelected{
-
-      [self.content setContentOffset:CGPointMake(0, 0) animated:YES];
+    
+    [self.content setContentOffset:CGPointMake(0, 0) animated:YES];
 }
 
 - (void)uootuOtionSelected{
@@ -322,7 +324,7 @@
 }
 
 - (void)uSureSlected{
-
+    
     if(self.uAccount.enter.text.length == 0){
         SPAlert(@"请输入账号",self);
         return;
@@ -384,7 +386,7 @@
 
 - (void)startCountdown{
     
-  [self.phone.send setUserInteractionEnabled:NO];
+    [self.phone.send setUserInteractionEnabled:NO];
     self.countdown = 60;
     self.timer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(sendCodeCountdown) userInfo:nil repeats:YES];
     

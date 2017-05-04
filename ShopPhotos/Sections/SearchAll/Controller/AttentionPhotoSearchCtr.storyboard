@@ -113,12 +113,41 @@
                                     <constraint firstAttribute="height" constant="64" id="vKY-Q0-u5x"/>
                                 </constraints>
                             </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="kr2-Ad-Cor">
+                                <rect key="frame" x="0.0" y="64" width="375" height="45"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="我关注的相册" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2wF-IT-hY7">
+                                        <rect key="frame" x="16" y="14.5" width="80" height="16"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                        <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="DuE-mZ-YN4">
+                                        <rect key="frame" x="0.0" y="44" width="375" height="1"/>
+                                        <color key="backgroundColor" red="0.93333333330000001" green="0.93333333330000001" blue="0.93333333330000001" alpha="1" colorSpace="calibratedRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="1" id="9Zv-YH-YFS"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="DuE-mZ-YN4" secondAttribute="trailing" id="01I-Kk-clx"/>
+                                    <constraint firstAttribute="bottom" secondItem="DuE-mZ-YN4" secondAttribute="bottom" id="HHX-Hl-gnv"/>
+                                    <constraint firstItem="DuE-mZ-YN4" firstAttribute="leading" secondItem="kr2-Ad-Cor" secondAttribute="leading" id="Pa5-4Y-ube"/>
+                                    <constraint firstAttribute="height" constant="45" id="b9i-QB-YWQ"/>
+                                    <constraint firstItem="2wF-IT-hY7" firstAttribute="centerY" secondItem="kr2-Ad-Cor" secondAttribute="centerY" id="w9F-B3-G7q"/>
+                                    <constraint firstItem="2wF-IT-hY7" firstAttribute="leading" secondItem="kr2-Ad-Cor" secondAttribute="leading" constant="16" id="yhT-vO-pG0"/>
+                                </constraints>
+                            </view>
                         </subviews>
-                        <color key="backgroundColor" red="0.93333333333333335" green="0.93333333333333335" blue="0.93333333333333335" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstItem="gRL-RO-RBg" firstAttribute="leading" secondItem="1Sy-oj-Ly4" secondAttribute="leading" id="7Wm-13-sxM"/>
+                            <constraint firstItem="kr2-Ad-Cor" firstAttribute="leading" secondItem="1Sy-oj-Ly4" secondAttribute="leading" id="XU7-63-rR3"/>
+                            <constraint firstAttribute="trailing" secondItem="kr2-Ad-Cor" secondAttribute="trailing" id="a5s-sq-mde"/>
                             <constraint firstAttribute="trailing" secondItem="gRL-RO-RBg" secondAttribute="trailing" id="joR-QO-XrS"/>
                             <constraint firstItem="gRL-RO-RBg" firstAttribute="top" secondItem="1Sy-oj-Ly4" secondAttribute="top" id="nAG-Ku-UQM"/>
+                            <constraint firstItem="kr2-Ad-Cor" firstAttribute="top" secondItem="gRL-RO-RBg" secondAttribute="bottom" id="vVD-vS-0QY"/>
                         </constraints>
                     </view>
                     <connections>
@@ -126,6 +155,7 @@
                         <outlet property="imageSearch" destination="Xt1-6T-WDK" id="YJx-Gb-vba"/>
                         <outlet property="searchText" destination="iii-lb-hRi" id="k7z-2S-sHO"/>
                         <outlet property="titleBackground" destination="MtC-ef-DP0" id="KOg-hd-s85"/>
+                        <outlet property="viewCaption" destination="kr2-Ad-Cor" id="uy9-QB-lgR"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QDb-JV-PEW" userLabel="First Responder" sceneMemberID="firstResponder"/>
