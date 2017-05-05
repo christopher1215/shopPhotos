@@ -15,7 +15,7 @@
 @property (strong, nonatomic) NSString * username;
 @property (assign, nonatomic) BOOL twoWay;
 @property (assign, nonatomic) BOOL caan;
-@property (readwrite, nonatomic) BOOL isSubClass;
-@property (strong, nonatomic) AlbumClassTableModel * parentModel;
+//@property (readwrite, nonatomic) BOOL isSubClass;
+//@property (strong, nonatomic) AlbumClassTableModel * parentModel;
 
 @end

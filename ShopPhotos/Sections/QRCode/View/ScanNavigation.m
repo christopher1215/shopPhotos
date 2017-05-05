@@ -12,6 +12,7 @@
 
 @property (strong, nonatomic) UIImageView * back;
 @property (strong, nonatomic) UILabel * title;
+@property (strong, nonatomic) UILabel * lblBack;
 
 @end
 
@@ -36,7 +37,7 @@
 }
 
 - (void)stCreateView{
-
+    
     UIView * backView = [[UIView alloc] init];
     [backView addTarget:self action:@selector(backSelect)];
     [self addSubview:backView];
@@ -45,7 +46,13 @@
     [self.back setContentMode:UIViewContentModeScaleAspectFit];
     [self.back setImage:[UIImage imageNamed:@"btn_back_black"]];
     [backView addSubview:self.back];
-
+    
+    self.lblBack = [[UILabel alloc] init];
+    [self.lblBack setText:@"返回"];
+    [self.lblBack setFont:[UIFont systemFontOfSize:17]];
+    [self.lblBack setTextColor:[UIColor blackColor]];
+    [backView addSubview:self.lblBack];
+    
     self.title = [[UILabel alloc] init];
     [self.title setTextAlignment:NSTextAlignmentCenter];
     [self.title setText:@"扫一扫"];
@@ -56,7 +63,7 @@
     backView.sd_layout
     .leftEqualToView(self)
     .bottomEqualToView(self)
-    .widthIs(44)
+    .widthIs(75)
     .heightIs(44);
     
     UIView * line = [[UIView alloc] init];
@@ -68,11 +75,19 @@
     .bottomEqualToView(self)
     .heightIs(1);
     
+    self.lblBack.sd_layout
+    .rightSpaceToView(backView,6)
+    .topSpaceToView(backView, 12)
+    .heightIs(21)
+    .widthIs(45);
+    
     self.back.sd_layout
     .leftSpaceToView(backView,7)
     .topSpaceToView(backView,7)
-    .rightSpaceToView(backView,7)
+    .rightSpaceToView(_lblBack,6)
+    .widthIs(11)
     .bottomSpaceToView(backView,7);
+    
     
     self.title.sd_layout
     .leftSpaceToView(self,50)

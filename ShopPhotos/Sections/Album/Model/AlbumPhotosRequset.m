@@ -55,9 +55,7 @@
     model.video = [RequestErrorGrab getStringwitKey:@"video" toTarget:photo];
     model.desc = [RequestErrorGrab getStringwitKey:@"description" toTarget:photo];
     model.Id = [NSString stringWithFormat:@"%ld",[RequestErrorGrab getIntegetKey:@"id" toTarget:photo]];
-    model.type = [RequestErrorGrab getStringwitKey:@"type" toTarget:photo];
     model.createdAt = [RequestErrorGrab getStringwitKey:@"createdAt" toTarget:photo];
-    model.dateDiff = [RequestErrorGrab getStringwitKey:@"dateDiff" toTarget:photo];
     model.user = [RequestErrorGrab getDicwitKey:@"user" toTarget:photo];
     model.classify = [RequestErrorGrab getDicwitKey:@"classify" toTarget:photo];
     model.subclass = [RequestErrorGrab getDicwitKey:@"subclass" toTarget:photo];

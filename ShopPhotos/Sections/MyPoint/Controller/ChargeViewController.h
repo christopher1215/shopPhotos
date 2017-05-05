@@ -11,5 +11,6 @@
 @interface ChargeViewController : BaseViewCtr
 @property (weak, nonatomic) IBOutlet UILabel *lblAccount;
 @property (weak, nonatomic) IBOutlet UILabel *lblPoint;
+@property (assign, nonatomic) int currentPoint;
 
 @end

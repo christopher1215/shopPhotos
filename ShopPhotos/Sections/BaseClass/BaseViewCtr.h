@@ -27,6 +27,7 @@ static NSString * const URLHead = @"http://www.uootu.com/";
 @property (strong, nonatomic)CongfingURL * congfing;
 @property (strong, nonatomic)NSDictionary * tokenData;
 @property (strong, nonatomic)NSString * photosUserID;
+@property (strong, nonatomic)NSString * photosUserName;
 @property (strong, nonatomic)AppDelegate *appd;
 //@property (strong, nonatomic)ErrMsgViewController *popupErrVC;
 

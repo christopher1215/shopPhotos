@@ -25,7 +25,7 @@
     [super viewDidLoad];
     
     self.appd = (AppDelegate*)[UIApplication sharedApplication].delegate;
-//    self.popupErrVC = [[ErrMsgViewController alloc] initWithNibName:@"ErrMsgViewController" bundle:nil];
+    //    self.popupErrVC = [[ErrMsgViewController alloc] initWithNibName:@"ErrMsgViewController" bundle:nil];
     
     
     [self.navigationController.navigationBar setHidden:YES];
@@ -33,9 +33,11 @@
     UserModel * userModel = [self getValueWithKey:CacheUserModel];
     if(userModel){
         self.photosUserID = userModel.uid;
+        self.photosUserName = userModel.name;
     }
     if(!self.photosUserID || self.photosUserID.length == 0){
         self.photosUserID = [[NSString alloc] init];
+        self.photosUserName = [[NSString alloc] init];
     }
 }
 

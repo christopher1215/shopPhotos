@@ -21,8 +21,8 @@
 #import "AlbumPhotoTableView.h"
 #import "AlbumPhotosRequset.h"
 #import "DynamicTableView.h"
-#import "AlbumClassTable.h"
-#import "AlbumClassModel.h"
+#import "PersonalClassTable.h"
+#import "AllClassifiesRequest.h"
 #import "PhotoDetailsCtr.h"
 #import "UserInfoDrawerCtr.h"
 
@@ -38,7 +38,7 @@
 #import "PhotoImagesModel.h"
 #import "SPVideoPlayer.h"
 
-@interface PersonalHomeCtr ()<UIScrollViewDelegate,PhotosEditViewDelegate,AlbumPhotoTableViewDelegate,ShareDelegate,AlbumClassTableDelegate,DynamicTableViewDelegate,UserInfoDrawerDelegate>{
+@interface PersonalHomeCtr ()<UIScrollViewDelegate,PhotosEditViewDelegate,AlbumPhotoTableViewDelegate,ShareDelegate,PersonalClassTableDelegate,DynamicTableViewDelegate,UserInfoDrawerDelegate>{
     CGFloat screenWidth;
     NSInteger tabIndex;
     SPVideoPlayer *videoView;
@@ -88,12 +88,12 @@
 @property (strong, nonatomic) NSMutableArray * recommendDataArray;
 @property (strong, nonatomic) NSMutableArray * dynamicDataArray;
 @property (strong, nonatomic) NSMutableArray * albumDataArray;
-@property (strong, nonatomic) NSMutableArray * albumClassDataArray;
+@property (strong, nonatomic) NSMutableArray * personalClassDataArray;
 
 @property (strong, nonatomic) AlbumPhotoTableView * recommendTable;
 @property (strong, nonatomic) DynamicTableView * dynamicTable;
 @property (strong, nonatomic) AlbumPhotoTableView * albumTable;
-@property (strong, nonatomic) AlbumClassTable * albumClassTable;
+@property (strong, nonatomic) PersonalClassTable * personalClassTable;
 
 @property (assign, nonatomic) NSInteger itmeSelectedIndex;
 @property (strong, nonatomic) ShareCtr * shareView;
@@ -129,9 +129,9 @@
     if(!_albumDataArray) _albumDataArray = [NSMutableArray array];
     return _albumDataArray;
 }
-- (NSMutableArray *)albumClassDataArray{
-    if(!_albumClassDataArray) _albumClassDataArray = [NSMutableArray array];
-    return _albumClassDataArray;
+- (NSMutableArray *)personalClassDataArray{
+    if(!_personalClassDataArray) _personalClassDataArray = [NSMutableArray array];
+    return _personalClassDataArray;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -145,6 +145,7 @@
     [self.view bringSubviewToFront:self.shareView.view];
     [self.view bringSubviewToFront:self.userInfo.view];
     [self.view bringSubviewToFront:videoView];
+    
     screenWidth = [[UIScreen mainScreen] bounds].size.width;
     
     [self setup];
@@ -171,7 +172,6 @@
     }else{
         [self loadNetworkAlbumData];
     }
-    
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
@@ -179,9 +179,7 @@
     if ([scrollView isEqual:_contentScrollView]) {
         
         switch (scrollView.panGestureRecognizer.state) {
-                
             case UIGestureRecognizerStateBegan:
-                
                 // User began dragging
                 [self.view bringSubviewToFront:_contentScrollView];
                 [self.view bringSubviewToFront:_titleView];
@@ -297,7 +295,8 @@
     }
 }
 
-- (void)setup{
+- (void)setup {
+    
     tabIndex = 0;
     [self.back addTarget:self action:@selector(backSelected)];
     [self.headImage addTarget:self action:@selector(iconSelected)];
@@ -315,7 +314,7 @@
     [self.photos addTarget:self action:@selector(photosSelected)];
     [self.photosClass addTarget:self action:@selector(photosClassSelected)];
     [self.search addTarget:self action:@selector(searchSelected)];
-    [self.share addTarget:self action:@selector(shareSelected)];
+//    [self.share addTarget:self action:@selector(shareSelected)];
     
     if(self.twoWay){
         [self.attentionLabel setText:@"取消关注"];
@@ -381,19 +380,19 @@
     .topSpaceToView(self.albumView,0)
     .bottomSpaceToView(self.albumView,0);
 
-    self.albumClassTable = [[AlbumClassTable alloc] init];
-    self.albumClassTable.albumDelegage = self;
-    [self.albumClassView addSubview:self.albumClassTable];
-    self.albumClassTable.sd_layout
+    self.personalClassTable = [[PersonalClassTable alloc] init];
+    self.personalClassTable.delegate = self;
+    [self.albumClassView addSubview:self.personalClassTable];
+    self.personalClassTable.sd_layout
     .leftEqualToView(self.albumClassView)
     .rightEqualToView(self.albumClassView)
     .topSpaceToView(self.albumClassView,0)
     .bottomEqualToView(self.albumClassView);
     
-    self.albumClassTable.table.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+    self.personalClassTable.table.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
         [weakSelef loadNetworkAlbumClassData];
     }];
-    [self.albumClassTable.table.mj_header beginRefreshing];
+    [self.personalClassTable.table.mj_header beginRefreshing];
     
     self.userInfo = GETALONESTORYBOARDPAGE(@"UserInfoDrawerCtr");
     self.userInfo.delegate = self;
@@ -639,36 +638,28 @@
 
 - (void)loadNetworkAlbumClassData {
     
-    NSDictionary *data = nil;
+    NSDictionary *data = @{@"uid":self.uid};
     NSString *url = nil;
     CongfingURL * config = [self getValueWithKey:ShopPhotosApi];
-    if (_isSubClass) {
-        data = [NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%ld",_parentModel.Id],@"classifyId",@"desc",@"order",@"updated_at",@"orderBy", nil];
-        url = config.getSubclasses;
-    }
-    else {
-        data = [NSDictionary dictionaryWithObjectsAndKeys:_uid,@"uid",@"desc",@"order",@"updated_at",@"orderBy", nil];
-        url = config.getClassifies;
-    }
-    
+    url = config.getAllClassifies;
+
     __weak __typeof(self)weakSelef = self;
     
     [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",url,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
-        [weakSelef.albumClassTable.table.mj_header endRefreshing];
+        [weakSelef.personalClassTable.table.mj_header endRefreshing];
         NSLog(@"%@",responseObject);
-        AlbumClassModel * model = [[AlbumClassModel alloc] init];
+        AllClassifiesRequest * model = [[AllClassifiesRequest alloc] init];
         [model analyticInterface:responseObject];
         if(model.status == 0){
-            [weakSelef.albumClassDataArray removeAllObjects];
-            [weakSelef.albumClassDataArray addObjectsFromArray:model.dataArray];
-            weakSelef.albumClassTable.isSubClass = weakSelef.isSubClass;
-            weakSelef.albumClassTable.dataArray = weakSelef.albumClassDataArray;
+            [weakSelef.personalClassDataArray removeAllObjects];
+            [weakSelef.personalClassDataArray addObjectsFromArray:model.dataArray];
+            weakSelef.personalClassTable.dataArray = weakSelef.personalClassDataArray;
         }else{
             [weakSelef showToast:model.message];
         }
     } failure:^(NSError *error){
         [weakSelef showToast:NETWORKTIPS];
-        [weakSelef.albumClassTable.table.mj_header endRefreshing];
+        [weakSelef.personalClassTable.table.mj_header endRefreshing];
     }];
 }
 
@@ -1385,7 +1376,7 @@
     
     //[self showLoad];
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.isAllow parametric:data succed:^(id responseObject){
+    [HTTPRequest requestPOSTUrl:self.congfing.isPassiveUserAllow parametric:data succed:^(id responseObject){
         //[weakSelef closeLoad];
         NSLog(@"%@",responseObject);
         CopyRequset * model = [[CopyRequset alloc] init];
@@ -1566,5 +1557,10 @@
     
     [self.navigationController pushViewController:photoDetails animated:YES];
 }
+
+#pragma mark - PersonalClassTableDelegate
+- (void)personalClassTableSelected:(NSIndexPath *)indexPath{}
+- (void)personalClassTableHeadSelectType:(NSInteger)type slectedPath:(NSInteger)section{}
+- (void)personalClassTableSelectType:(NSInteger)type selectPath:(NSIndexPath *)indexPath{}
 
 @end

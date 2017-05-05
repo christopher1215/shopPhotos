@@ -540,7 +540,7 @@
     
     //[self showLoad];
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.isAllow parametric:data succed:^(id responseObject){
+    [HTTPRequest requestPOSTUrl:self.congfing.isPassiveUserAllow parametric:data succed:^(id responseObject){
         //[weakSelef closeLoad];
         NSLog(@"%@",responseObject);
         CopyRequset * model = [[CopyRequset alloc] init];

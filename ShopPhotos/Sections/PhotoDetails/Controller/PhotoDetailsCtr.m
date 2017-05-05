@@ -729,7 +729,6 @@
 //        [self.remarksView updateLayout];
     }
     
-    
 //    self.editView.sd_layout.heightIs(self.remarksView.height+self.remarksView.top_sd);
 //    [self.editView updateLayout];
     [self.content setContentSize:CGSizeMake(0, self.foot.top+self.foot.height)];
@@ -775,9 +774,8 @@
 //    [self getPhotoDescription];
 }
 
-- (void)getDetailPhoto{
-    
-    if(!self.subclassID){
+- (void)getDetailPhoto {
+    if(!self.subclassID) {
         [self showLoad];
     }
     //[self showLoad];
@@ -919,7 +917,7 @@
     
     //[self showLoad];
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.isAllow parametric:data succed:^(id responseObject){
+    [HTTPRequest requestPOSTUrl:self.congfing.isPassiveUserAllow parametric:data succed:^(id responseObject){
         //[weakSelef closeLoad];
         NSLog(@"%@",responseObject);
         CopyRequset * model = [[CopyRequset alloc] init];

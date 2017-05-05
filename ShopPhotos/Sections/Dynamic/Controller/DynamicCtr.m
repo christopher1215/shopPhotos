@@ -34,7 +34,9 @@
 #import "CopyRequset.h"
 #import "AlbumPhotosModel.h"
 #import "SPVideoPlayer.h"
-
+#import "AddUserViewController.h"
+#import "ChattingViewController.h"
+#
 @interface DynamicCtr ()<DynamicTableViewDelegate,MoreAlertDelegate,AddFriendAlertDelegate,UserInfoDrawerDelegate,ShareDelegate>
 
 @property (weak, nonatomic) IBOutlet UIButton *more;
@@ -97,15 +99,18 @@
         [_back setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         [_back setTitle:@"首页" forState:UIControlStateNormal];
         [_back.titleLabel setFont:[UIFont fontWithName:@"Helvetica" size:17]];
-        
+        [_back setContentEdgeInsets:UIEdgeInsetsMake(10, 0, 10, 0)];
         [_head addSubview:_back];
         _back.sd_layout
         .leftSpaceToView(_head,0)
-        .bottomSpaceToView(_head,10)
+        .bottomSpaceToView(_head,0)
         .widthIs(80)
-        .heightIs(20);
+        .heightIs(40);
         
         [_back addTarget:self action:@selector(backSelected)];
+        _lblTitle.text = @"我的动态";
+    } else {
+        _lblTitle.text = @"动态";
     }
     
     [self.search addTarget:self action:@selector(searchSelected)];
@@ -121,7 +126,7 @@
     .leftEqualToView(self.view)
     .rightEqualToView(self.view)
     .topSpaceToView(self.view,64)
-    .bottomSpaceToView(self.view,0);
+    .bottomSpaceToView(self.view,_isMyDynamic?0:49);
     
     self.userInfo = GETALONESTORYBOARDPAGE(@"UserInfoDrawerCtr");
     self.userInfo.delegate = self;
@@ -147,7 +152,7 @@
     
     self.moreAlert = [[MoreAlert alloc] init];
     [self.view addSubview:self.moreAlert];
-    self.moreAlert.mode = OptionModel;
+    self.moreAlert.mode = _isMyDynamic? OptionModel : DynamicTabModel;
     self.moreAlert.delegate = self;
     [self.moreAlert setHidden:YES];
     self.moreAlert.sd_layout
@@ -215,22 +220,24 @@
     if(indexPath == 0){
         PublishPhotoCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotoCtr");
         [self.navigationController pushViewController:pulish animated:YES];
-    }else if(indexPath == 1){
+    }else if(indexPath == 2){
         QRCodeScanCtr * qrCode = [[QRCodeScanCtr alloc] init];
         [self.navigationController pushViewController:qrCode animated:YES];
-    }else if(indexPath == 2){
-        if(!self.addAlert){
-            self.addAlert = [[AddFriendAlert alloc] init];
-            AppDelegate * appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-            [appDelegate.window addSubview:self.addAlert];
-            self.addAlert.delegate = self;
-            self.addAlert.sd_layout
-            .leftEqualToView(appDelegate.window)
-            .rightEqualToView(appDelegate.window)
-            .topEqualToView(appDelegate.window)
-            .bottomEqualToView(appDelegate.window);
-        }
-        [self.addAlert showAlert];
+    }else if(indexPath == 1){
+        AddUserViewController *vc=[[AddUserViewController alloc] initWithNibName:@"AddUserViewController" bundle:nil];
+        [self.navigationController pushViewController:vc animated:YES];
+        //        if(!self.addAlert){
+        //            self.addAlert = [[AddFriendAlert alloc] init];
+        //            AppDelegate * appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        //            [appDelegate.window addSubview:self.addAlert];
+        //            self.addAlert.delegate = self;
+        //            self.addAlert.sd_layout
+        //            .leftEqualToView(appDelegate.window)
+        //            .rightEqualToView(appDelegate.window)
+        //            .topEqualToView(appDelegate.window)
+        //            .bottomEqualToView(appDelegate.window);
+        //        }
+        //        [self.addAlert showAlert];
     }
     
 }
@@ -494,6 +501,19 @@
     }
     else if (type == 5) { // chat
         NSLog(@"%ld", type);
+        NSString * uid = [model.user objectForKey:@"uid"];
+        if ([self.photosUserID isEqualToString:uid]) {
+            [self showToast:@""];
+        }
+        else {
+            if(uid && uid.length > 0){
+                ChattingViewController *conversationVC = [[ChattingViewController alloc]init];
+                conversationVC.conversationType = ConversationType_PRIVATE;
+                conversationVC.targetId = uid;
+                conversationVC.name = [model.user objectForKey:@"name"];
+                [self.navigationController pushViewController:conversationVC animated:YES];
+            }
+        }
     }
     else if (type == 6) { // pengyou qiu
         NSLog(@"%ld", type);
@@ -531,8 +551,11 @@
         // click video
         SPVideoPlayer *videoView = [[SPVideoPlayer alloc] init];
         videoView.frame = CGRectMake(0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
-        [self.view addSubview:videoView];
-        
+        if (_isMyDynamic) {
+            [self.view addSubview:videoView];
+        } else {
+            [self.tabBarController.view addSubview:videoView];
+        }
         AlbumPhotosModel * model = [self.dataArray objectAtIndex:indexPath.row];
         [videoView playVideo:model.video];
     }
@@ -644,7 +667,7 @@
 - (void)loadUserNetworkData:(NSDictionary *)data{
     
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.getUserInfo parametric:data succed:^(id responseObject){
+    [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",self.congfing.getUserInfo,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
         
         NSLog(@"%@",responseObject);
         
@@ -864,35 +887,23 @@
 }
 
 - (void)deleteMyPhotos:(NSDictionary * )data{
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"删除" message:@"确认删除相册?" preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action){
+        [self deleteDynamic:data apiStr:self.congfing.deletePhotos];
+    }]];
+    [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+    [self presentViewController:alert animated:YES completion:nil];
     
-    [self showLoad];
-    __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestDELETEUrl:[NSString stringWithFormat:@"%@%@",self.congfing.deletePhotos,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
-        [weakSelef closeLoad];
-        NSLog(@"%@",responseObject);
-        BaseModel * model = [[BaseModel alloc] init];
-        if(model.status == 0){
-            [weakSelef showToast:@"取消收藏成功"];
-            [weakSelef loadNetworkData];
-        }else{
-            [weakSelef showToast:model.message];
-        }
-    } failure:^(NSError *error){
-        [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
-    }];
 }
-
-- (void)deleteMyVideos:(NSDictionary * )data{
-    
+- (void)deleteDynamic:(NSDictionary * )data apiStr:(NSString *)apiStr {
     [self showLoad];
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestDELETEUrl:[NSString stringWithFormat:@"%@%@",self.congfing.deleteVideos,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+    [HTTPRequest requestDELETEUrl:[NSString stringWithFormat:@"%@%@",apiStr,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
         [weakSelef closeLoad];
         NSLog(@"%@",responseObject);
         BaseModel * model = [[BaseModel alloc] init];
         if(model.status == 0){
-            [weakSelef showToast:@"取消收藏成功"];
+            [weakSelef showToast:@"删除成功"];
             [weakSelef loadNetworkData];
         }else{
             [weakSelef showToast:model.message];
@@ -901,6 +912,16 @@
         [weakSelef closeLoad];
         [weakSelef showToast:NETWORKTIPS];
     }];
+    
+}
+- (void)deleteMyVideos:(NSDictionary * )data{
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"删除" message:@"确认删除视频?" preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action){
+        [self deleteDynamic:data apiStr:self.congfing.deleteVideos];
+    }]];
+    [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+    [self presentViewController:alert animated:YES completion:nil];
+    
 }
 
 @end

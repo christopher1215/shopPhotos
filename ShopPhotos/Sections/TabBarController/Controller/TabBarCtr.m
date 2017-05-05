@@ -95,6 +95,7 @@
         case 2:
         {
             UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:@"" message:@"" preferredStyle:UIAlertControllerStyleActionSheet];
+            [actionSheet setTitle:@"上传"];
             [actionSheet addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
                 
                 // Cancel button tappped.

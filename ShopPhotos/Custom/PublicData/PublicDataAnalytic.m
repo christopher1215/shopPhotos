@@ -60,6 +60,13 @@
             congfing.advancedSearch = [RequestErrorGrab getStringwitKey:@"advancedSearch" toTarget:api];
             congfing.deletePhotoImage = [RequestErrorGrab getStringwitKey:@"deletePhotoImage" toTarget:api];
             
+            
+            congfing.getMyOrders = [RequestErrorGrab getStringwitKey:@"getMyOrders" toTarget:api];
+            congfing.getProducts = [RequestErrorGrab getStringwitKey:@"getProducts" toTarget:api];
+            congfing.createOrder = [RequestErrorGrab getStringwitKey:@"createOrder" toTarget:api];
+            congfing.getUserIntegralLog = [RequestErrorGrab getStringwitKey:@"getUserIntegralLog" toTarget:api];
+            
+            
             congfing.appLogin = [RequestErrorGrab getStringwitKey:@"appLogin" toTarget:api];
             congfing.captcha = [RequestErrorGrab getStringwitKey:@"captcha" toTarget:api];
             congfing.authTel = [RequestErrorGrab getStringwitKey:@"authTel" toTarget:api];
@@ -125,7 +132,7 @@
             congfing.mobileSavePhoto = [RequestErrorGrab getStringwitKey:@"mobileSavePhoto" toTarget:api];
             
             congfing.getSubclasses = [RequestErrorGrab getStringwitKey:@"getSubclasses" toTarget:api];
-            congfing.isAllow = [RequestErrorGrab getStringwitKey:@"isAllow" toTarget:api];
+            congfing.isPassiveUserAllow = [RequestErrorGrab getStringwitKey:@"isPassiveUserAllow" toTarget:api];
             congfing.hasCollectPhoto = [RequestErrorGrab getStringwitKey:@"hasCollectPhoto" toTarget:api];
             congfing.collectPhotos = [RequestErrorGrab getStringwitKey:@"collectPhotos" toTarget:api];
             congfing.collectPhoto = [RequestErrorGrab getStringwitKey:@"collectPhoto" toTarget:api];
@@ -141,8 +148,9 @@
             congfing.updateToken = [RequestErrorGrab getStringwitKey:@"updateToken" toTarget:api];
             congfing.sendCopyRequest = [RequestErrorGrab getStringwitKey:@"sendCopyRequest" toTarget:api];
             congfing.getSubclassPhotos = [RequestErrorGrab getStringwitKey:@"getSubclassPhotos" toTarget:api];
-            
-            
+            congfing.getAllClassifies = [RequestErrorGrab getStringwitKey:@"getAllClassifies" toTarget:api];
+            congfing.getCollectVideos = [RequestErrorGrab getStringwitKey:@"getCollectVideos" toTarget:api];
+
             //            }
             //
         }

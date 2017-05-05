@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16B2657" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -39,42 +39,46 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="O3w-8p-ROu">
-                                        <rect key="frame" x="341" y="34" width="19" height="19"/>
+                                        <rect key="frame" x="329" y="22" width="40" height="40"/>
                                         <constraints>
+                                            <constraint firstAttribute="width" constant="40" id="8so-OF-uWP"/>
                                             <constraint firstAttribute="width" secondItem="O3w-8p-ROu" secondAttribute="height" multiplier="1:1" id="Eom-2j-1AL"/>
                                         </constraints>
-                                        <state key="normal" backgroundImage="ico_add_b"/>
+                                        <inset key="contentEdgeInsets" minX="9" minY="9" maxX="9" maxY="9"/>
+                                        <state key="normal" image="ico_add_b"/>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="N3G-SW-OSx">
-                                        <rect key="frame" x="296" y="33" width="20" height="20"/>
+                                        <rect key="frame" x="283" y="23" width="40" height="40"/>
                                         <constraints>
+                                            <constraint firstAttribute="width" constant="40" id="m8I-QE-L8A"/>
                                             <constraint firstAttribute="width" secondItem="N3G-SW-OSx" secondAttribute="height" multiplier="1:1" id="niI-Wv-ds4"/>
                                         </constraints>
-                                        <state key="normal" backgroundImage="ico_search_b"/>
+                                        <inset key="contentEdgeInsets" minX="10" minY="10" maxX="10" maxY="10"/>
+                                        <state key="normal" image="ico_search_b"/>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pSX-c0-Wca">
-                                        <rect key="frame" x="15" y="33" width="20" height="20"/>
+                                        <rect key="frame" x="5" y="23" width="40" height="40"/>
                                         <constraints>
+                                            <constraint firstAttribute="width" constant="40" id="hq8-yX-18b"/>
                                             <constraint firstAttribute="width" secondItem="pSX-c0-Wca" secondAttribute="height" multiplier="1:1" id="ozQ-D0-8wY"/>
                                         </constraints>
-                                        <state key="normal" backgroundImage="ico_scan_b"/>
+                                        <inset key="contentEdgeInsets" minX="10" minY="10" maxX="10" maxY="10"/>
+                                        <state key="normal" image="ico_scan_b"/>
                                     </button>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="2Zi-Pz-scy" secondAttribute="trailing" id="1zj-jo-EYI"/>
-                                    <constraint firstItem="O3w-8p-ROu" firstAttribute="leading" secondItem="N3G-SW-OSx" secondAttribute="trailing" constant="25" id="5wj-qE-qWD"/>
-                                    <constraint firstItem="2Zi-Pz-scy" firstAttribute="top" secondItem="O3w-8p-ROu" secondAttribute="bottom" constant="10" id="E2D-oi-SXl"/>
-                                    <constraint firstItem="O3w-8p-ROu" firstAttribute="width" secondItem="O3w-8p-ROu" secondAttribute="height" multiplier="1:1" id="FZE-Q1-EgX"/>
+                                    <constraint firstItem="O3w-8p-ROu" firstAttribute="leading" secondItem="N3G-SW-OSx" secondAttribute="trailing" constant="6" id="5wj-qE-qWD"/>
+                                    <constraint firstItem="2Zi-Pz-scy" firstAttribute="top" secondItem="O3w-8p-ROu" secondAttribute="bottom" constant="1" id="E2D-oi-SXl"/>
                                     <constraint firstAttribute="bottom" secondItem="2Zi-Pz-scy" secondAttribute="bottom" id="Fcu-Oe-b1U"/>
-                                    <constraint firstItem="pSX-c0-Wca" firstAttribute="leading" secondItem="Rdg-Cr-zHA" secondAttribute="leading" constant="15" id="FeS-OT-Tvv"/>
+                                    <constraint firstItem="pSX-c0-Wca" firstAttribute="leading" secondItem="Rdg-Cr-zHA" secondAttribute="leading" constant="5" id="FeS-OT-Tvv"/>
                                     <constraint firstAttribute="height" constant="64" id="Fv6-1t-wtl"/>
-                                    <constraint firstItem="2Zi-Pz-scy" firstAttribute="top" secondItem="N3G-SW-OSx" secondAttribute="bottom" constant="10" id="SbI-y4-Icl"/>
-                                    <constraint firstItem="2Zi-Pz-scy" firstAttribute="top" secondItem="pSX-c0-Wca" secondAttribute="bottom" constant="10" id="dvQ-7N-K7x"/>
+                                    <constraint firstItem="2Zi-Pz-scy" firstAttribute="top" secondItem="N3G-SW-OSx" secondAttribute="bottom" id="SbI-y4-Icl"/>
+                                    <constraint firstItem="2Zi-Pz-scy" firstAttribute="top" secondItem="pSX-c0-Wca" secondAttribute="bottom" id="dvQ-7N-K7x"/>
                                     <constraint firstItem="2Zi-Pz-scy" firstAttribute="leading" secondItem="Rdg-Cr-zHA" secondAttribute="leading" id="fUr-T3-acg"/>
-                                    <constraint firstAttribute="trailing" secondItem="O3w-8p-ROu" secondAttribute="trailing" constant="15" id="mw1-pY-CDC"/>
+                                    <constraint firstAttribute="trailing" secondItem="O3w-8p-ROu" secondAttribute="trailing" constant="6" id="mw1-pY-CDC"/>
                                     <constraint firstItem="kyi-q3-HQP" firstAttribute="centerX" secondItem="Rdg-Cr-zHA" secondAttribute="centerX" id="svp-UK-PJD"/>
-                                    <constraint firstItem="N3G-SW-OSx" firstAttribute="width" secondItem="N3G-SW-OSx" secondAttribute="height" multiplier="1:1" id="t3l-1w-kY5"/>
                                     <constraint firstItem="2Zi-Pz-scy" firstAttribute="top" secondItem="kyi-q3-HQP" secondAttribute="bottom" constant="10" id="x14-5M-IBp"/>
                                 </constraints>
                             </view>
@@ -88,6 +92,7 @@
                     </view>
                     <connections>
                         <outlet property="head" destination="Rdg-Cr-zHA" id="NGX-Dp-MxM"/>
+                        <outlet property="lblTitle" destination="kyi-q3-HQP" id="vRl-Nj-Ojg"/>
                         <outlet property="more" destination="O3w-8p-ROu" id="FSB-Xf-OlP"/>
                         <outlet property="scan" destination="pSX-c0-Wca" id="FcY-um-SMv"/>
                         <outlet property="search" destination="N3G-SW-OSx" id="frq-SG-F42"/>

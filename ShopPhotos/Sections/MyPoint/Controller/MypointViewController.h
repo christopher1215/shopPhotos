@@ -9,5 +9,7 @@
 #import "BaseViewCtr.h"
 @interface MypointViewController : BaseViewCtr
 @property (weak, nonatomic) IBOutlet UILabel *lblCurrentPoint;
+@property (assign, nonatomic) int currentPoint;
+@property (weak, nonatomic) IBOutlet UITableView *tblHistory;
 
 @end

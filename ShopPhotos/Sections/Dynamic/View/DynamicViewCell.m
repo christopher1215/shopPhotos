@@ -28,6 +28,7 @@
 @property (strong, nonatomic) UIButton *btn_pyq;
 @property (strong, nonatomic) UIButton *btn_delete;
 
+@property (strong, nonatomic) UILabel *morePhoto;
 @end
 
 @implementation DynamicViewCell
@@ -60,10 +61,10 @@
     [self.icon addTarget:self action:@selector(iconSelected)];
     [self.content addSubview:self.icon];
     self.icon.sd_layout
-    .leftSpaceToView(self.content,10)
+    .leftSpaceToView(self.content,0)
     .topSpaceToView(self.content,5)
-    .widthIs(35)
-    .heightIs(35);
+    .widthIs(45)
+    .heightIs(45);
     
     self.name = [[UILabel alloc] init];
     [self.name setTextColor:[UIColor blackColor]];
@@ -72,7 +73,7 @@
     [self.content addSubview:self.name];
     self.name.sd_layout
     .leftSpaceToView(self.icon,10)
-    .topSpaceToView(self.content,5)
+    .topSpaceToView(self.content,7)
     .rightEqualToView(self.content)
     .heightIs(20);
     
@@ -94,17 +95,17 @@
     .rightEqualToView(self.content)
     .heightIs(100);
     
-    UILabel *morePhoto = [[UILabel alloc] init];
-    [morePhoto setText:@"详情"];
-    [morePhoto setTextColor:ColorHex(0x579bd5)];
-    [morePhoto setFont:Font(14)];
-    [morePhoto setBackgroundColor:[UIColor clearColor]];
-    [morePhoto setTextAlignment:NSTextAlignmentRight];
-    [self.content addSubview:morePhoto];
-    morePhoto.sd_layout
+    _morePhoto = [[UILabel alloc] init];
+    [_morePhoto setText:@"详情"];
+    [_morePhoto setTextColor:ColorHex(0x579bd5)];
+    [_morePhoto setFont:Font(14)];
+    [_morePhoto setBackgroundColor:[UIColor clearColor]];
+    [_morePhoto setTextAlignment:NSTextAlignmentRight];
+    [self.content addSubview:_morePhoto];
+    _morePhoto.sd_layout
     .rightEqualToView(self.content)
-    .topSpaceToView(self.images,5)
-    .heightIs(18);
+    .topSpaceToView(self.images,20)
+    .heightIs(40);
     //[morePhoto setHidden:YES];
     
     self.text = [[UILabel alloc] init];
@@ -115,8 +116,8 @@
     [self.content addSubview:self.text];
     self.text.sd_layout
     .leftEqualToView(self.content)
-    .rightEqualToView(self.content)
-    .topSpaceToView(morePhoto,6)
+    .rightSpaceToView(self.content,60)
+    .topSpaceToView(self.images,10)
     .heightIs(40);
     
     UILabel *viewAllText = [[UILabel alloc] init];
@@ -190,25 +191,27 @@
     else {
         _btn_pyq = [[UIButton alloc] init];
         [_btn_pyq setBackgroundColor:[UIColor clearColor]];
-        [_btn_pyq setBackgroundImage:[UIImage imageNamed:@"btn_pyq_b"] forState:UIControlStateNormal];
+        [_btn_pyq setImage:[UIImage imageNamed:@"btn_pyq_b"] forState:UIControlStateNormal];
         [_btn_pyq addTarget:self action:@selector(pyqSelected)];
+        _btn_pyq.contentEdgeInsets = UIEdgeInsetsMake(7, 7, 7, 7);
+        
         [self.shareView addSubview:_btn_pyq];
         _btn_pyq.sd_layout
         .leftEqualToView(_shareView)
-        .topSpaceToView(_shareView,15)
-        .widthIs(16)
-        .heightIs(16);
+        .topSpaceToView(_shareView,8)
+        .widthIs(30)
+        .heightIs(30);
         
         _btn_delete = [[UIButton alloc] init];
         [_btn_delete setBackgroundColor:[UIColor clearColor]];
-        [_btn_delete setBackgroundImage:[UIImage imageNamed:@"btn_delete"] forState:UIControlStateNormal];
+        [_btn_delete setImage:[UIImage imageNamed:@"btn_delete"] forState:UIControlStateNormal];
         [_btn_delete addTarget:self action:@selector(deleteSelected)];
         [self.shareView addSubview:_btn_delete];
         _btn_delete.sd_layout
-        .leftSpaceToView(_btn_pyq,20)
-        .topSpaceToView(_shareView,15)
-        .widthIs(16)
-        .heightIs(16);
+        .leftSpaceToView(_btn_pyq,13)
+        .topSpaceToView(_shareView,8)
+        .widthIs(30)
+        .heightIs(30);
     }
     
     
@@ -220,9 +223,9 @@
     [self.shareView addSubview:self.share];
     self.share.sd_layout
     .rightSpaceToView(self.shareView,2)
-    .topSpaceToView(self.shareView,15)
-    .widthIs(20)
-    .heightIs(20);
+    .topSpaceToView(self.shareView,10)
+    .widthIs(30)
+    .heightIs(30);
     
     UIView *seperate = [[UIView alloc] init];
     [seperate setBackgroundColor:ColorHex(0Xeeeeee)];
@@ -258,6 +261,7 @@
     }
     else if ([model.type isEqualToString:@"video"]) {
         [self showVideoCover:model.cover];
+        [_morePhoto setHidden:YES];
     }
     
     if(self.icon.gestureRecognizers.count == 0){

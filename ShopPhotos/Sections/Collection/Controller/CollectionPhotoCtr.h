@@ -9,6 +9,9 @@
 #import "BaseViewCtr.h"
 
 @interface CollectionPhotoCtr : BaseViewCtr
+
 @property (strong, nonatomic) NSString * uid;
 @property (strong, nonatomic) NSString *str_from;
+@property (assign, nonatomic) BOOL isVideo;
+
 @end

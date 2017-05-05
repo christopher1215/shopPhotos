@@ -11,5 +11,6 @@
 @interface DynamicCtr : BaseViewCtr
 
 @property (readwrite, nonatomic) BOOL isMyDynamic;
+@property (weak, nonatomic) IBOutlet UILabel *lblTitle;
 
 @end

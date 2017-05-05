@@ -27,8 +27,10 @@
 #import "PersonalHomeCtr.h"
 #import "ShareCtr.h"
 #import <ShareSDK/ShareSDK.h>
+#import "SPVideoPlayer.h"
 
 @interface CollectionPhotoCtr ()<MoreAlertDelegate,PhotosEditViewDelegate,CollectionTableViewDelegate,ShareDelegate>
+
 @property (weak, nonatomic) IBOutlet UIButton *back;
 //@property (weak, nonatomic) IBOutlet UIView *more;
 @property (weak, nonatomic) IBOutlet UIButton *search;
@@ -36,6 +38,8 @@
 @property (strong, nonatomic) CollectionTableView * table;
 @property (strong, nonatomic) MoreAlert * moreAlert;
 @property (strong, nonatomic) NSMutableArray * dataArray;
+@property (strong, nonatomic) NSMutableArray * photoArray;
+@property (strong, nonatomic) NSMutableArray * videoArray;
 @property (strong, nonatomic) PhotosEditView * editHead;
 @property (strong, nonatomic) UIButton * editOption;
 @property (assign, nonatomic) NSInteger pageIndex;
@@ -44,9 +48,10 @@
 @property (strong, nonatomic) NSMutableArray * imageArray;
 @property (strong, nonatomic) DynamicQRAlert * qrAlert;
 @property (weak, nonatomic) IBOutlet UILabel *collectLabel;
-
+@property (weak, nonatomic) IBOutlet UIView *movieView;
 
 @end
+
 @implementation CollectionPhotoCtr
 
 - (NSMutableArray *)imageArray{
@@ -57,6 +62,11 @@
 - (NSMutableArray *)dataArray{
     if(!_dataArray)_dataArray = [NSMutableArray array];
     return _dataArray;
+}
+
+- (NSMutableArray *)videoArray{
+    if(!_videoArray)_videoArray = [NSMutableArray array];
+    return _videoArray;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -76,12 +86,18 @@
     [self.back addTarget:self action:@selector(backSelected)];
     [self.edit addTarget:self action:@selector(editSelected)];
     [self.search addTarget:self action:@selector(searchSelected)];
+    [self.movieView addTarget:self action:@selector(videoSelected)];
 }
 
 - (void)createAutoLayout{
     
+    if (self.isVideo) {
+        [self.movieView setHidden:YES];
+    }
+    
     self.table = [[CollectionTableView alloc] init];
     self.table.delegate = self;
+    self.table.isVideo = self.isVideo;
     [self.view addSubview:self.table];
     
     self.table.sd_layout
@@ -235,6 +251,16 @@
     [self presentViewController:alert animated:YES completion:nil];
 }
 
+- (void) videoSelected {
+    
+    CollectionPhotoCtr * videoCollectCtrl = GETALONESTORYBOARDPAGE(@"CollectionPhotoCtr");
+    videoCollectCtrl.uid = self.uid;
+    videoCollectCtrl.str_from = @"返回";
+    videoCollectCtrl.isVideo = YES;
+    [self.navigationController pushViewController:videoCollectCtrl animated:YES];
+    
+}
+
 #pragma mark - PhotosEditViewDelegate
 - (void)photosEditSelected:(NSInteger)type{
     
@@ -276,8 +302,7 @@
 }
 
 #pragma mark - MoreAlertDelegate
-- (void)moreAlertSelected:(NSInteger)indexPath{
-    
+- (void) moreAlertSelected:(NSInteger)indexPath {
     if(indexPath == 0){
         // 编辑
         for(AlbumPhotosModel * model in self.dataArray){
@@ -325,10 +350,21 @@
 }
 - (void)tableDidSelected:(NSIndexPath *)indexPath{
     
-    AlbumPhotosModel * model = [self.dataArray objectAtIndex:indexPath.row];
-    PhotoDetailsCtr * photoDetails = GETALONESTORYBOARDPAGE(@"PhotoDetailsCtr");
-    photoDetails.photoId = model.Id;
-    [self.navigationController pushViewController:photoDetails animated:YES];
+    if (self.isVideo) {
+        SPVideoPlayer *videoView = [[SPVideoPlayer alloc] init];
+        videoView.frame = CGRectMake(0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
+        [self.view addSubview:videoView];
+        
+        AlbumPhotosModel * model = [self.dataArray objectAtIndex:indexPath.row];
+        [videoView playVideo:model.video];
+        
+    }
+    else{
+        AlbumPhotosModel * model = [self.dataArray objectAtIndex:indexPath.row];
+        PhotoDetailsCtr * photoDetails = GETALONESTORYBOARDPAGE(@"PhotoDetailsCtr");
+        photoDetails.photoId = model.Id;
+        [self.navigationController pushViewController:photoDetails animated:YES];
+    }
 }
 
 - (void)collectionUserSelecte:(NSIndexPath *)indexPath{
@@ -347,7 +383,7 @@
     [self.shareView showAlert];
 }
 
-- (void)getPhotoImages{
+- (void) getPhotoImages {
     AlbumPhotosModel * model = [self.dataArray objectAtIndex:self.itmeSelectedIndex];
 
     NSDictionary * detailPhotodata = @{@"photoId":model.Id};
@@ -371,7 +407,7 @@
     
     //[self showLoad];
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.isAllow parametric:data succed:^(id responseObject){
+    [HTTPRequest requestPOSTUrl:self.congfing.isPassiveUserAllow parametric:data succed:^(id responseObject){
         //[weakSelef closeLoad];
         NSLog(@"%@",responseObject);
         CopyRequset * model = [[CopyRequset alloc] init];
@@ -632,6 +668,37 @@
                             @"keyWord":@"false"};
     self.pageIndex = 1;
     __weak __typeof(self)weakSelef = self;
+    
+    [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",self.congfing.getCollectVideos,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+        NSLog(@"%@",responseObject);
+        [weakSelef.table.table.mj_header endRefreshing];
+        AlbumPhotosRequset * requset = [[AlbumPhotosRequset alloc] init];
+        [requset analyticInterface:responseObject];
+        if(requset.status == 0){
+            weakSelef.pageIndex ++;
+            weakSelef.table.table.mj_footer = [MJRefreshAutoNormalFooter footerWithRefreshingBlock:^{
+                [weakSelef loadNetworkMoreData];
+            }];
+            [weakSelef.videoArray removeAllObjects];
+            [weakSelef.videoArray addObjectsFromArray:requset.dataArray];
+            if (weakSelef.isVideo == YES) {
+                [weakSelef.dataArray removeAllObjects];
+                [weakSelef.dataArray addObjectsFromArray:requset.dataArray];
+                [weakSelef.table loadData:weakSelef.dataArray];
+            }
+            else {
+                [weakSelef.collectLabel setText:[NSString stringWithFormat:@"我的收藏视频(%ld)",weakSelef.videoArray.count]];
+            }
+        }else{
+            [weakSelef showToast:requset.message];
+        }
+        
+    } failure:^(NSError *error){
+        [weakSelef.table.table.mj_header endRefreshing];
+        [weakSelef showToast:NETWORKTIPS];
+    }];
+    
+    
     [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",self.congfing.getCollectPhotos,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
         NSLog(@"%@",responseObject);
         [weakSelef.table.table.mj_header endRefreshing];
@@ -647,9 +714,13 @@
             }else{
                 [weakSelef.table.table.mj_footer resetNoMoreData];
             }
-            [weakSelef.dataArray removeAllObjects];
-            [weakSelef.dataArray addObjectsFromArray:requset.dataArray];
-            [weakSelef.table loadData:weakSelef.dataArray];
+            [weakSelef.photoArray removeAllObjects];
+            [weakSelef.photoArray addObjectsFromArray:requset.dataArray];
+            if (weakSelef.isVideo == NO) {
+                [weakSelef.dataArray removeAllObjects];
+                [weakSelef.dataArray addObjectsFromArray:requset.dataArray];
+                [weakSelef.table loadData:weakSelef.dataArray];
+            }
         }else{
             [weakSelef showToast:requset.message];
         }
@@ -668,6 +739,29 @@
                             @"keyWord":@"false"};
     
     __weak __typeof(self)weakSelef = self;
+    
+    [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",self.congfing.getCollectVideos,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+        NSLog(@"%@",responseObject);
+        [weakSelef.table.table.mj_header endRefreshing];
+        AlbumPhotosRequset * requset = [[AlbumPhotosRequset alloc] init];
+        [requset analyticInterface:responseObject];
+        if(requset.status == 0){
+            weakSelef.pageIndex ++;
+            weakSelef.table.table.mj_footer = [MJRefreshAutoNormalFooter footerWithRefreshingBlock:^{
+                [weakSelef loadNetworkMoreData];
+            }];
+            [weakSelef.videoArray removeAllObjects];
+            [weakSelef.videoArray addObjectsFromArray:requset.dataArray];
+            [weakSelef.collectLabel setText:[NSString stringWithFormat:@"我的收藏视频(%ld)",weakSelef.videoArray.count]];
+        }else{
+            [weakSelef showToast:requset.message];
+        }
+        
+    } failure:^(NSError *error){
+        [weakSelef.table.table.mj_header endRefreshing];
+        [weakSelef showToast:NETWORKTIPS];
+    }];
+    
     [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",self.congfing.getCollectPhotos,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
 
         [weakSelef.table.table.mj_footer endRefreshing];
@@ -695,7 +789,7 @@
     NSLog(@"%@",data);
     [self showLoad];
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.cancelCollectPhotos parametric:data succed:^(id responseObject){
+    [HTTPRequest requestPOSTUrl:self.congfing.cancelCollectPhotos parametric:data succed:^(id responseObject) {
         [weakSelef closeLoad];
         NSLog(@"%@",responseObject);
         
@@ -712,4 +806,7 @@
         [weakSelef closeLoad];
     }];
 }
+
+// click movie view
+
 @end

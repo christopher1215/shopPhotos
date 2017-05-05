@@ -520,7 +520,7 @@
                     break;
                 }
                 
-                [self getAllowPurview:@{@"uid":self.uid}];
+                [self getCopyAccept:@{@"uid":self.uid}];
             }
         }
             break;
@@ -675,11 +675,12 @@
     }];
 }
 
-- (void)getAllowPurview:(NSDictionary *)data{
+- (void)getCopyAccept:(NSDictionary *)data{
     
     //[self showLoad];
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.isAllow parametric:data succed:^(id responseObject){
+    [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",self.congfing.isPassiveUserAllow,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+        NSLog(@"1  %@",responseObject);
         //[weakSelef closeLoad];
         NSLog(@"%@",responseObject);
         CopyRequset * model = [[CopyRequset alloc] init];

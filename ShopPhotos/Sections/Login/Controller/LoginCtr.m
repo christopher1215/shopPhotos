@@ -1,4 +1,4 @@
- //
+//
 //  LoginCtr.m
 //  ShopPhotos
 //
@@ -26,7 +26,7 @@
 #import <RongIMKit/RongIMKit.h>
 
 @interface LoginCtr ()<UITextFieldDelegate>{
-//    AppDelegate *appd;
+    //    AppDelegate *appd;
     ErrMsgViewController *popupErrVC;
 }
 @property (weak, nonatomic) IBOutlet UITextField *account;
@@ -60,7 +60,7 @@
 - (void)viewDidLoad {
     
     [super viewDidLoad];
-//    appd = (AppDelegate*)[UIApplication sharedApplication].delegate;
+    //    appd = (AppDelegate*)[UIApplication sharedApplication].delegate;
     popupErrVC = [[ErrMsgViewController alloc] initWithNibName:@"ErrMsgViewController" bundle:nil];
     [self setup];
 }
@@ -146,8 +146,8 @@
 
 #pragma mark - 注册
 - (void)registeredSelected{
-//    RegisteredCtr * registered = GETALONESTORYBOARDPAGE(@"RegisteredCtr");
-//    [self.navigationController pushViewController:registered animated:YES];
+    //    RegisteredCtr * registered = GETALONESTORYBOARDPAGE(@"RegisteredCtr");
+    //    [self.navigationController pushViewController:registered animated:YES];
     ResetPasswordCtr * resetPassword = GETALONESTORYBOARDPAGE(@"ResetPasswordCtr");
     resetPassword.fromType = @"register";
     [self.navigationController pushViewController:resetPassword animated:YES];
@@ -166,8 +166,8 @@
             NSString * avatar = user.icon;
             if(nickname && authId && avatar){
                 NSDictionary * data = @{@"nickname":nickname,
-                                      @"authId":authId,
-                                      @"avatar":avatar};
+                                        @"authId":authId,
+                                        @"avatar":avatar};
                 [self appWithWeQQLogin:data];
             }else{
                 [self showToast:@"QQ登录失败"];
@@ -226,35 +226,46 @@
 
 #pragma makr - AFNetworking网络加载
 - (void)loginLoadNetworkData:(NSDictionary *)data{
-
+    
     [self showLoad];
     __weak __typeof(self)weakSelef = self;
     [HTTPRequest requestPOSTUrl:[NSString stringWithFormat:@"%@%@",self.congfing.login,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
-        [weakSelef closeLoad];
         LoginLoadModel * model = [[LoginLoadModel alloc] init];
         [model analyticInterface:responseObject];
         if(model.status == 0 || model.status == 200){
             [self setValue:self.password.text WithKey:@"password"];
             [[RCIM sharedRCIM] connectWithToken:model.imToken     success:^(NSString *userId) {
+                [weakSelef closeLoad];
                 NSLog(@"登陆成功。当前登录的用户ID：%@", userId);
                 int totalUnreadCount = [[RCIMClient sharedRCIMClient] getTotalUnreadCount];
                 NSLog(@"当前所有会话的未读消息数为：%d", totalUnreadCount);
                 NSDictionary * userInfo = @{ @"totalUnreadCount": [NSString stringWithFormat:@"%d", totalUnreadCount]};
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"getTotalUnreadCount" object:nil userInfo:userInfo];
+                TabBarCtr * tabbar = [[TabBarCtr alloc] init];
+                [weakSelef.navigationController pushViewController:tabbar animated:YES];
+                
             } error:^(RCConnectErrorCode status) {
+                [weakSelef closeLoad];
                 NSLog(@"登陆的错误码为:%d", status);
+                TabBarCtr * tabbar = [[TabBarCtr alloc] init];
+                [weakSelef.navigationController pushViewController:tabbar animated:YES];
+                
             } tokenIncorrect:^{
                 //token过期或者不正确。
                 //如果设置了token有效期并且token过期，请重新请求您的服务器获取新的token
                 //如果没有设置token有效期却提示token错误，请检查您客户端和服务器的appkey是否匹配，还有检查您获取token的流程。
+                [weakSelef closeLoad];
                 NSLog(@"token错误");
+                TabBarCtr * tabbar = [[TabBarCtr alloc] init];
+                [weakSelef.navigationController pushViewController:tabbar animated:YES];
+                
             }];
-            TabBarCtr * tabbar = [[TabBarCtr alloc] init];
-            [weakSelef.navigationController pushViewController:tabbar animated:YES];
         }else{
             
             [popupErrVC showInView:self animated:YES type:@"error" message:model.message];
-//            [weakSelef showToast:model.message];
+            [weakSelef closeLoad];
+            
+            //            [weakSelef showToast:model.message];
         }
     } failure:^(NSError * error){
         [weakSelef showToast:NETWORKTIPS];
@@ -269,31 +280,41 @@
     [self showLoad];
     __weak __typeof(self)weakSelef = self;
     [HTTPRequest requestPOSTUrl:[NSString stringWithFormat:@"%@%@",self.congfing.useWXLogin,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
-        [weakSelef closeLoad];
         NSLog(@"%@",responseObject);
         ChatLoginRequset * requset = [[ChatLoginRequset alloc] init];
         [requset analyticInterface:responseObject];
         if(requset.status == 0){
             [[RCIM sharedRCIM] connectWithToken:requset.imToken     success:^(NSString *userId) {
+                [weakSelef closeLoad];
                 NSLog(@"登陆成功。当前登录的用户ID：%@", userId);
                 int totalUnreadCount = [[RCIMClient sharedRCIMClient] getTotalUnreadCount];
                 NSLog(@"当前所有会话的未读消息数为：%d", totalUnreadCount);
                 NSDictionary * userInfo = @{ @"totalUnreadCount": [NSString stringWithFormat:@"%d", totalUnreadCount]};
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"getTotalUnreadCount" object:nil userInfo:userInfo];
+                TabBarCtr * tabbar = [[TabBarCtr alloc] init];
+                [weakSelef.navigationController pushViewController:tabbar animated:YES];
+                
             } error:^(RCConnectErrorCode status) {
+                [weakSelef closeLoad];
                 NSLog(@"登陆的错误码为:%d", status);
+                TabBarCtr * tabbar = [[TabBarCtr alloc] init];
+                [weakSelef.navigationController pushViewController:tabbar animated:YES];
+                
             } tokenIncorrect:^{
                 //token过期或者不正确。
                 //如果设置了token有效期并且token过期，请重新请求您的服务器获取新的token
                 //如果没有设置token有效期却提示token错误，请检查您客户端和服务器的appkey是否匹配，还有检查您获取token的流程。
+                [weakSelef closeLoad];
                 NSLog(@"token错误");
+                TabBarCtr * tabbar = [[TabBarCtr alloc] init];
+                [weakSelef.navigationController pushViewController:tabbar animated:YES];
+                
             }];
-            TabBarCtr * tabbar = [[TabBarCtr alloc] init];
-            [weakSelef.navigationController pushViewController:tabbar animated:YES];
         }else if(requset.status == 303){
+            [weakSelef closeLoad];
             ChatLoginCtr * chat = GETALONESTORYBOARDPAGE(@"ChatLoginCtr");
             //chat.userData = [[NSMutableDictionary alloc] initWithDictionary:requset.userData];
-            //chat.type = TypeWechatSession;
+            chat.type = TypeWechatSession;
             [self.navigationController pushViewController:chat animated:YES];
             
         }else{
@@ -305,7 +326,7 @@
         [weakSelef showToast:NETWORKTIPS];
         [weakSelef closeLoad];
     }];
-
+    
 }
 
 - (void)appWithWeQQLogin:(NSDictionary *)data{
@@ -313,35 +334,46 @@
     [self showLoad];
     __weak __typeof(self)weakSelef = self;
     [HTTPRequest requestPOSTUrl:[NSString stringWithFormat:@"%@%@",self.congfing.useQQLogin,[self.appd getParameterString]] parametric:data  succed:^(id responseObject){
-        [weakSelef closeLoad];
         NSLog(@"%@",responseObject);
         ChatLoginRequset * requset = [[ChatLoginRequset alloc] init];
         [requset analyticInterface:responseObject];
         if(requset.status == 0){
             [[RCIM sharedRCIM] connectWithToken:requset.imToken     success:^(NSString *userId) {
+                [weakSelef closeLoad];
                 NSLog(@"登陆成功。当前登录的用户ID：%@", userId);
                 int totalUnreadCount = [[RCIMClient sharedRCIMClient] getTotalUnreadCount];
                 NSLog(@"当前所有会话的未读消息数为：%d", totalUnreadCount);
                 NSDictionary * userInfo = @{ @"totalUnreadCount": [NSString stringWithFormat:@"%d", totalUnreadCount]};
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"getTotalUnreadCount" object:nil userInfo:userInfo];
+                TabBarCtr * tabbar = [[TabBarCtr alloc] init];
+                [weakSelef.navigationController pushViewController:tabbar animated:YES];
+                
             } error:^(RCConnectErrorCode status) {
+                [weakSelef closeLoad];
                 NSLog(@"登陆的错误码为:%d", status);
+                TabBarCtr * tabbar = [[TabBarCtr alloc] init];
+                [weakSelef.navigationController pushViewController:tabbar animated:YES];
+                
             } tokenIncorrect:^{
                 //token过期或者不正确。
                 //如果设置了token有效期并且token过期，请重新请求您的服务器获取新的token
                 //如果没有设置token有效期却提示token错误，请检查您客户端和服务器的appkey是否匹配，还有检查您获取token的流程。
+                [weakSelef closeLoad];
                 NSLog(@"token错误");
+                TabBarCtr * tabbar = [[TabBarCtr alloc] init];
+                [weakSelef.navigationController pushViewController:tabbar animated:YES];
+                
             }];
-            TabBarCtr * tabbar = [[TabBarCtr alloc] init];
-            [weakSelef.navigationController pushViewController:tabbar animated:YES];
         }else if(requset.status == 303){
-        
+            [weakSelef closeLoad];
+            
             ChatLoginCtr * chat = GETALONESTORYBOARDPAGE(@"ChatLoginCtr");
-//            chat.userData = [[NSMutableDictionary alloc] initWithDictionary:requset.userData];
-//            chat.type = TypeQQSession;
+            //            chat.userData = [[NSMutableDictionary alloc] initWithDictionary:requset.userData];
+            chat.type = TypeQQSession;
             [self.navigationController pushViewController:chat animated:YES];
             
         }else{
+            [weakSelef closeLoad];
             [weakSelef showToast:requset.message];
         }
     } failure:^(NSError * error){

@@ -69,7 +69,7 @@
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath{
     
     StaticCollectionViewCell * cell = [collectionView dequeueReusableCellWithReuseIdentifier:CollectionTableCellID forIndexPath:indexPath];
-    [cell createAutoLayout:FALSE cellType:2];
+    [cell createAutoLayout:self.isVideo cellType:2];
     cell.model = [self.dataArray objectAtIndex:indexPath.row];
     cell.indexPath = indexPath;
     if(!cell.delegate)cell.delegate = self;

@@ -7,15 +7,12 @@
 //
 
 #import "TabBarView.h"
-#import "TabBarItem.h"
 #import "TabBarModel.h"
 #import <RongIMKit/RongIMKit.h>
 #import "NSObject+StoreValue.h"
 
 @interface TabBarView ()<RCIMConnectionStatusDelegate, RCIMReceiveMessageDelegate>
 
-@property (strong, nonatomic) TabBarItem * selectTabBar;
-@property (strong, nonatomic) TabBarItem * contactTabBar;
 
 @end
 
@@ -119,7 +116,7 @@
     
     NSInteger tag = tap.view.tag;
     
-    if(tag != 2){
+    if(tag != 2 && tag != 3){
         [self.selectTabBar setStyleDefault];
         self.selectTabBar = (TabBarItem *)tap.view;
         [self.selectTabBar setStyleSelected];

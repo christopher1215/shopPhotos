@@ -24,6 +24,9 @@
 #import "GuideViewController.h"
 #import <CommonCrypto/CommonDigest.h>
 #import <RongIMKit/RongIMKit.h>
+#import "WXApi.h"
+#import "WXApiManager.h" //wechat pay
+
 @interface AppDelegate ()
 
 @property (strong, nonatomic) NSTimer * updateToken;
@@ -46,6 +49,8 @@
     [self pageJump];
     
     //    self.updateToken =  [NSTimer scheduledTimerWithTimeInterval:300 target:self selector:@selector(updateTokenUse) userInfo:nil repeats:YES];
+    
+    
     return YES;
 }
 
@@ -97,6 +102,16 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
+- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
+    return  [WXApi handleOpenURL:url delegate:[WXApiManager sharedManager]];
+}
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
+{
+    return [WXApi handleOpenURL:url delegate:[WXApiManager sharedManager]];
+}
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<NSString*, id> *)options{
+    return [WXApi handleOpenURL:url delegate:[WXApiManager sharedManager]];
+}
 #pragma mark - 初始化QQ 微信
 - (void)initShareSDK{
     

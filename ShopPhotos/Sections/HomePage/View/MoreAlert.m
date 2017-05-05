@@ -54,8 +54,19 @@
     else if (mode == HomeModel){
         titleArray = @[@"上传相册",@"添加用户"];
         self.alertHeight = 90;
-//        [self.alert setBackgroundColor:ColorHexA(0X333333,0.9)];
+        //        [self.alert setBackgroundColor:ColorHexA(0X333333,0.9)];
         [self.alert setBackgroundColor:ColorHexA(0xffffff,0.9)];
+        self.alert.sd_layout
+        .rightSpaceToView(self,10)
+        .topSpaceToView(self,64)
+        .widthIs(self.alertWidth)
+        .heightIs(self.alertHeight);
+    }
+    else if (mode == DynamicTabModel){
+        titleArray = @[@"上传相册",@"添加用户"];
+        self.alertHeight = 90;
+        //        [self.alert setBackgroundColor:ColorHexA(0X333333,0.9)];
+        [self.alert setBackgroundColor:ColorHexA(0X333333,0.9)];
         self.alert.sd_layout
         .rightSpaceToView(self,10)
         .topSpaceToView(self,64)

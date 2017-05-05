@@ -7,7 +7,6 @@
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -24,21 +23,26 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2UI-mV-BWa">
-                                <rect key="frame" x="20" y="74" width="374" height="45"/>
+                                <rect key="frame" x="5" y="74" width="404" height="45"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="我的收藏视频(0)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="czg-6d-PCm">
-                                        <rect key="frame" x="124.33333333333336" y="12" width="125.66666666666664" height="21"/>
+                                        <rect key="frame" x="139.33333333333331" y="12" width="125.99999999999994" height="21"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="c7Q-rL-BAK">
-                                        <rect key="frame" x="66" y="6" width="41" height="33"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ico_movie_folder" translatesAutoresizingMaskIntoConstraints="NO" id="c7Q-rL-BAK">
+                                        <rect key="frame" x="103.33333333333334" y="9.3333333333333286" width="26.000000000000028" height="26"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="c7Q-rL-BAK" secondAttribute="height" multiplier="1:1" id="dru-FK-Jlr"/>
+                                            <constraint firstAttribute="width" constant="26" id="jgI-Po-Nxa"/>
+                                        </constraints>
                                     </imageView>
                                 </subviews>
                                 <color key="backgroundColor" red="0.93333333333333335" green="0.93333333333333335" blue="0.93333333333333335" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
+                                    <constraint firstItem="czg-6d-PCm" firstAttribute="leading" secondItem="c7Q-rL-BAK" secondAttribute="trailing" constant="10" id="BOg-SU-MzE"/>
+                                    <constraint firstItem="c7Q-rL-BAK" firstAttribute="centerY" secondItem="czg-6d-PCm" secondAttribute="centerY" id="EG7-WR-lJz"/>
                                     <constraint firstAttribute="height" constant="45" id="N6l-ah-BFr"/>
                                     <constraint firstItem="czg-6d-PCm" firstAttribute="centerX" secondItem="2UI-mV-BWa" secondAttribute="centerX" id="lPV-eg-yJQ"/>
                                     <constraint firstItem="czg-6d-PCm" firstAttribute="centerY" secondItem="2UI-mV-BWa" secondAttribute="centerY" id="tAW-GE-Vkv"/>
@@ -105,11 +109,11 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstAttribute="trailing" secondItem="2UI-mV-BWa" secondAttribute="trailing" constant="5" id="I3C-dY-hrE"/>
                             <constraint firstAttribute="trailing" secondItem="zjm-2y-pSf" secondAttribute="trailing" id="KwO-T0-lGV"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="2UI-mV-BWa" secondAttribute="trailing" id="cic-NN-kh7"/>
+                            <constraint firstItem="2UI-mV-BWa" firstAttribute="leading" secondItem="1pw-gv-MeS" secondAttribute="leading" constant="5" id="Z8v-Fi-gPM"/>
                             <constraint firstItem="2UI-mV-BWa" firstAttribute="top" secondItem="zjm-2y-pSf" secondAttribute="bottom" constant="10" id="p0K-fu-HLb"/>
                             <constraint firstItem="zjm-2y-pSf" firstAttribute="top" secondItem="1pw-gv-MeS" secondAttribute="top" id="p2h-of-399"/>
-                            <constraint firstItem="2UI-mV-BWa" firstAttribute="leading" secondItem="1pw-gv-MeS" secondAttribute="leadingMargin" id="pOR-Uk-NSf"/>
                             <constraint firstItem="zjm-2y-pSf" firstAttribute="leading" secondItem="1pw-gv-MeS" secondAttribute="leading" id="zFw-1O-Xnp"/>
                         </constraints>
                     </view>
@@ -117,6 +121,7 @@
                         <outlet property="back" destination="SMt-8O-8Md" id="CDc-Po-p53"/>
                         <outlet property="collectLabel" destination="czg-6d-PCm" id="gpT-2c-ja9"/>
                         <outlet property="edit" destination="c4I-XY-HiU" id="b2L-sD-ytT"/>
+                        <outlet property="movieView" destination="2UI-mV-BWa" id="krV-vz-Y1Y"/>
                         <outlet property="search" destination="oHb-Np-OYw" id="iFs-X8-JM7"/>
                     </connections>
                 </viewController>
@@ -128,6 +133,7 @@
     <resources>
         <image name="btn_back_black" width="11" height="19"/>
         <image name="ico_edit" width="19" height="20"/>
+        <image name="ico_movie_folder" width="26" height="25"/>
         <image name="ico_search_b" width="19" height="20"/>
     </resources>
 </document>

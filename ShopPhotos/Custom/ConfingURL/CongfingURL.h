@@ -38,6 +38,11 @@
 @property (strong, nonatomic) NSString * handleStarUser;
 @property (strong, nonatomic) NSString * searchPhotos;
 @property (strong, nonatomic) NSString * deletePhotoImage;
+@property (strong, nonatomic) NSString * getMyOrders;
+@property (strong, nonatomic) NSString * getProducts;
+@property (strong, nonatomic) NSString * createOrder;
+@property (strong, nonatomic) NSString * getUserIntegralLog;
+
 //----------------------tcg-------------------------//
 @property (strong, nonatomic) NSString * token;
 // 用户登入
@@ -76,6 +81,7 @@
 @property (strong, nonatomic) NSString * deleteNotices;
 // 获取收藏列表
 @property (strong, nonatomic) NSString * getCollectPhotos;
+@property (strong, nonatomic) NSString * getCollectVideos;
 // 关注用户
 @property (strong, nonatomic) NSString * concernUser;
 // 同意复制请求
@@ -141,6 +147,7 @@
 @property (strong, nonatomic) NSString * mobileSavePhoto;
 // 获取父分类
 @property (strong, nonatomic) NSString * getSubclasses;
+@property (strong, nonatomic) NSString * getAllClassifies;
 // 取消收藏相册
 @property (strong, nonatomic) NSString * cancelCollectPhotos;
 @property (strong, nonatomic) NSString * cancelCollectVideos;
@@ -158,9 +165,6 @@
 @property (strong, nonatomic) NSString * appWithQQLogin;
 // 更新token
 @property (strong, nonatomic) NSString * updateToken;
-
-
-
 
 @property (strong, nonatomic) NSString * activeAccount;
 @property (strong, nonatomic) NSString * addImage;
@@ -192,6 +196,7 @@
 @property (strong, nonatomic) NSString * hasCollectPhoto;
 @property (strong, nonatomic) NSString * index;
 @property (strong, nonatomic) NSString * isAllow;
+@property (strong, nonatomic) NSString * isPassiveUserAllow;
 @property (strong, nonatomic) NSString * logoUrl;
 @property (strong, nonatomic) NSString * momentAddImage;
 @property (strong, nonatomic) NSString * momentRemoveImage;

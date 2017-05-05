@@ -14,7 +14,8 @@ typedef NS_ENUM(NSInteger,AlertModeType) {
     PhotosModel,
     PhotosClassModel,
     SortOrder,
-    HomeModel
+    HomeModel,
+    DynamicTabModel
 };
 
 @protocol MoreAlertDelegate <NSObject>

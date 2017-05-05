@@ -14,6 +14,7 @@
             <connections>
                 <outlet property="back" destination="HdP-fK-tJ8" id="ZS6-Ry-iJf"/>
                 <outlet property="lblCurrentPoint" destination="LI9-CU-KK9" id="0C2-d6-UJA"/>
+                <outlet property="tblHistory" destination="Mhm-ye-hgj" id="MGz-Pk-fWU"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>

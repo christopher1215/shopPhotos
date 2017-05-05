@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16B2657" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -39,41 +39,48 @@
                                         </constraints>
                                     </view>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Sza-vG-iZe" userLabel="Back">
-                                        <rect key="frame" x="15" y="33" width="47" height="20"/>
+                                        <rect key="frame" x="0.0" y="19" width="70" height="44"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="44" id="PPs-Jy-JEq"/>
+                                            <constraint firstAttribute="width" constant="70" id="lLY-6x-ldg"/>
+                                        </constraints>
                                         <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                         <state key="normal" title="首页" image="btn_back_black">
                                             <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
                                         </state>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gXd-NF-jVD" userLabel="edit">
-                                        <rect key="frame" x="340" y="33" width="20" height="20"/>
+                                        <rect key="frame" x="329" y="22" width="40" height="40"/>
                                         <constraints>
+                                            <constraint firstAttribute="width" constant="40" id="8Hk-4U-THC"/>
                                             <constraint firstAttribute="width" secondItem="gXd-NF-jVD" secondAttribute="height" multiplier="1:1" id="qGf-Zp-2UK"/>
                                         </constraints>
-                                        <state key="normal" backgroundImage="ico_edit"/>
+                                        <inset key="contentEdgeInsets" minX="9" minY="9" maxX="9" maxY="9"/>
+                                        <state key="normal" image="ico_edit"/>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nlp-ia-Lom" userLabel="Search">
-                                        <rect key="frame" x="295" y="33" width="20" height="20"/>
+                                        <rect key="frame" x="283" y="23" width="40" height="40"/>
                                         <constraints>
+                                            <constraint firstAttribute="width" constant="40" id="f6y-gB-qNF"/>
                                             <constraint firstAttribute="width" secondItem="nlp-ia-Lom" secondAttribute="height" multiplier="1:1" id="hqp-WK-HlA"/>
                                         </constraints>
-                                        <state key="normal" backgroundImage="ico_search_b"/>
+                                        <inset key="contentEdgeInsets" minX="10" minY="10" maxX="10" maxY="10"/>
+                                        <state key="normal" image="ico_search_b"/>
                                     </button>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="pPA-EA-kYm" secondAttribute="trailing" id="8UY-3m-Q7b"/>
-                                    <constraint firstItem="pPA-EA-kYm" firstAttribute="top" secondItem="nlp-ia-Lom" secondAttribute="bottom" constant="10" id="AXW-mf-Wfp"/>
-                                    <constraint firstItem="pPA-EA-kYm" firstAttribute="top" secondItem="gXd-NF-jVD" secondAttribute="bottom" constant="10" id="ApB-6O-VTS"/>
-                                    <constraint firstItem="pPA-EA-kYm" firstAttribute="top" secondItem="Sza-vG-iZe" secondAttribute="bottom" constant="10" id="Hdu-fh-GNw"/>
+                                    <constraint firstItem="pPA-EA-kYm" firstAttribute="top" secondItem="nlp-ia-Lom" secondAttribute="bottom" id="AXW-mf-Wfp"/>
+                                    <constraint firstItem="pPA-EA-kYm" firstAttribute="top" secondItem="gXd-NF-jVD" secondAttribute="bottom" constant="1" id="ApB-6O-VTS"/>
+                                    <constraint firstItem="pPA-EA-kYm" firstAttribute="top" secondItem="Sza-vG-iZe" secondAttribute="bottom" id="Hdu-fh-GNw"/>
                                     <constraint firstItem="kLx-oa-GIN" firstAttribute="centerX" secondItem="WJ5-tO-XDd" secondAttribute="centerX" id="Jhq-D8-sEA"/>
                                     <constraint firstItem="pPA-EA-kYm" firstAttribute="top" secondItem="kLx-oa-GIN" secondAttribute="bottom" constant="10" id="RPU-L9-Y3X"/>
-                                    <constraint firstItem="gXd-NF-jVD" firstAttribute="leading" secondItem="nlp-ia-Lom" secondAttribute="trailing" constant="25" id="WoJ-eU-9LK"/>
+                                    <constraint firstItem="gXd-NF-jVD" firstAttribute="leading" secondItem="nlp-ia-Lom" secondAttribute="trailing" constant="6" id="WoJ-eU-9LK"/>
                                     <constraint firstItem="pPA-EA-kYm" firstAttribute="leading" secondItem="WJ5-tO-XDd" secondAttribute="leading" id="Xed-9L-5EE"/>
                                     <constraint firstAttribute="bottom" secondItem="pPA-EA-kYm" secondAttribute="bottom" id="XrC-DE-fL4"/>
-                                    <constraint firstAttribute="trailing" secondItem="gXd-NF-jVD" secondAttribute="trailing" constant="15" id="ehg-HY-6lL"/>
-                                    <constraint firstItem="Sza-vG-iZe" firstAttribute="leading" secondItem="WJ5-tO-XDd" secondAttribute="leading" constant="15" id="fzH-pH-H4E"/>
-                                    <constraint firstItem="Sza-vG-iZe" firstAttribute="width" secondItem="Sza-vG-iZe" secondAttribute="height" multiplier="7:3" id="uH0-2n-W4J"/>
+                                    <constraint firstAttribute="trailing" secondItem="gXd-NF-jVD" secondAttribute="trailing" constant="6" id="ehg-HY-6lL"/>
+                                    <constraint firstItem="Sza-vG-iZe" firstAttribute="leading" secondItem="WJ5-tO-XDd" secondAttribute="leading" id="fzH-pH-H4E"/>
                                     <constraint firstAttribute="height" constant="64" id="v5c-MY-PI2"/>
                                 </constraints>
                             </view>

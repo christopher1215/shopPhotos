@@ -7,6 +7,7 @@
 //
 
 #import "BaseView.h"
+#import "TabBarItem.h"
 
 @protocol TabBarViewDelegate <NSObject>
 
@@ -17,5 +18,7 @@
 
 @property (weak, nonatomic) id<TabBarViewDelegate>delegate;
 -(void)setUnreadCountBadge:(NSNotification *)noti;
+@property (strong, nonatomic) TabBarItem * selectTabBar;
+@property (strong, nonatomic) TabBarItem * contactTabBar;
 
 @end

@@ -26,8 +26,12 @@
 #import "PersonalHomeCtr.h"
 #import "DynamicCtr.h"
 #import "MypointViewController.h"
+#import "AddUserViewController.h"
 
 @interface HomePageCtr ()<MoreAlertDelegate,AddFriendAlertDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate>
+{
+    int currentPoint;
+}
 @property (weak, nonatomic) IBOutlet UIView *firstGuidView;
 @property (weak, nonatomic) IBOutlet UIView *mainView;
 @property (weak, nonatomic) IBOutlet UIImageView *headImage;
@@ -157,6 +161,39 @@
     ipc.delegate = self;
     [self presentViewController:ipc animated:YES completion:nil];
 }
+- (IBAction)uidSelect:(id)sender {
+}
+- (IBAction)qqSelect:(id)sender {
+    __weak __typeof(self)weakSelef = self;
+    NSString * msg = [NSString stringWithFormat:@"QQ号已复制，可以进入QQ粘贴"];
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:msg preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:[UIAlertAction actionWithTitle:@"打开QQ" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action){
+        
+        if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"mqq://"]]) {
+            
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"mqq://"] options:@{} completionHandler:nil];
+        }else{
+            [weakSelef showToast:@"您没有安装QQ"];
+        }
+    }]];
+    [alert addAction:[UIAlertAction actionWithTitle:@"关闭" style:UIAlertActionStyleDefault handler:nil]];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+- (IBAction)wechatSelect:(id)sender {
+    __weak __typeof(self)weakSelef = self;
+    NSString * msg = [NSString stringWithFormat:@"微信号已复制，可以进入微信粘贴"];
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:msg preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:[UIAlertAction actionWithTitle:@"打开微信" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action){
+        
+        if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"weixin://"]]) {
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"weixin://"] options:@{} completionHandler:nil];
+        }else{
+            [weakSelef showToast:@"您没有安装微信"];
+        }
+    }]];
+    [alert addAction:[UIAlertAction actionWithTitle:@"关闭" style:UIAlertActionStyleDefault handler:nil]];
+    [self presentViewController:alert animated:YES completion:nil];
+}
 #pragma mark -- <UIImagePickerControllerDelegate>--
 // 获取图片后的操作
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
@@ -207,12 +244,19 @@
     search.uid = self.photosUserID;
     [self.navigationController pushViewController:search animated:YES];
 }
+- (IBAction)gotoSearch:(id)sender {
+    SearchAllCtr * search = GETALONESTORYBOARDPAGE(@"SearchAllCtr");
+    search.uid = self.photosUserID;
+    [self.navigationController pushViewController:search animated:YES];
+}
 
 
 - (void)keepSelected{
     CollectionPhotoCtr * collecttion = GETALONESTORYBOARDPAGE(@"CollectionPhotoCtr");
     collecttion.uid = self.photosUserID;
     collecttion.str_from = @"首页";
+    collecttion.isVideo = NO;
+    
     [self.navigationController pushViewController:collecttion animated:YES];
 }
 
@@ -222,6 +266,7 @@
 
 - (void) pointSelected {
     MypointViewController *vc=[[MypointViewController alloc] initWithNibName:@"MypointViewController" bundle:nil];
+    vc.currentPoint = currentPoint;
     [self.navigationController pushViewController:vc animated:YES];
 }
 
@@ -290,18 +335,21 @@
         QRCodeScanCtr * qrCode = [[QRCodeScanCtr alloc] init];
         [self.navigationController pushViewController:qrCode animated:YES];
     }else if(indexPath == 1){
-        if(!self.addAlert){
-            self.addAlert = [[AddFriendAlert alloc] init];
-            AppDelegate * appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-            [appDelegate.window addSubview:self.addAlert];
-            self.addAlert.delegate = self;
-            self.addAlert.sd_layout
-            .leftEqualToView(appDelegate.window)
-            .rightEqualToView(appDelegate.window)
-            .topEqualToView(appDelegate.window)
-            .bottomEqualToView(appDelegate.window);
-        }
-        [self.addAlert showAlert];
+        AddUserViewController *vc=[[AddUserViewController alloc] initWithNibName:@"AddUserViewController" bundle:nil];
+        [self.navigationController pushViewController:vc animated:YES];
+        
+        //        if(!self.addAlert){
+        //            self.addAlert = [[AddFriendAlert alloc] init];
+        //            AppDelegate * appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        //            [appDelegate.window addSubview:self.addAlert];
+        //            self.addAlert.delegate = self;
+        //            self.addAlert.sd_layout
+        //            .leftEqualToView(appDelegate.window)
+        //            .rightEqualToView(appDelegate.window)
+        //            .topEqualToView(appDelegate.window)
+        //            .bottomEqualToView(appDelegate.window);
+        //        }
+        //        [self.addAlert showAlert];
     }
 }
 
@@ -416,7 +464,7 @@
     self.signature.text = sign;
     
     [self.point setTitle:[NSString stringWithFormat:@"积分:%ld", model.integral] forState:UIControlStateNormal];
-    [self.keep setTitle:[NSString stringWithFormat:@"收藏:%ld", model.concerned] forState:UIControlStateNormal];
+    //    [self.keep setTitle:[NSString stringWithFormat:@"收藏:%ld", model.concerned] forState:UIControlStateNormal];
 }
 
 #pragma makr - AFNetworking网络加载
@@ -433,6 +481,7 @@
         [infoModel analyticInterface:responseObject];
         if(infoModel.status == 0){
             [weakSelef setStyle:infoModel];
+            currentPoint = infoModel.integral;
             if(infoModel.settings && infoModel.settings.count > 0){
                 weakSelef.settingConfig = infoModel.settings;
             }

@@ -8,6 +8,7 @@
 
 #import "DynamicTableView.h"
 #import "DynamicViewCell.h"
+#import "AlbumPhotosModel.h"
 
 @interface DynamicTableView ()<UITableViewDelegate,UITableViewDataSource,DynamicViewCellDelegate>
 @property (strong, nonatomic) NSMutableArray * dataArray;
@@ -67,7 +68,7 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-
+    
     DynamicViewCell * cell = [tableView dequeueReusableCellWithIdentifier:CellID forIndexPath:indexPath];
     if(!cell.delegate)cell.delegate = self;
     cell.indexPath = indexPath;
@@ -84,8 +85,11 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    if(self.delegate && [self.delegate respondsToSelector:@selector(dynamicTableCellSelected:)]){
-        [self.delegate dynamicTableCellSelected:indexPath];
+    AlbumPhotosModel *model = [self.dataArray objectAtIndex:indexPath.row];
+    if([model.type isEqualToString:@"photo"]){
+        if(self.delegate && [self.delegate respondsToSelector:@selector(dynamicTableCellSelected:)]){
+            [self.delegate dynamicTableCellSelected:indexPath];
+        }
     }
 }
 

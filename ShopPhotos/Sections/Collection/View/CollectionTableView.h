@@ -21,8 +21,10 @@ static NSString * CollectionTableCellID = @"CollectionTableCellID";
 @end
 
 @interface CollectionTableView : BaseView
+
 @property (strong, nonatomic) UICollectionView * table;
 @property (weak, nonatomic) id<CollectionTableViewDelegate>delegate;
+@property (assign, nonatomic) BOOL isVideo;
 
 - (void)loadData:(NSArray *)dataArray;
 - (void)loadMoreData:(NSArray *)dataArray;
