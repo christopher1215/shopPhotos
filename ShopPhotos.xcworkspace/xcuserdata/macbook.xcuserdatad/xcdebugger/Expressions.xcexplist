@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "-[ChattingViewController keyboardWillHide:]:ChattingViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "oldInputBarFrame">
+            </PersistentString>
+            <PersistentString
+               value = "oldMessageCollectionFrame">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[PersonalHomeCtr viewWillAppear:]:PersonalHomeCtr.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "_dataScrollView.frame">
+            </PersistentString>
+            <PersistentString
+               value = "_dataScrollBottom.constant">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[ChattingViewController setup]:ChattingViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.viewChatting.frame">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "__26-[PublishPhoto savePhotos]_block_invoke:PublishPhoto.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[SettingCtr showSuccess]:SettingCtr.m">
+      </ContextState>
+      <ContextState
+         contextName = "__33-[PhotoDetailsCtr getDetailPhoto]_block_invoke:PhotoDetailsCtr.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[PersonalHomeCtr viewDidAppear:]:PersonalHomeCtr.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.underBar.frame">
+            </PersistentString>
+            <PersistentString
+               value = "self.recommend.frame.size">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[ShareContentSelectCtr sureSelected]:ShareContentSelectCtr.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.imageArray">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[PhotoDetailsCtr setPhotoDetailsContent:]:PhotoDetailsCtr.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[DynamicViewCell expandSelected]:DynamicViewCell.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.text">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[DynamicViewCell setModel:]:DynamicViewCell.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.text.font.lineHeight">
+            </PersistentString>
+            <PersistentString
+               value = "_cellModel.textLines">
+            </PersistentString>
+            <PersistentString
+               value = "self.text.frame.size.width">
+            </PersistentString>
+            <PersistentString
+               value = "self.content.frame.size.width">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[PublishPhoto savePhotos]:PublishPhoto.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[TabBarView createAutoLayout]:TabBarView.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "WindowWidth">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[PhotosSearchCtr cropViewController:didCropToImage:withRect:angle:]:PhotosSearchCtr.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[AttentionCtr loadNetworkData]:AttentionCtr.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.userType">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "__43-[ChattingViewController keyboardWillShow:]_block_invoke:ChattingViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "chatVC.chatSessionInputBarControl.frame">
+            </PersistentString>
+            <PersistentString
+               value = "posY">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>

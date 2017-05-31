@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Copy Photo Ctr-->
+        <scene sceneID="qbR-v2-77o">
+            <objects>
+                <viewController storyboardIdentifier="CopyPhotoCtr" id="DeK-hn-6Vv" customClass="CopyPhotoCtr" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="MwO-sL-sYI"/>
+                        <viewControllerLayoutGuide type="bottom" id="PQ4-DF-bPO"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="xT8-Eq-eRa">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9si-BO-M4s">
+                                <rect key="frame" x="0.0" y="84" width="375" height="55"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="选择分类" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="C19-Cd-vU7">
+                                        <rect key="frame" x="10" y="17" width="100" height="21"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="100" id="IND-tz-8aP"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ico_arrow_right" translatesAutoresizingMaskIntoConstraints="NO" id="rRx-yg-0jO">
+                                        <rect key="frame" x="345" y="19.5" width="15" height="15"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="15" id="7eh-Cf-wgQ"/>
+                                            <constraint firstAttribute="height" constant="15" id="Wxt-cd-2oF"/>
+                                        </constraints>
+                                    </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4pW-nD-2H2">
+                                        <rect key="frame" x="185" y="27.5" width="150" height="0.0"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="150" id="3hc-lk-lF1"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
+                                        <color key="textColor" red="0.16907692158136203" green="0.56601233400213724" blue="0.93339765071868896" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="55" id="4CW-Ik-DWy"/>
+                                    <constraint firstItem="C19-Cd-vU7" firstAttribute="leading" secondItem="9si-BO-M4s" secondAttribute="leading" constant="10" id="Urd-0W-3dt"/>
+                                    <constraint firstItem="4pW-nD-2H2" firstAttribute="centerY" secondItem="9si-BO-M4s" secondAttribute="centerY" id="eS4-EL-Ydw"/>
+                                    <constraint firstItem="rRx-yg-0jO" firstAttribute="leading" secondItem="4pW-nD-2H2" secondAttribute="trailing" constant="10" id="jhM-z9-4FG"/>
+                                    <constraint firstAttribute="trailing" secondItem="rRx-yg-0jO" secondAttribute="trailing" constant="15" id="pAW-4d-2bo"/>
+                                    <constraint firstItem="rRx-yg-0jO" firstAttribute="centerY" secondItem="9si-BO-M4s" secondAttribute="centerY" id="xbO-f2-TG2"/>
+                                    <constraint firstItem="C19-Cd-vU7" firstAttribute="centerY" secondItem="9si-BO-M4s" secondAttribute="centerY" id="zL9-9b-b0Q"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="CUV-5A-eac" userLabel="head">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="64"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="复制相册" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oRY-md-WMa">
+                                        <rect key="frame" x="154" y="29" width="68" height="24"/>
+                                        <fontDescription key="fontDescription" name="PingFangSC-Regular" family="PingFang SC" pointSize="17"/>
+                                        <color key="textColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="irG-nm-E5t">
+                                        <rect key="frame" x="0.0" y="63" width="375" height="1"/>
+                                        <color key="backgroundColor" red="0.93333333330000001" green="0.93333333330000001" blue="0.93333333330000001" alpha="1" colorSpace="calibratedRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="1" id="IuX-r5-eaS"/>
+                                        </constraints>
+                                    </view>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xyl-rF-QvQ">
+                                        <rect key="frame" x="310" y="19" width="60" height="44"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="44" id="sdk-x2-y0I"/>
+                                            <constraint firstAttribute="width" constant="60" id="wst-op-lnR"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" name="PingFangSC-Regular" family="PingFang SC" pointSize="15"/>
+                                        <state key="normal" title="确定">
+                                            <color key="titleColor" red="0.36265316605567932" green="0.66976135969161987" blue="0.98138707876205444" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="copyPhoto:" destination="DeK-hn-6Vv" eventType="touchUpInside" id="cXt-JK-6ex"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dJa-XB-NdB">
+                                        <rect key="frame" x="5" y="19" width="60" height="44"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="60" id="X7U-nF-K9A"/>
+                                            <constraint firstAttribute="height" constant="44" id="u4C-Eb-Yxr"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" name="PingFangSC-Regular" family="PingFang SC" pointSize="15"/>
+                                        <state key="normal" title=" 返回" image="btn_back_black">
+                                            <color key="titleColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="goBack:" destination="DeK-hn-6Vv" eventType="touchUpInside" id="xd0-KO-46F"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="irG-nm-E5t" secondAttribute="trailing" id="0qd-1N-xjz"/>
+                                    <constraint firstAttribute="height" constant="64" id="D8W-pQ-cby"/>
+                                    <constraint firstItem="irG-nm-E5t" firstAttribute="top" secondItem="dJa-XB-NdB" secondAttribute="bottom" id="blu-m6-hPC"/>
+                                    <constraint firstItem="oRY-md-WMa" firstAttribute="centerX" secondItem="CUV-5A-eac" secondAttribute="centerX" id="eSF-XQ-cUr"/>
+                                    <constraint firstItem="irG-nm-E5t" firstAttribute="top" secondItem="xyl-rF-QvQ" secondAttribute="bottom" id="m8b-hf-K8j"/>
+                                    <constraint firstItem="irG-nm-E5t" firstAttribute="top" secondItem="oRY-md-WMa" secondAttribute="bottom" constant="10" id="pyc-2Y-i7e"/>
+                                    <constraint firstItem="irG-nm-E5t" firstAttribute="leading" secondItem="CUV-5A-eac" secondAttribute="leading" id="r7c-O6-rb8"/>
+                                    <constraint firstAttribute="trailing" secondItem="xyl-rF-QvQ" secondAttribute="trailing" constant="5" id="sBZ-zm-WIA"/>
+                                    <constraint firstItem="dJa-XB-NdB" firstAttribute="leading" secondItem="CUV-5A-eac" secondAttribute="leading" constant="5" id="tAd-RR-d9h"/>
+                                    <constraint firstAttribute="bottom" secondItem="irG-nm-E5t" secondAttribute="bottom" id="zW1-FA-bEM"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" red="0.93324130773544312" green="0.93339765071868896" blue="0.93322080373764038" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="9si-BO-M4s" secondAttribute="trailing" id="AtB-5S-xRf"/>
+                            <constraint firstItem="CUV-5A-eac" firstAttribute="top" secondItem="xT8-Eq-eRa" secondAttribute="top" id="PVt-B8-ubw"/>
+                            <constraint firstItem="CUV-5A-eac" firstAttribute="leading" secondItem="xT8-Eq-eRa" secondAttribute="leading" id="Wlq-RQ-DNL"/>
+                            <constraint firstAttribute="trailing" secondItem="CUV-5A-eac" secondAttribute="trailing" id="YAz-a4-kPd"/>
+                            <constraint firstItem="9si-BO-M4s" firstAttribute="leading" secondItem="xT8-Eq-eRa" secondAttribute="leading" id="dmn-F5-NhP"/>
+                            <constraint firstItem="9si-BO-M4s" firstAttribute="top" secondItem="CUV-5A-eac" secondAttribute="bottom" constant="20" id="fVy-SP-fa4"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="classLabel" destination="4pW-nD-2H2" id="vZT-T7-4pu"/>
+                        <outlet property="classView" destination="9si-BO-M4s" id="jf2-2z-Xjn"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="MaN-8T-vSB" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-426.39999999999998" y="80.50974512743629"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="btn_back_black" width="11" height="19"/>
+        <image name="ico_arrow_right" width="30" height="30"/>
+    </resources>
+</document>
