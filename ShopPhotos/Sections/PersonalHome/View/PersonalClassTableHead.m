@@ -48,7 +48,8 @@
     .widthIs(14);
     
     self.subclassCount.sd_layout
-    .rightSpaceToView(self, 30)
+    .rightSpaceToView(self, 10)
+    .widthIs(40)
     .topSpaceToView(self,0)
     .bottomSpaceToView(self,0);
     

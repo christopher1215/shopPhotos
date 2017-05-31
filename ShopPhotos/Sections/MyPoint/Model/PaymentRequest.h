@@ -9,7 +9,7 @@
 #import "BaseModel.h"
 
 @interface PaymentRequest : BaseModel
-@property (assign, nonatomic) NSString * orderId;
+@property (strong, nonatomic) NSString * orderId;
 @property (strong, nonatomic) NSString * timestamps;
 @property (strong, nonatomic) NSDictionary * config;
 @property (strong, nonatomic) NSString * configStr;

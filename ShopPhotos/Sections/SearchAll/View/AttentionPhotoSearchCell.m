@@ -58,7 +58,7 @@
     
     
     self.icon = [[UIImageView alloc] init];
-//    [self.icon setContentMode:UIViewContentModeScaleAspectFit];
+    [self.icon setContentMode:UIViewContentModeScaleAspectFit];
     [self.icon setBackgroundColor:ColorHex(0XF5F5F5)];
     [self.content addSubview:self.icon];
     
@@ -114,7 +114,7 @@
 //    .heightIs(25);
 
     self.userIcon = [[UIImageView alloc] init];
-//    [self.userIcon setContentMode:UIViewContentModeScaleAspectFit];
+    [self.userIcon setContentMode:UIViewContentModeScaleAspectFit];
     [self.content addSubview:self.userIcon];
     [self.userIcon addTarget:self action:@selector(userSelected)];
     self.userIcon.sd_layout
@@ -136,16 +136,17 @@
     .heightIs(25);
 
     self.share = [[UILabel alloc] init];
-    [self.share setFont:Font(19)];
+    [self.share setFont:Font(22)];
     [self.share setText:@"..."];
+    [self.share setTextColor:ColorHex(0x4c5364)];
     [self.share addTarget:self action:@selector(shareClicked)];
-    self.share.textAlignment = NSTextAlignmentLeft;
+    self.share.textAlignment = NSTextAlignmentCenter;
     [self.content addSubview:self.share];
     self.share.sd_layout
     .rightSpaceToView(self.content,5)
-    .topSpaceToView(self.title,5)
+    .topSpaceToView(self.title,0)
     .widthIs(20)
-    .heightIs(25);
+    .heightIs(22);
 
 }
 

@@ -75,21 +75,21 @@
 }
 
 - (void)imageSelected:(UITapGestureRecognizer *)tap {
-    NSLog(@"%ld",tap.view.superview.tag);
+    NSLog(@"%d",tap.view.superview.tag);
     if(self.delegate && [self.delegate respondsToSelector:@selector(photoDetailsHeadSelectType:select:)]){
         [self.delegate photoDetailsHeadSelectType:1 select:tap.view.superview.tag];
     }
 }
 
 - (void)deleteSelected:(UIButton *)button{
-    NSLog(@"%ld",button.superview.superview.tag);
+    NSLog(@"%d",button.superview.superview.tag);
     if(self.delegate && [self.delegate respondsToSelector:@selector(photoDetailsHeadSelectType:select:)]){
         [self.delegate photoDetailsHeadSelectType:2 select:button.superview.superview.tag];
     }
 }
 
 - (void)settingSelected:(UIButton *)button{
-    NSLog(@"%ld",button.superview.superview.tag);
+    NSLog(@"%d",button.superview.superview.tag);
     [self.delegate photoDetailsHeadSelectType:3 select:button.superview.superview.tag];
 }
 

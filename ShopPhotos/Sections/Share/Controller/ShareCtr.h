@@ -20,5 +20,6 @@
 
 - (void)showAlert;
 - (void)closeAlert;
+- (void)setLayout:(NSString *)type isCollected:(BOOL)collected whoisPhoto:(BOOL) isMyPhoto;
 
 @end

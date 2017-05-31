@@ -25,12 +25,10 @@
 #import "DownloadImageCtr.h"
 #import "CopyRequset.h"
 #import "HasCollectPhotoRequset.h"
-#import "DynamicQRAlert.h"
-#import "ShareCtr.h"
 #import <ShareSDK/ShareSDK.h>
 #import "PhotoImagesModel.h"
 
-@interface PhotosSearchCtr ()<AlbumPhotoTableViewDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,TOCropViewControllerDelegate,PhotosControllerDelegate,TZImagePickerControllerDelegate,ShareDelegate>
+@interface PhotosSearchCtr ()<AlbumPhotoTableViewDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,TOCropViewControllerDelegate,PhotosControllerDelegate,TZImagePickerControllerDelegate>
 @property (weak, nonatomic) IBOutlet UIView *titleBackground;
 
 @property (weak, nonatomic) IBOutlet UIView *back;
@@ -42,12 +40,11 @@
 @property (strong, nonatomic) AlbumPhotoTableView * table;
 @property (strong, nonatomic) NSMutableArray * dataArray;
 @property (assign, nonatomic) NSInteger pageIndex;
+@property (assign, nonatomic) BOOL searchFlag;
 @property (strong, nonatomic) UIImage * searchImage;
 
 @property (assign, nonatomic) NSInteger itmeSelectedIndex;
-@property (strong, nonatomic) ShareCtr * shareView;
 @property (strong, nonatomic) NSMutableArray * imageArray;
-@property (strong, nonatomic) DynamicQRAlert * qrAlert;
 @end
 
 @implementation PhotosSearchCtr
@@ -70,7 +67,10 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self dataArray];
+    [self imageArray];
     [self setup];
+    _searchFlag = NO;
 }
 
 - (void)setup{
@@ -80,9 +80,27 @@
     [self.search addTarget:self action:@selector(searchSelected)];
     [self.imageSearch addTarget:self action:@selector(imageSearchSelected)];
     self.search.cornerRadius = 3;
+    
     if(self.searchKey && self.searchKey.length > 0){
         [self.searchText setText:self.searchKey];
-        [self loadSearchData];
+        self.searchText.text = [self.searchText.text stringByReplacingOccurrencesOfString:@"%" withString:@""];
+        
+        NSDictionary * data = @{@"uid":self.uid,
+                                @"keyword":self.searchText.text,
+                                @"includeFriends":@"0",
+                                //@"excludesUsers":@"",
+                                @"page":@"1",
+                                @"pageSize":@"30"};
+        
+        [self loadSearchData:data];
+    } else {
+        NSDictionary * data = @{@"uid":self.uid,
+                                @"includeFriends":@"0",
+                                //@"excludesUsers":@"",
+                                @"page":@"1",
+                                @"pageSize":@"30"};
+        
+//        [self loadSearchData:data];
     }
     self.table = [[AlbumPhotoTableView alloc] init];
     self.table.delegate = self;
@@ -94,12 +112,7 @@
     .rightEqualToView(self.view)
     .topSpaceToView(self.viewCaption,0)
     .bottomEqualToView(self.view);
-    
-    self.shareView = GETALONESTORYBOARDPAGE(@"ShareCtr");
-    self.shareView.delegate = self;
-    [self.view addSubview:self.shareView.view];
-    [self.shareView.view setHidden:YES];
-    [self.shareView closeAlert];
+
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
@@ -155,11 +168,19 @@
         SPAlert(@"请输入搜索关键字",self);
         return;
     }
-    
+    self.pageIndex = 1;
+
     [self.dataArray removeAllObjects];
     [self.table.photos reloadData];
-    
-    [self loadSearchData];
+    self.searchText.text = [self.searchText.text stringByReplacingOccurrencesOfString:@"%" withString:@""];
+    NSDictionary * data = @{@"uid":self.uid,
+                            @"keyword":self.searchText.text,
+                            @"includeFriends":@"0",
+                            //@"excludesUsers":@"",
+                            @"page":[NSString stringWithFormat:@"%ld",(long)self.pageIndex],
+                            @"pageSize":@"30"};
+    [self loadSearchData:data];
+    _searchFlag = YES;
 }
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
@@ -174,6 +195,7 @@
         self.searchImage = image;
         
         [self.dataArray removeAllObjects];
+        [self.table loadData:self.dataArray];
         [self.table.photos reloadData];
         
         [self loadSearchImageData];
@@ -199,19 +221,16 @@
 }
 
 #pragma makr - AFNetworking网络加载
-- (void)loadSearchData{
+- (void)loadSearchData:(NSDictionary *)data{
+    if (data[@"keyword"]) {
+        if ([[data objectForKey:@"keyword"] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]].length <= 0) {
+            [self showToast:@"请输入关键字"];
+            return;
+        }
+        
+    }
 
-    self.pageIndex = 1;
     [self showLoad];
-    
-    NSDictionary * data = @{@"uid":self.uid,
-                            @"keyword":self.searchText.text,
-                            @"includeFriends":@"0",
-                            //@"excludesUsers":@"",
-                            @"page":[NSString stringWithFormat:@"%ld",self.pageIndex],
-                            @"pageSize":@"30"};
-    
-    
     
     __weak __typeof(self)weakSelef = self;
     [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",self.congfing.searchPhotos,[self.appd getParameterString]]  parametric:data succed:^(id responseObject){
@@ -228,9 +247,15 @@
             }];
             if(requset.dataArray.count < 30){
                 [weakSelef.table.photos.mj_footer endRefreshingWithNoMoreData];
-                if(requset.dataArray.count == 0){
-                    [weakSelef showToast:@"未搜索到结果"];
-                }
+                [weakSelef.table.photos.mj_footer setHidden:YES];
+
+//                if(requset.dataArray.count == 0){
+//                    [weakSelef.table.photos.mj_footer setHidden:YES];
+//                } else {
+//                    [weakSelef.table.photos.mj_footer setHidden:NO];
+//                    
+//                }
+
             }else{
                 [weakSelef.table.photos.mj_footer resetNoMoreData];
             }
@@ -244,7 +269,7 @@
     } failure:^(NSError *error){
         [weakSelef closeLoad];
         [weakSelef.table.photos.mj_header endRefreshing];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
 }
 
@@ -254,7 +279,7 @@
                             @"keyword":self.searchText.text,
                             @"includeFriends":@"0",
                             //@"excludesUsers":@"",
-                            @"page":[NSString stringWithFormat:@"%ld",self.pageIndex],
+                            @"page":[NSString stringWithFormat:@"%ld",(long)self.pageIndex],
                             @"pageSize":@"30"};
     
     __weak __typeof(self)weakSelef = self;
@@ -268,6 +293,8 @@
             weakSelef.pageIndex ++;
             if(requset.dataArray.count < 30){
                 [weakSelef.table.photos.mj_footer endRefreshingWithNoMoreData];
+                [weakSelef.table.photos.mj_footer setHidden:YES];
+
                 if(requset.dataArray.count == 0){
                     [weakSelef showToast:@"未搜索到结果"];
                 }
@@ -283,23 +310,21 @@
     } failure:^(NSError *error){
         [weakSelef closeLoad];
         [weakSelef.table.photos.mj_header endRefreshing];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
 }
 
 - (void)loadSearchImageData{
-    
-    
     [self showLoad];
     __weak __typeof(self)weakSelf = self;
     NSDictionary * data = @{@"uid":self.uid,
                             @"includeFriends":@"0",
-                            //@"excludesUsers":@"",
+                            //@"excludesUsers[0]":@"12343244",
                             @"resultCount":@"100"};
     NSData * imageData = UIImageJPEGRepresentation(self.searchImage, 0.3);
     [HTTPRequest Manager:self.congfing.useImageSearch Method:nil dic:data file:imageData fileName:@"imageFile" requestSucced:^(id responseObject){
         NSLog(@"%@",responseObject);
-        PhotosSearchRequeset * requset = [[PhotosSearchRequeset alloc] init];
+        AlbumPhotosRequset * requset = [[AlbumPhotosRequset alloc] init];
         [requset analyticInterface:responseObject];
         if(requset.status == 0){
             [weakSelf.dataArray removeAllObjects];
@@ -313,292 +338,58 @@
         [weakSelf closeLoad];
     } requestfailure:^(NSError * error){
         [weakSelf closeLoad];
-        [weakSelf showToast:NETWORKTIPS];
+//        [weakSelf showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
+        [weakSelf.dataArray removeAllObjects];
+        
+        [weakSelf.table loadData:weakSelf.dataArray];
+        [weakSelf.table.photos reloadData];
     }];
 }
 
 - (void)shareClicked:(NSIndexPath *)indexPath {
     self.itmeSelectedIndex = indexPath.row;
     //    [self showLoad];
-    [self getPhotoImages];
-    [self.shareView showAlert];
-}
-#pragma mark - ShareDelegate
-- (void)shareSelected:(NSInteger)type{
-    
     AlbumPhotosModel * model = [self.dataArray objectAtIndex:self.itmeSelectedIndex];
-    NSString * text = [NSString stringWithFormat:@"%@%@/photo/detail/%@",URLHead,self.uid,model.Id];
-    
-    //1、创建分享参数（必要）
-    NSMutableDictionary *shareParams = [NSMutableDictionary dictionary];
-    [shareParams SSDKSetupShareParamsByText:text
-                                     images:nil
-                                        url:nil
-                                      title:text
-                                       type:SSDKContentTypeAuto];
-    
-    switch (type) {
-        case 1: //微信好友
-        {
-            UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
-            pasteboard.string = text;
-            [ShareSDK share:SSDKPlatformSubTypeWechatSession parameters:shareParams onStateChanged:^(SSDKResponseState state, NSDictionary *userData, SSDKContentEntity *contentEntity, NSError *error){
-            }];
-        }
-            break;
-        case 2:// 朋友圈
-        {
-            
-            NSMutableArray * images = [NSMutableArray array];
-            for(PhotoImagesModel * imageModel in self.imageArray){
-                DynamicImagesModel * model = [[DynamicImagesModel alloc] init];
-                model.bigImageUrl = imageModel.bigImageUrl;
-                model.thumbnailUrl = imageModel.thumbnailUrl;
-                [images addObject:model];
-            }
-            UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
-            pasteboard.string = model.title;
-            ShareContentSelectCtr * shareSelect = GETALONESTORYBOARDPAGE(@"ShareContentSelectCtr");
-            shareSelect.dataArray = images;
-            [self.navigationController pushViewController:shareSelect animated:YES];
-        }
-            break;
-        case 3:// QQ好友
-        {
-            UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
-            pasteboard.string = text;
-            [ShareSDK share:SSDKPlatformSubTypeQQFriend parameters:shareParams onStateChanged:^(SSDKResponseState state, NSDictionary *userData, SSDKContentEntity *contentEntity, NSError *error){
-            }];
-        }
-            
-            break;
-        case 4:// 复制相册
-        {
-            
-            NSString * uid = self.uid;
-            if(uid && uid.length > 0){
-                if([self.photosUserID isEqualToString:uid]){
-                    [self showToast:@"不能复制自己的相册"];
-                    break;
-                }
-                
-                [self getAllowPurview:@{@"uid":self.uid}];
-            }
-        }
-            break;
-        case 5:// 复制链接
-        {
-            NSString * text = [NSString stringWithFormat:@"%@%@/photo/detail/%@",URLHead,self.uid,model.Id];
-            UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
-            pasteboard.string = text;
-            [self showToast:@"复制成功"];
-        }
-            
-            break;
-        case 6:// 复制标题
-        {
-            UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
-            pasteboard.string = model.title;
-            [self showToast:@"复制成功"];
-        }
-            break;
-        case 7:// 查看二维码
-        {
-            self.qrAlert.titleText = model.title;
-            self.qrAlert.contentText = [NSString stringWithFormat:@"%@%@/photo/detail/%@",URLHead,self.uid,model.title];
-            [self.qrAlert showAlert];
-        }
-            
-            break;
-        case 8:// 收藏相册
-        {
-            NSString * uid = self.uid;
-            if(uid && uid.length > 0){
-                if([self.photosUserID isEqualToString:uid]){
-                    [self showToast:@"不能收藏自己的相册"];
-                    break;
-                }
-            }
-            
-            [self hasCollectPhoto:@{@"photoId":model.Id}];
-        }
-            break;
-        case 9:// 下载图片
-        {
-            NSMutableArray * images = [NSMutableArray array];
-            for(PhotoImagesModel * imageModel in self.imageArray){
-                DynamicImagesModel * model = [[DynamicImagesModel alloc] init];
-                model.bigImageUrl = imageModel.bigImageUrl;
-                model.thumbnailUrl = imageModel.thumbnailUrl;
-                [images addObject:model];
-            }
-            
-            DownloadImageCtr * shareSelect = GETALONESTORYBOARDPAGE(@"DownloadImageCtr");
-            shareSelect.dataArray = images;
-            [self.navigationController pushViewController:shareSelect animated:YES];
-            
-        }
-            break;
+    [self.appd showShareview:model.type collected:model.collected model:model from:self];
+}
+- (void)pyqClicked:(NSIndexPath *)indexPath {
+    self.itmeSelectedIndex = indexPath.row;
+    //    [self showLoad];
+    [self getPhotoImages];
+    NSMutableArray * images = [NSMutableArray array];
+    for(PhotoImagesModel * imageModel in _imageArray){
+        DynamicImagesModel * model = [[DynamicImagesModel alloc] init];
+        model.bigImageUrl = imageModel.bigImageUrl;
+        model.thumbnailUrl = imageModel.thumbnailUrl;
+        [images addObject:model];
     }
-}
-
-- (void)sendCopyRequest:(NSDictionary *)data{
+    AlbumPhotosModel * model = [self.dataArray objectAtIndex:self.itmeSelectedIndex];
     
-    NSLog(@"1--- %@",data);
-    
-    NSLog(@"2--- %@",self.congfing.sendCopyRequest);
-    //[self showLoad];
-    __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.sendCopyRequest parametric:data succed:^(id responseObject){
-        //[weakSelef closeLoad];
-        NSLog(@"%@",responseObject);
-        BaseModel * model = [[BaseModel alloc] init];
-        [model analyticInterface:responseObject];
-        if(model.status == 0){
-            [weakSelef showToast:@"发送成功，请耐心等待"];
-        }else{
-            [weakSelef showToast:model.message];
-        }
-    } failure:^(NSError *error){
-        //[weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
-    }];
-}
-
-- (void)hasCollectPhoto:(NSDictionary *)data{
-    
-    //[self showLoad];
-    __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.hasCollectPhoto parametric:data succed:^(id responseObject){
-        //[weakSelef closeLoad];
-        NSLog(@"%@",responseObject);
-        HasCollectPhotoRequset * requset = [[HasCollectPhotoRequset alloc] init];
-        [requset analyticInterface:responseObject];
-        if(requset.status == 0){
-            
-            if(requset.hasCollect){
-                
-                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:@"您已经收藏该相册，是否取消收藏" preferredStyle:UIAlertControllerStyleAlert];
-                [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
-                [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action){
-                    
-                    [weakSelef cancelCollectPhotos:@{@"photosId":[NSString stringWithFormat:@"%@,",[data objectForKey:@"photoId"]]}];
-                }]];
-                
-                [weakSelef presentViewController:alert animated:YES completion:nil];
-            }else{
-                [weakSelef collectPhoto:data];
-            }
-            
-        }else{
-            [weakSelef showToast:requset.message];
-        }
-    } failure:^(NSError *error){
-        //[weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
-    }];
-}
-
-- (void)collectPhoto:(NSDictionary *)data{
-    //[self showLoad];
-    __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.collssssCopy parametric:data succed:^(id responseObject){
-        //[weakSelef closeLoad];
-        NSLog(@"%@",responseObject);
-        BaseModel * model = [[BaseModel alloc] init];
-        if(model.status == 0){
-            [weakSelef showToast:@"收藏成功"];
-        }else{
-            [weakSelef showToast:model.message];
-        }
-    } failure:^(NSError *error){
-        //[weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
-    }];
-}
-
-- (void)cancelCollectPhotos:(NSDictionary * )data{
-    
-    //[self showLoad];
-    __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.cancelCollectPhotos parametric:data succed:^(id responseObject){
-        //[weakSelef closeLoad];
-        NSLog(@"%@",responseObject);
-        BaseModel * model = [[BaseModel alloc] init];
-        if(model.status == 0){
-            [weakSelef showToast:@"取消收藏成功"];
-        }else{
-            [weakSelef showToast:model.message];
-        }
-    } failure:^(NSError *error){
-        //[weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
-    }];
-}
-
-- (void)getAllowPurview:(NSDictionary *)data{
-    
-    //[self showLoad];
-    __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.isPassiveUserAllow parametric:data succed:^(id responseObject){
-        //[weakSelef closeLoad];
-        NSLog(@"%@",responseObject);
-        CopyRequset * model = [[CopyRequset alloc] init];
-        [model analyticInterface:responseObject];
-        if(model.status == 0){
-            
-            if(model.allow){
-                PublishPhotoCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotoCtr");
-                AlbumPhotosModel * albumModel = [self.dataArray objectAtIndex:self.itmeSelectedIndex];
-                /*
-                 pulish.is_copy = YES;
-                 pulish.photoTitleText = albumModel.title;
-                 pulish.photoTitleText = @"";
-                 pulish.imageCopy = [[NSMutableArray alloc] initWithArray:self.imageArray];*/
-                [weakSelef.navigationController pushViewController:pulish animated:YES];
-            }else{
-                
-                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:@"对方设置了限制复制，是否发送请求复制" preferredStyle:UIAlertControllerStyleAlert];
-                [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
-                [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action){
-                    
-                    [weakSelef sendCopyRequest:data];
-                    
-                }]];
-                
-                [weakSelef presentViewController:alert animated:YES completion:nil];
-            }
-            
-        }else{
-            [weakSelef showToast:model.message];
-        }
-        
-    } failure:^(NSError *error){
-        //[weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
-    }];
+    UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
+    pasteboard.string = model.title;
+    ShareContentSelectCtr * shareSelect = GETALONESTORYBOARDPAGE(@"ShareContentSelectCtr");
+    shareSelect.dataArray = images;
+    [self.navigationController pushViewController:shareSelect animated:YES];
 }
 
 - (void)getPhotoImages{
-    NSDictionary * model = [self.dataArray objectAtIndex:self.itmeSelectedIndex];
-    self.imageArray = [RequestErrorGrab getArrwitKey:@"images" toTarget:model];
-    //    AlbumPhotosModel * model = [self.dataArray objectAtIndex:self.itmeSelectedIndex];
-    //
-    //    NSDictionary * detailPhotodata = @{@"photoId":model.Id};
-    //    __weak __typeof(self)weakSelef = self;
-    //    [HTTPRequest requestPOSTUrl:self.congfing.getPhotoImages parametric:detailPhotodata succed:^(id responseObject){
-    //        [weakSelef closeLoad];
-    //        NSLog(@"获取相册图片 -- >%@",responseObject);
-    //        PhotoImagesRequset * requset = [[PhotoImagesRequset alloc] init];
-    //        [requset analyticInterface:responseObject];
-    //        if(requset.status == 0){
-    //            [weakSelef.imageArray removeAllObjects];
-    //            [weakSelef.imageArray addObjectsFromArray:requset.dataArray];
-    //        }
-    //    } failure:^(NSError *error){
-    //        [weakSelef showToast:NETWORKTIPS];
-    //        //[weakSelef closeLoad];
-    //    }];
+    [_imageArray removeAllObjects];
+    AlbumPhotosModel * model = [self.dataArray objectAtIndex:self.itmeSelectedIndex];
+    
+    for(NSDictionary * image in model.images){
+        PhotoImagesModel * model = [[PhotoImagesModel alloc] init];
+        model.Id = [NSString stringWithFormat:@"%ld",(long)[RequestErrorGrab getIntegetKey:@"id" toTarget:image]];
+        //                model.imageLink_id = [NSString stringWithFormat:@"%ld",[RequestErrorGrab getIntegetKey:@"imageLink_id" toTarget:images]];
+        model.thumbnailUrl = [RequestErrorGrab getStringwitKey:@"thumbnailUrl" toTarget:image];
+        model.bigImageUrl = [RequestErrorGrab getStringwitKey:@"bigImageUrl" toTarget:image];
+        model.srcUrl = [RequestErrorGrab getStringwitKey:@"srcUrl" toTarget:image];
+        model.isCover = [RequestErrorGrab getBooLwitKey:@"isCover" toTarget:image];
+        if (model.isCover) {
+            [_imageArray insertObject:model atIndex:0];
+        }else{
+            [_imageArray addObject:model];
+        }
+    }
 }
 
 @end

@@ -22,7 +22,7 @@
         if(data && data.count > 0){
             for(NSDictionary * images in data){
                 PhotoImagesModel * model = [[PhotoImagesModel alloc] init];
-                model.Id = [NSString stringWithFormat:@"%ld",[RequestErrorGrab getIntegetKey:@"id" toTarget:images]];
+                model.Id = [NSString stringWithFormat:@"%ld",(long)[RequestErrorGrab getIntegetKey:@"id" toTarget:images]];
 //                model.imageLink_id = [NSString stringWithFormat:@"%ld",[RequestErrorGrab getIntegetKey:@"imageLink_id" toTarget:images]];
                 model.thumbnailUrl = [RequestErrorGrab getStringwitKey:@"thumbnailUrl" toTarget:images];
                 model.bigImageUrl = [RequestErrorGrab getStringwitKey:@"bigImageUrl" toTarget:images];
@@ -39,7 +39,7 @@
     } @catch (NSException *exception) {
         
         self.status = 1;
-        self.message = NETWORKTIPS;
+        self.message = exception.name;//NETWORKTIPS;
         
     }
 }

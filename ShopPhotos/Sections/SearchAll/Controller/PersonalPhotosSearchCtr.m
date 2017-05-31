@@ -91,13 +91,17 @@
 
 #pragma makr - AFNetworking网络加载
 - (void)loadSearchData{
+    if ([self.searchText.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]].length <= 0) {
+        [self showToast:@"请输入关键字"];
+        return;
+    }
     
     [self showLoad];
     self.pageIndex = 1;
     
     
     NSDictionary * data = @{@"uid":self.uid,
-                            @"page":[NSString stringWithFormat:@"%ld",self.pageIndex],
+                            @"page":[NSString stringWithFormat:@"%ld",(long)self.pageIndex],
                             @"pageSize":@"30",
                             @"keyWord":self.searchText.text};
     __weak __typeof(self)weakSelef = self;
@@ -116,6 +120,7 @@
             }];
             if(requset.dataArray.count < 30){
                 [weakSelef.table.photos.mj_footer endRefreshingWithNoMoreData];
+                [weakSelef.table.photos.mj_footer setHidden:YES];
                 if(requset.dataArray.count == 0){
                     [weakSelef showToast:@"未搜索到结果"];
                 }
@@ -132,14 +137,18 @@
     } failure:^(NSError *error){
         [weakSelef closeLoad];
         [weakSelef.table.photos.mj_header endRefreshing];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
+}
+- (void)shareClicked:(NSIndexPath *)indexPath {
+    AlbumPhotosModel * model = [self.dataArray objectAtIndex:indexPath.row];
+    [self.appd showShareview:model.type collected:model.collected model:model from:self];
 }
 
 - (void)loadNetworkMoreData{
     [self showLoad];
     NSDictionary * data = @{@"uid":self.uid,
-                            @"page":[NSString stringWithFormat:@"%ld",self.pageIndex],
+                            @"page":[NSString stringWithFormat:@"%ld",(long)self.pageIndex],
                             @"pageSize":@"30",
                             @"keyWord":self.searchText.text};
     
@@ -155,6 +164,7 @@
             weakSelef.pageIndex ++;
             if(requset.dataArray.count < 30){
                 [weakSelef.table.photos.mj_footer endRefreshingWithNoMoreData];
+                [weakSelef.table.photos.mj_footer setHidden:YES];
             }else{
                 [weakSelef.table.photos.mj_footer resetNoMoreData];
             }
@@ -167,7 +177,7 @@
     } failure:^(NSError *error){
         [weakSelef closeLoad];
         [weakSelef.table.photos.mj_header endRefreshing];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
 }
 

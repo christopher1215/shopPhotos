@@ -109,7 +109,7 @@
         [head addTarget:self action:@selector(tableViewHeadSelected:)];
         head.sd_layout.heightIs(50);
         head.title.text = model.name;
-        head.subclassCount.text = [NSString stringWithFormat:@"%ld",model.subclasses.count];
+        head.subclassCount.text = [NSString stringWithFormat:@"%ld",(unsigned long)model.subclasses.count];
         
         if(model.isOpen){
             [head openOption];
@@ -134,7 +134,7 @@
     //[self.table reloadSections:indexSet withRowAnimation:UITableViewRowAnimationAutomatic];
     
     [self.table reloadData];
-    if(model.isOpen){
+    if(model.isOpen && model.subclasses.count > 0){
         NSIndexPath * dayOne = [NSIndexPath indexPathForRow:0 inSection:section];
         [self.self.table scrollToRowAtIndexPath:dayOne atScrollPosition:UITableViewScrollPositionTop animated:YES];
     }
@@ -142,10 +142,10 @@
 
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-/*
+
     if(self.delegate && [self.delegate respondsToSelector:@selector(personalClassTableSelected:)]){
         [self.delegate personalClassTableSelected:indexPath];
-    }*/
+    }
 }
 
 #pragma mark - AlbumClassTableHeadDelegate

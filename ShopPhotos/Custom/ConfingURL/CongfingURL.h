@@ -42,6 +42,9 @@
 @property (strong, nonatomic) NSString * getProducts;
 @property (strong, nonatomic) NSString * createOrder;
 @property (strong, nonatomic) NSString * getUserIntegralLog;
+@property (strong, nonatomic) NSString * checkOrderState;
+@property (strong, nonatomic) NSString * version;
+@property (strong, nonatomic) NSString * updateVideo;
 
 //----------------------tcg-------------------------//
 @property (strong, nonatomic) NSString * token;
@@ -64,7 +67,7 @@
 @property (strong, nonatomic) NSString * getUserDynamics;
 
 // 用户反馈提交
-@property (strong, nonatomic) NSString * publishedFeedback;
+@property (strong, nonatomic) NSString * publishFeedback;
 // 获取用户相册分类、子分类
 @property (strong, nonatomic) NSString * getClassifies;
 // 被谁允许复制，被谁关注，允许谁复制，关注了谁 列表
@@ -152,7 +155,7 @@
 @property (strong, nonatomic) NSString * cancelCollectPhotos;
 @property (strong, nonatomic) NSString * cancelCollectVideos;
 // 收藏相册
-@property (strong, nonatomic) NSString * collectPhotos;
+@property (strong, nonatomic) NSString * collectMultiPhotos;
 @property (strong, nonatomic) NSString * collectPhoto;
 @property (strong, nonatomic) NSString * collectVideo;
 
@@ -192,7 +195,7 @@
 @property (strong, nonatomic) NSString * getMoments;
 @property (strong, nonatomic) NSString * getSubclassPhotos;
 @property (strong, nonatomic) NSString * getUserVideos;
-@property (strong, nonatomic) NSString * handleRecommends;
+@property (strong, nonatomic) NSString * handleRecommendPhotos;
 @property (strong, nonatomic) NSString * hasCollectPhoto;
 @property (strong, nonatomic) NSString * index;
 @property (strong, nonatomic) NSString * isAllow;
@@ -215,5 +218,6 @@
 @property (strong, nonatomic) NSString * weChatAuth;
 @property (strong, nonatomic) NSString * webLogin;
 @property (strong, nonatomic) NSString * webLogout;
+@property (strong, nonatomic) NSString * ccopyPhoto;
 
 @end

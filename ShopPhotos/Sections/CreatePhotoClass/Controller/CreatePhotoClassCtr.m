@@ -138,7 +138,7 @@
             // 创建
             
             AlbumClassTableModel * model = [self.dataArray objectAtIndex:self.selecClass];
-            NSDictionary * data = @{@"classifyId":[NSString stringWithFormat:@"%ld",model.Id],
+            NSDictionary * data = @{@"classifyId":[NSString stringWithFormat:@"%ld",(long)model.Id],
                                     @"newClassifyName":@"",
                                     @"subclassifications":subName};
             [self createClassData:data];
@@ -200,7 +200,7 @@
         }
     } failure:^(NSError *error){
         [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
 }
 
@@ -222,7 +222,7 @@
         }
     } failure:^(NSError *error){
         [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
 }
 

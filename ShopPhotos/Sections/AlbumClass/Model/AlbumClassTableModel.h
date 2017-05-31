@@ -19,5 +19,6 @@
 @property (assign, nonatomic) BOOL delChecked;
 @property (assign, nonatomic) BOOL isVideo;
 @property (strong, nonatomic) NSMutableArray * dataArray;
+@property (strong, nonatomic) NSString * cover;
 
 @end

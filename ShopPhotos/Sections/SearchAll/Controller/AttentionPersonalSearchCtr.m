@@ -11,7 +11,7 @@
 #import "AttentionPersonalSearchRequset.h"
 #import "AttentionPersonalSearchModel.h"
 #import "PersonalHomeCtr.h"
-
+#import "AlbumPhotosRequset.h"
 
 @interface AttentionPersonalSearchCtr ()<UICollectionViewDelegate,UICollectionViewDataSource>
 @property (weak, nonatomic) IBOutlet UIView *titleBackground;
@@ -22,7 +22,7 @@
 @property (strong, nonatomic) NSMutableArray * dataArray;
 @property (strong, nonatomic) UICollectionView * photos;
 @property (assign, nonatomic) NSInteger pageIndex;
-
+@property (assign, nonatomic) BOOL searchFlag;
 
 @end
 
@@ -41,6 +41,7 @@
     [super viewDidLoad];
     
     [self setup];
+    _searchFlag = NO;
     
 }
 
@@ -51,7 +52,18 @@
     [self.search addTarget:self action:@selector(searchSelected)];
     if(self.searchKey && self.searchKey.length > 0){
         [self.searchText setText:self.searchKey];
-        [self loadSearchData];
+        self.searchText.text = [self.searchText.text stringByReplacingOccurrencesOfString:@"%" withString:@""];
+
+        NSDictionary * data = @{
+                                @"type":@"concerns",
+                                @"keyword":self.searchText.text};
+        
+        [self loadSearchData:data];
+    } else {
+        NSDictionary * data = @{
+                                @"type":@"concerns"};
+        
+//        [self loadSearchData:data];
     }
     
     UICollectionViewFlowLayout * layout = [[UICollectionViewFlowLayout alloc]init];
@@ -93,8 +105,15 @@
     
     [self.dataArray removeAllObjects];
     [self.photos reloadData];
-    
-    [self loadSearchData];
+    self.searchText.text = [self.searchText.text stringByReplacingOccurrencesOfString:@"%" withString:@""];
+    self.pageIndex = 1;
+
+    NSDictionary * data = @{
+                            @"type":@"concerns",
+                            @"keyword":self.searchText.text};
+
+    [self loadSearchData:data];
+    _searchFlag = YES;
 }
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
@@ -104,7 +123,26 @@
 #pragma mark -- UICollectionViewDataSource
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
+    if(self.dataArray.count == 0 && _searchFlag)
+    {
+        UILabel *messageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
+        
+        messageLabel.text = @"没有找到你需要的哦！";
+        messageLabel.textColor = [UIColor lightGrayColor];
+        messageLabel.numberOfLines = 0;
+        messageLabel.textAlignment = NSTextAlignmentCenter;
+        messageLabel.font = [UIFont systemFontOfSize:18];
+        [messageLabel sizeToFit];
+        collectionView.backgroundView = messageLabel;
+    }
+    else
+    {
+        collectionView.backgroundView = nil;
+    }
     return self.dataArray.count;
+}
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView{
+    return 1;
 }
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -119,10 +157,6 @@
 {
     return CGSizeMake(WindowWidth, 60);
 }
--(UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section{
-    return UIEdgeInsetsMake(0, 0, 0, 0);
-}
-
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
     
     AttentionPersonalSearchModel * model = [self.dataArray objectAtIndex:indexPath.row];
@@ -132,14 +166,27 @@
     [self.navigationController pushViewController:personalHome animated:YES];
 
 }
-
-#pragma makr - AFNetworking网络加载
-- (void)loadSearchData{
+-(UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section{
+    return UIEdgeInsetsMake(0, 0, 0, 0);
+}
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
     
-    self.pageIndex = 1;
-    NSDictionary * data = @{
-                            @"type":@"concerns",
-                            @"keyword":self.searchText.text};
+    return 0.0;
+}
+
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section {
+    return 0.0;
+}
+#pragma makr - AFNetworking网络加载
+- (void)loadSearchData:(NSDictionary *)data{
+    if (data[@"keyword"]) {
+        if ([[data objectForKey:@"keyword"] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]].length <= 0) {
+            [self showToast:@"请输入关键字"];
+            return;
+        }
+
+    }
+    
     
     [self showLoad];
     __weak __typeof(self)weakSelef = self;
@@ -153,7 +200,8 @@
             [weakSelef.dataArray addObjectsFromArray:requset.dataArray];
             [weakSelef.photos reloadData];
             if(requset.dataArray.count == 0){
-                [weakSelef showToast:@"未搜索到结果"];
+                //[weakSelef showToast:@"未搜索到结果"];
+                
             }
             
         }else{
@@ -163,7 +211,7 @@
         NSLog(@"%@",responseObject);
     } failure:^(NSError *error){
         [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
 }
 

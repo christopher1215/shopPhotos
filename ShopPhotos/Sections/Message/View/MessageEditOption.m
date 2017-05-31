@@ -123,7 +123,7 @@
     UIButton * button = [self viewWithTag:112];
     NSString * title = @"删除";
     if(count > 0){
-        title = [NSString stringWithFormat:@"删除(%ld)",count];
+        title = [NSString stringWithFormat:@"删除(%ld)",(long)count];
     }
     [button setTitle:title forState:UIControlStateNormal];
 }

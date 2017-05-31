@@ -67,8 +67,8 @@
     
     self.title = [[UILabel alloc] init];
     self.title.numberOfLines = 1;
-    [self.title setFont:Font(15)];
-    [self.title setTextColor:ColorHex(0X222222)];
+    [self.title setFont:Font(13)];
+    [self.title setTextColor:ColorHex(0X333333)];
     [self.title setBackgroundColor:[UIColor clearColor]];
     [self.content addSubview:self.title];
     /*
@@ -100,16 +100,18 @@
     self.userIconImage.layer.masksToBounds = TRUE;
     
     self.userName = [[UILabel alloc] init];
-    [self.userName setFont:Font(15)];
+    [self.userName setFont:Font(14)];
     [self.userName addTarget:self action:@selector(userSelected)];
     [self.userName setBackgroundColor:[UIColor clearColor]];
+    [self.userName setTextColor:ColorHex(0x4c5364)];
     [self.content addSubview:self.userName];
 
     self.share = [[UILabel alloc] init];
-    [self.share setFont:Font(19)];
+    [self.share setFont:Font(22)];
     [self.share setText:@"..."];
+    [self.share setTextColor:ColorHex(0x4c5364)];
     [self.share addTarget:self action:@selector(shareClicked)];
-    self.share.textAlignment = NSTextAlignmentLeft;
+    self.share.textAlignment = NSTextAlignmentCenter;
     [self.content addSubview:self.share];
     
     self.selectView = [[UIView alloc] init];
@@ -191,10 +193,10 @@
     self.share.sd_layout
     .rightSpaceToView(self.content,2)
     .leftSpaceToView(self.userName,10)
-    .bottomSpaceToView(self.content,15)
-//    .topSpaceToView(self.prize,0)
-    .widthIs(20)
-    .heightIs(25);
+//    .bottomSpaceToView(self.content,15)
+    .topSpaceToView(self.prize,0)
+    .widthIs(40)
+    .heightIs(22);
     
     
     self.selectView.sd_layout

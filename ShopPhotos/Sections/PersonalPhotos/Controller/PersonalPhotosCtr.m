@@ -22,10 +22,8 @@
 #import "PhotosSearchCtr.h"
 #import "PersonalPhotosSearchCtr.h"
 #import "UserInfoDrawerCtr.h"
-#import "ShareCtr.h"
 #import "ShareContentSelectCtr.h"
 #import <ShareSDK/ShareSDK.h>
-#import "DynamicQRAlert.h"
 #import "DownloadImageCtr.h"
 #import "PublishPhotoCtr.h"
 #import "HasCollectPhotoRequset.h"
@@ -35,7 +33,7 @@
 #import "SearchAllCtr.h"
 #import "CopyRequset.h"
 
-@interface PersonalPhotosCtr ()<AlbumPhotoTableViewDelegate,DynamicTableViewDelegate,UserInfoDrawerDelegate,ShareDelegate,AlbumClassTableDelegate>
+@interface PersonalPhotosCtr ()<AlbumPhotoTableViewDelegate,DynamicTableViewDelegate,UserInfoDrawerDelegate,AlbumClassTableDelegate>
 @property (weak, nonatomic) IBOutlet UIView *search;
 @property (weak, nonatomic) IBOutlet UIView *back;
 @property (weak, nonatomic) IBOutlet UILabel *pageTitle;
@@ -67,10 +65,8 @@
 @property (assign, nonatomic) NSInteger photosPageIndex;
 @property (assign, nonatomic) NSInteger selectType;
 @property (strong, nonatomic) UserInfoDrawerCtr * userInfo;
-@property (strong, nonatomic) ShareCtr * share;
 @property (assign, nonatomic) NSInteger userInfoSelectIndex;
 @property (assign, nonatomic) NSInteger shareSelectIndex;
-@property (strong, nonatomic) DynamicQRAlert * qrAlert;
 @property (strong, nonatomic) UIView * topView;
 @end
 
@@ -182,30 +178,13 @@
     [self.userInfo closeDrawe];
     [self.userInfo.view setHidden:YES];
     
-    
-    
-    self.share = GETALONESTORYBOARDPAGE(@"ShareCtr");
-    self.share.delegate = self;
-    [self.view addSubview:self.share.view];
-    [self.share.view setHidden:YES];
-    [self.share closeAlert];
-    
-    self.qrAlert = [[DynamicQRAlert alloc] init];
-    [self.view addSubview:self.qrAlert];
-    self.qrAlert.sd_layout
-    .leftEqualToView(self.view)
-    .rightEqualToView(self.view)
-    .topEqualToView(self.view)
-    .bottomEqualToView(self.view);
-    [self.qrAlert setHidden:YES];
-    
     self.topView = [[UIView alloc] init];
     [self.topView setBackgroundColor:[UIColor clearColor]];
     [self.topView addTarget:self action:@selector(topViewSelected)];
     [self.view addSubview:self.topView];
     self.topView.sd_layout
     .rightSpaceToView(self.view,10)
-    .bottomSpaceToView(self.view,140)
+    .bottomSpaceToView(self.view,90)
     .widthIs(50)
     .heightIs(50);
     
@@ -393,119 +372,12 @@
     }
 }
 
-#pragma mark - ShareDelegate
-#pragma mark - ShareDelegate
-- (void)shareSelected:(NSInteger)type{
-    
-    DynamicModel * model = [self.dynamicDataArray objectAtIndex:self.shareSelectIndex];
-    NSMutableArray * urlImages = [NSMutableArray array];
-    for(DynamicImagesModel * subModel in model.images){
-        [urlImages addObject:subModel.bigImageUrl];
-    }
-    
-    NSString * photoStr = [NSString stringWithFormat:@"%@%@/photo/detail/%@",URLHead,[model.user objectForKey:@"uid"],model.photosID];
-    
-    //1、创建分享参数（必要）
-    NSMutableDictionary *shareParams = [NSMutableDictionary dictionary];
-    [shareParams SSDKSetupShareParamsByText:photoStr
-                                     images:nil
-                                        url:nil
-                                      title:photoStr
-                                       type:SSDKContentTypeAuto];
-    switch (type) {
-        case 1: //微信好友
-        {
-            UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
-            pasteboard.string = photoStr;
-            [ShareSDK share:SSDKPlatformSubTypeWechatSession parameters:shareParams onStateChanged:^(SSDKResponseState state, NSDictionary *userData, SSDKContentEntity *contentEntity, NSError *error){
-            }];
-        }
-            break;
-        case 2:// 朋友圈
-        {
-            UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
-            pasteboard.string = model.title;
-            ShareContentSelectCtr * shareSelect = GETALONESTORYBOARDPAGE(@"ShareContentSelectCtr");
-            shareSelect.dataArray = model.images;
-            [self.navigationController pushViewController:shareSelect animated:YES];
-        }
-            break;
-        case 3:// QQ好友
-        {
-            UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
-            pasteboard.string = photoStr;
-            [ShareSDK share:SSDKPlatformSubTypeQQFriend parameters:shareParams onStateChanged:^(SSDKResponseState state, NSDictionary *userData, SSDKContentEntity *contentEntity, NSError *error){
-            }];
-        }
-            
-            break;
-        case 4:// 复制相册
-        {
-            
-            if([self.photosUserID isEqualToString:self.uid]){
-                [self showToast:@"不能复制自己的相册"];
-                break;
-            }else{
-                [self getAllowPurview:@{@"uid":self.uid}];
-            }
-        }
-            break;
-        case 5:// 复制链接
-        {
-//            NSString * text = [NSString stringWithFormat:@"%@/photo/detail/%@",URLHead,[model.user objectForKey:@"uid"],model.photosID];
-            NSString * text = [NSString stringWithFormat:@"%@/photo/detail/%@",URLHead,[model.user objectForKey:@"uid"]];
-            UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
-            pasteboard.string = text;
-            [self showToast:@"复制成功"];
-        }
-            
-            break;
-        case 6:// 复制标题
-        {
-            UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
-            pasteboard.string = model.title;
-            [self showToast:@"复制成功"];
-        }
-            break;
-        case 7:// 查看二维码
-        {
-            self.qrAlert.titleText = model.title;
-            self.qrAlert.contentText = [NSString stringWithFormat:@"%@%@/photo/detail/%@",URLHead,[model.user objectForKey:@"uid"],model.photosID];
-            [self.qrAlert showAlert];
-        }
-            
-            break;
-        case 8:// 收藏相册
-        {
-
-            if([self.photosUserID isEqualToString:self.uid]){
-                [self showToast:@"不能收藏自己的相册"];
-                break;
-            }else{
-                [self hasCollectPhoto:@{@"photoId":model.photosID}];
-            }
-            
-            
-        }
-            break;
-        case 9:// 下载图片
-        {
-            DownloadImageCtr * shareSelect = GETALONESTORYBOARDPAGE(@"DownloadImageCtr");
-            shareSelect.dataArray = model.images;
-            [self.navigationController pushViewController:shareSelect animated:YES];
-            
-        }
-            break;
-    }
-    
-}
-
 #pragma mark - AlbumClassTableDelegate
 - (void)albumClassTableSelected:(NSIndexPath *)indexPath{
-    
+/*
     AlbumClassTableModel * model = [self.photoClassDataArray objectAtIndex:indexPath.section];
     AlbumClassTableSubModel * subModel = [model.dataArray objectAtIndex:indexPath.row];
-/*    AlbumClassTable * classTable = GETALONESTORYBOARDPAGE(@"AlbumClassTabelCtr");
+    AlbumClassTable * classTable = GETALONESTORYBOARDPAGE(@"AlbumClassTabelCtr");
     classTable.uid = self.uid;
     classTable.subClassID = [NSString stringWithFormat:@"%ld",subModel.classfiyId];
     classTable.pageText = subModel.name;
@@ -550,9 +422,7 @@
         
     }else if(type == 2){
         self.shareSelectIndex = indexPath.row;
-        [self.share showAlert];
-        NSLog(@"share");
-        
+//        [self.share showAlert];
     }else if(type == 3){
         NSString * uid = [model.user objectForKey:@"uid"];
         if(uid && uid.length > 0){
@@ -598,7 +468,7 @@
 - (void)loadRecommendNetworkData{
     self.recommendPageIndex = 1;
     NSDictionary * data = @{@"uid":self.uid,
-                            @"page":[NSString stringWithFormat:@"%ld",self.recommendPageIndex],
+                            @"page":[NSString stringWithFormat:@"%ld",(long)self.recommendPageIndex],
                             @"pageSize":@"30",
                             @"keyWord":@"false",
                             @"subclassification_id":@"0"};
@@ -618,6 +488,7 @@
                 [weakSelef.recommendList.photos.mj_footer resetNoMoreData];
             }else{
                 [weakSelef.recommendList.photos.mj_footer endRefreshingWithNoMoreData];
+                [weakSelef.recommendList.photos.mj_footer setHidden:YES];
             }
             [weakSelef.recommendDataArray removeAllObjects];
             [weakSelef.recommendDataArray addObjectsFromArray:requset.dataArray];
@@ -626,7 +497,7 @@
             [weakSelef showToast:requset.message];
         }
     } failure:^(NSError *error){
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
         [weakSelef.recommendList.photos .mj_header endRefreshing];
     }];
 }
@@ -634,7 +505,7 @@
 - (void)loadRecommendMoreNetworkData{
     
     NSDictionary * data = @{@"uid":self.uid,
-                            @"page":[NSString stringWithFormat:@"%ld",self.recommendPageIndex],
+                            @"page":[NSString stringWithFormat:@"%ld",(long)self.recommendPageIndex],
                             @"pageSize":@"30",
                             @"keyWord":@"false",
                             @"subclassification_id":@"0"};
@@ -652,6 +523,7 @@
                 [weakSelef.recommendList.photos.mj_footer resetNoMoreData];
             }else{
                 [weakSelef.recommendList.photos.mj_footer endRefreshingWithNoMoreData];
+                [weakSelef.recommendList.photos.mj_footer setHidden:YES];
             }
             [weakSelef.recommendDataArray addObjectsFromArray:requset.dataArray];
             [weakSelef.recommendList loadMoreData:requset.dataArray];
@@ -661,7 +533,7 @@
         
     } failure:^(NSError *error){
         [weakSelef.recommendList.photos.mj_footer endRefreshing];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
     
 }
@@ -670,7 +542,7 @@
     
     self.dynamicPageIndex = 1;
     NSDictionary * data = @{@"uid":self.uid,
-                            @"page":[NSString stringWithFormat:@"%ld",self.dynamicPageIndex],
+                            @"page":[NSString stringWithFormat:@"%ld",(long)self.dynamicPageIndex],
                             @"pageSize":@"20",
                             @"getAll":@"false"};
     __weak __typeof(self)weakSelef = self;
@@ -690,6 +562,7 @@
                  [weakSelef.dynamicList.table.mj_footer resetNoMoreData];
             }else{
                 [weakSelef.dynamicList.table.mj_footer endRefreshingWithNoMoreData];
+                [weakSelef.dynamicList.table.mj_footer setHidden:YES];
             }
             [weakSelef.dynamicDataArray removeAllObjects];
             [weakSelef.dynamicDataArray addObjectsFromArray:requset.dataArray];
@@ -699,7 +572,7 @@
             [weakSelef showToast:requset.message];
         }
     } failure:^(NSError *error){
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
         [weakSelef.dynamicList.table.mj_header endRefreshing];
     }];
 }
@@ -707,7 +580,7 @@
 - (void)loadDynamicNetworkMoreData{
     
     NSDictionary * data = @{@"uid":self.uid,
-                            @"page":[NSString stringWithFormat:@"%ld",self.dynamicPageIndex],
+                            @"page":[NSString stringWithFormat:@"%ld",(long)self.dynamicPageIndex],
                             @"pageSize":@"20",
                             @"getAll":@"false"};
     __weak __typeof(self)weakSelef = self;
@@ -724,6 +597,7 @@
                 [weakSelef.dynamicList.table.mj_footer resetNoMoreData];
             }else{
                 [weakSelef.dynamicList.table.mj_footer endRefreshingWithNoMoreData];
+                [weakSelef.dynamicList.table.mj_footer setHidden:YES];
             }
             [weakSelef.dynamicDataArray addObjectsFromArray:requset.dataArray];
             [weakSelef.dynamicList loadMoreData:requset.dataArray];
@@ -732,7 +606,7 @@
             [weakSelef showToast:requset.message];
         }
     } failure:^(NSError *error){
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
         [weakSelef.dynamicList.table.mj_footer endRefreshing];
     }];
 }
@@ -740,7 +614,7 @@
 - (void)loadPhotoNetworkData{
     self.photosPageIndex = 1;
     NSDictionary * data = @{@"uid":self.uid,
-                            @"page":[NSString stringWithFormat:@"%ld",self.photosPageIndex],
+                            @"page":[NSString stringWithFormat:@"%ld",(long)self.photosPageIndex],
                             @"pageSize":@"30",
                             @"keyWord":@"false",
                             @"subclassification_id":@"0"};
@@ -761,6 +635,7 @@
                 [weakSelef.photosList.photos.mj_footer resetNoMoreData];
             }else{
                 [weakSelef.photosList.photos.mj_footer endRefreshingWithNoMoreData];
+                [weakSelef.photosList.photos.mj_footer setHidden:YES];
             }
 
             [weakSelef.photosDataArray removeAllObjects];
@@ -772,14 +647,14 @@
         
     } failure:^(NSError *error){
         [weakSelef.photosList.photos.mj_header endRefreshing];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
 }
 
 - (void)loadPhotoNetworkMoreData{
     
     NSDictionary * data = @{@"uid":self.uid,
-                            @"page":[NSString stringWithFormat:@"%ld",self.photosPageIndex],
+                            @"page":[NSString stringWithFormat:@"%ld",(long)self.photosPageIndex],
                             @"pageSize":@"30",
                             @"keyWord":@"false",
                             @"subclassification_id":@"0"};
@@ -797,6 +672,7 @@
                 [weakSelef.photosList.photos.mj_footer resetNoMoreData];
             }else{
                 [weakSelef.photosList.photos.mj_footer endRefreshingWithNoMoreData];
+                [weakSelef.photosList.photos.mj_footer setHidden:YES];
             }
             [weakSelef.photosDataArray addObjectsFromArray:requset.dataArray];
             [weakSelef.photosList loadMoreData:requset.dataArray];
@@ -806,7 +682,7 @@
         
     } failure:^(NSError *error){
         [weakSelef.photosList.photos.mj_footer endRefreshing];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
 }
 
@@ -828,7 +704,7 @@
         }
     } failure:^(NSError *error){
         [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
 }
 
@@ -851,114 +727,4 @@
     } failure:nil];
 }
 
-
-
-- (void)getAllowPurview:(NSDictionary *)data{
-    
-    [self showLoad];
-    __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.isPassiveUserAllow parametric:data succed:^(id responseObject){
-        [weakSelef closeLoad];
-        NSLog(@"%@",responseObject);
-        CopyRequset * model = [[CopyRequset alloc] init];
-        [model analyticInterface:responseObject];
-        if(model.status == 0){
-            
-            if(model.allow){
-                DynamicModel * model = [weakSelef.dynamicDataArray objectAtIndex:weakSelef.shareSelectIndex];
-/*                PublishPhotoCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotoCtr");
-                pulish.is_copy = YES;
-                pulish.photoTitleText = model.title;
-                pulish.imageCopy = [[NSMutableArray alloc] initWithArray:model.images];
-                
-                [weakSelef.navigationController pushViewController:pulish animated:YES]; */
-            }else{
-                
-                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:@"对方设置了限制复制，是否发送请求复制" preferredStyle:UIAlertControllerStyleAlert];
-                [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
-                [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action){
-                    
-                    [weakSelef sendCopyRequest:data];
-                    
-                }]];
-                
-                [weakSelef presentViewController:alert animated:YES completion:nil];
-            }
-            
-        }else{
-            [weakSelef showToast:model.message];
-        }
-    } failure:^(NSError *error){
-        [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
-    }];
-}
-
-- (void)sendCopyRequest:(NSDictionary *)data{
-    
-    NSLog(@"1--- %@",data);
-    
-    NSLog(@"2--- %@",self.congfing.sendCopyRequest);
-    [self showLoad];
-    __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.sendCopyRequest parametric:data succed:^(id responseObject){
-        [weakSelef closeLoad];
-        NSLog(@"%@",responseObject);
-        BaseModel * model = [[BaseModel alloc] init];
-        [model analyticInterface:responseObject];
-        if(model.status == 0){
-            [weakSelef showToast:@"发送成功，请耐心等待"];
-        }else{
-            [weakSelef showToast:model.message];
-        }
-    } failure:^(NSError *error){
-        [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
-    }];
-}
-
-- (void)hasCollectPhoto:(NSDictionary *)data{
-    
-    [self showLoad];
-    __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.hasCollectPhoto parametric:data succed:^(id responseObject){
-        [weakSelef closeLoad];
-        NSLog(@"%@",responseObject);
-        HasCollectPhotoRequset * requset = [[HasCollectPhotoRequset alloc] init];
-        [requset analyticInterface:responseObject];
-        if(requset.status == 0){
-            
-            if(requset.hasCollect){
-                [weakSelef showToast:@"已经收藏"];
-            }else{
-                
-                [weakSelef collectPhoto:data];
-            }
-            
-        }else{
-            [weakSelef showToast:requset.message];
-        }
-    } failure:^(NSError *error){
-        [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
-    }];
-}
-
-- (void)collectPhoto:(NSDictionary *)data{
-    [self showLoad];
-    __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.collssssCopy parametric:data succed:^(id responseObject){
-        [weakSelef closeLoad];
-        NSLog(@"%@",responseObject);
-        BaseModel * model = [[BaseModel alloc] init];
-        if(model.status == 0){
-            [weakSelef showToast:@"收藏成功"];
-        }else{
-            [weakSelef showToast:model.message];
-        }
-    } failure:^(NSError *error){
-        [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
-    }];
-}
 @end

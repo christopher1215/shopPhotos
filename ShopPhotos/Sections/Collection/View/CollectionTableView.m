@@ -112,8 +112,8 @@
     }
 }
 
-- (void)collctionUserSelecte:(NSIndexPath *)indexPath{
-    if(self.delegate && [self.delegate respondsToSelector:@selector(collctionUserSelecte:)]){
+- (void)collectionUserSelecte:(NSIndexPath *)indexPath{
+    if(self.delegate && [self.delegate respondsToSelector:@selector(collectionUserSelecte:)]){
         [self.delegate collectionUserSelecte:indexPath];
     }
 }

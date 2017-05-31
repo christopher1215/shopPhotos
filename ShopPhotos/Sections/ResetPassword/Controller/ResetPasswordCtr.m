@@ -127,7 +127,27 @@
     [textField resignFirstResponder];
     return YES;
 }
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    BOOL bFlag = YES;
+    if (textField == self.txtSms) {
+        NSUInteger maxLength = 6;
+        bFlag = [textField.text stringByReplacingCharactersInRange:range withString:string].length <= maxLength;
+        return bFlag;
+    }
+    if (textField == self.txtPhone) {
+        NSUInteger maxLength = 11;
+        bFlag = [textField.text stringByReplacingCharactersInRange:range withString:string].length <= maxLength;
+        return bFlag;
+    }
 
+    if (textField == self.txtCaptcha) {
+        NSUInteger maxLength = 6;
+        bFlag = [textField.text stringByReplacingCharactersInRange:range withString:string].length <= maxLength;
+        return bFlag;
+    }
+
+    return bFlag;
+}
 #pragma makr - AFNetworking网络加载
 - (void)sendCheckCode:(NSDictionary *)data{
     if ([_fromType isEqualToString:@"register"]) {
@@ -156,7 +176,7 @@
         }
         
     } failure:^(NSError * error){
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
         [weakSelef closeLoad];
     }];
     
@@ -179,7 +199,7 @@
         }
         
     } failure:^(NSError * error){
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
         [weakSelef closeLoad];
     }];
     
@@ -198,7 +218,7 @@
     NSLog(@"123213");
     self.countdown -- ;
     if(self.countdown > 0){
-        NSString * title = [NSString stringWithFormat:@"%ld",self.countdown];
+        NSString * title = [NSString stringWithFormat:@"%ld",(long)self.countdown];
         [self.btnSMS setTitle:title forState:UIControlStateNormal];
     }else{
         [self.btnSMS setTitle:@"获取验证码" forState:UIControlStateNormal];
@@ -240,7 +260,7 @@
         }
         
     } failure:^(NSError * error){
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
         [weakSelef closeLoad];
     }];
     
@@ -268,7 +288,7 @@
         }
         
     } failure:^(NSError * error){
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
         [weakSelef closeLoad];
     }];
     

@@ -2,7 +2,7 @@
 //  CreatePhoto2Model.h
 //  ShopPhotos
 //
-//  Created by Park Jin Hyok on 4/22/17.
+//  Created by  on 4/22/17.
 //  Copyright © 2017 addcn. All rights reserved.
 //
 

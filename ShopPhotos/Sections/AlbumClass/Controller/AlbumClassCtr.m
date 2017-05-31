@@ -17,6 +17,8 @@
 #import "PhotosEditView.h"
 #import "PhotosOptionView.h"
 #import <MJRefresh.h>
+#import "PublishPhotoCtr.h"
+#import "CopyPhotoCtr.h"
 
 @interface AlbumClassCtr ()<MoreAlertDelegate,AlbumClassTableDelegate,ChangeClassAlertDelegate,PhotosEditViewDelegate>
 
@@ -45,6 +47,7 @@
 @property (weak, nonatomic) IBOutlet UIView *tool;
 
 @property (assign, nonatomic) BOOL needGoparent;
+@property (weak, nonatomic) IBOutlet UITextField *txtKeyword;
 
 @end
 
@@ -79,10 +82,10 @@
 - (void)createAutoLayout{
     
     [self.back addTarget:self action:@selector(backSelected)];
-    [self.search addTarget:self action:@selector(searchSelected)];
+    //[self.search addTarget:self action:@selector(searchSelected)];
     [self.order addTarget:self action:@selector(moreSelected)];
     [self.edit addTarget:self action:@selector(editSelected)];
-    
+    [_txtKeyword addTarget:self action:@selector(textChanged:) forControlEvents:UIControlEventEditingChanged];
     _search.layer.cornerRadius = 15;
     _search.layer.masksToBounds = TRUE;
 
@@ -98,9 +101,11 @@
 
     self.editOption = [UIButton buttonWithType:UIButtonTypeSystem];
     [self.editOption setTitle:@"删除" forState:UIControlStateNormal];
-    [self.editOption.titleLabel setFont:Font(17)];
-    [self.editOption setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+    [self.editOption.titleLabel setFont:Font(16)];
+    [self.editOption setTitleColor:ColorHex(0xfc6c6c) forState:UIControlStateNormal];
     [self.editOption setBackgroundColor:[UIColor whiteColor]];
+    [self.editOption setBorderColor:[UIColor lightGrayColor]];
+    [self.editOption setBorderWidth:1.0f];
     [self.view addSubview:self.editOption];
     [self.editOption addTarget:self action:@selector(clickOptiontool) forControlEvents:UIControlEventTouchUpInside];
     [self.editOption setHidden:YES];
@@ -142,32 +147,60 @@
     
     if (_isSubClass) {
         [_ttitle setText:_parentModel.name];
-        [_back setTitle:@"相册分类" forState:UIControlStateNormal];
+        [_back setTitle:@" 返回" forState:UIControlStateNormal];
         _back.sd_layout
-        .widthIs(90);
+        .widthIs(60);
         [_back updateLayout];
     }
     
     if (_isFromUploadPhoto) {
-        [_tool setHidden:YES];
-        [_edit setHidden:YES];
-        if (_isSubClass == NO) {
-            [_back setTitle:@"上传相册" forState:UIControlStateNormal];
+//        [_tool setHidden:YES];
+//        [_edit setHidden:YES];
+//        if (_isSubClass == NO) {
+            [_back setTitle:@" 上传相册" forState:UIControlStateNormal];
             _back.sd_layout
             .widthIs(90);
             [_back updateLayout];
-        }
-        else {
-            [self editSelected];
-        }
+//        }
+//        else {
+//            [self editSelected];
+//        }
     }
     
     __weak __typeof(self)weakSelef = self;
     self.table.table.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
-       [weakSelef loadNetworkData];
+        [weakSelef loadNetworkData:@"updated_at"];
     }];
     [self.table.table.mj_header beginRefreshing];
     
+}
+-(void)textChanged:(UITextField *)textField
+{
+    if (_txtKeyword == textField) {
+        if (_txtKeyword.text.length > 0) {
+            NSMutableArray * searchArray = [NSMutableArray array];
+            if (!_isSubClass) {
+                [searchArray addObject:self.dataArray[0]];
+                for ( AlbumClassTableModel* model in self.dataArray ) {
+                    if ([[model.name lowercaseString] rangeOfString:[_txtKeyword.text lowercaseString]].location != NSNotFound) {
+                        [searchArray addObject:model];
+                    }
+                }
+            } else {
+                for ( AlbumClassTableSubModel* model in self.dataArray ) {
+                    if ([[model.name lowercaseString] rangeOfString:[_txtKeyword.text lowercaseString]].location != NSNotFound) {
+                        [searchArray addObject:model];
+                    }
+                }
+            }
+            
+            self.table.dataArray = searchArray;
+            
+        } else {
+            self.table.dataArray = self.dataArray;
+        }
+        [self.table.table reloadData];
+    }
 }
 
 #pragma mark - OnClick
@@ -213,6 +246,7 @@
 }
 
 -(void) editSelected {
+    [self.editHead.all setTitle:@"全选" forState:UIControlStateNormal];
     [self.editHead setHidden:NO];
     [self.editOption setHidden:NO];
     
@@ -242,65 +276,69 @@
             [self.table updateLayout];
             [self.table.table reloadData];
         }
+        if (_isSubClass) {
+            for (AlbumClassTableSubModel *subModel in self.dataArray) {
+                subModel.delChecked = NO;
+            }
+        }
+        else {
+            for (AlbumClassTableModel *model in self.dataArray) {
+                model.delChecked = NO;
+            }
+        }
+
     }
     else {
-        self.table.isAllSelect = YES;
-        [self.table.table reloadData];
+        if (self.table.isAllSelect) {
+            self.table.isAllSelect = NO;
+            if (_isSubClass) {
+                for (AlbumClassTableSubModel *subModel in self.dataArray) {
+                    subModel.delChecked = NO;
+                }
+            }
+            else {
+                for (AlbumClassTableModel *model in self.dataArray) {
+                    model.delChecked = NO;
+                }
+            }
+
+            [self.table.table reloadData];
+        } else {
+            self.table.isAllSelect = YES;
+            if (_isSubClass) {
+                for (AlbumClassTableSubModel *subModel in self.dataArray) {
+                    subModel.delChecked = YES;
+                }
+            }
+            else {
+                for (AlbumClassTableModel *model in self.dataArray) {
+                    model.delChecked = YES;
+                }
+            }
+
+            [self.table.table reloadData];
+        }
     }
     
-    if (_isSubClass) {
-        for (AlbumClassTableSubModel *subModel in self.dataArray) {
-            subModel.delChecked = NO;
-        }
-    }
-    else {
-        for (AlbumClassTableModel *model in self.dataArray) {
-            model.delChecked = NO;
-        }
-    }
 }
 
 #pragma mark - MoreAlertDelegate
 - (void)moreAlertSelected:(NSInteger)indexPath{
     if(indexPath == 0){
-        // 编辑
-        if(self.editStatu){
-            NSLog(@"取消");
-            for(AlbumClassTableModel * model in self.dataArray){
-                model.edit = NO;
-                for(AlbumClassTableSubModel * subModel in model.dataArray){
-                    subModel.edit = NO;
-                }
-            }
-        }else{
-            NSLog(@"编辑");
-            for(AlbumClassTableModel * model in self.dataArray){
-                model.edit = YES;
-                for(AlbumClassTableSubModel * subModel in model.dataArray){
-                    subModel.edit = YES;
-                }
-            }
-        }
-        
-        [self.more_icon setImage:[UIImage imageNamed:@"sure_edit"]];
-        [self.search_icon setImage:[UIImage imageNamed:@"cancel_edit"]];
-        
-        self.table.dataArray = self.dataArray;
-        self.editStatu = !self.editStatu;
+        [self loadNetworkData:@"name_abbr"];
     }else{
-        // 新建分类
-        NSLog(@"新建分类");
-        CreatePhotoClassCtr * createPhoto = GETALONESTORYBOARDPAGE(@"CreatePhotoClassCtr");
-        createPhoto.uid = self.uid;
-        [self.navigationController pushViewController:createPhoto animated:YES];
+        [self loadNetworkData:@"created_at"];
     }
 }
 
 #pragma mark - ChangeClassAlertDelegate
 - (void)editClassName:(NSString *)name indexClass:(NSInteger)index{
-    
     if(!name || name.length == 0){
         SPAlert(@"请输入分类名",self);
+        return;
+    }
+    if ([name stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]].length <= 0) {
+        [self showToast:@"分类不允许为空格"];
         return;
     }
         // 父类名称修改
@@ -334,9 +372,9 @@
         _changeAlert.subClass = _isSubClass;
          [_changeAlert showAlert];
     }else if(type == 2){ //delete
-        NSLog(@"cell delete select %ld - %ld",indexPath.section,indexPath.row);
+        NSLog(@"cell delete select %ld - %ld",(long)indexPath.section,indexPath.row);
         
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"确认删除?" message:@"删除父分类会将此父分\n类下所有子分类 全部" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"确认删除?" message:self.isSubClass?@"": @"删除父分类会将此父分\n类下所有子分类 全部删除" preferredStyle:UIAlertControllerStyleAlert];
         [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action){
             [self deleteClass:indexPath];
         }]];
@@ -344,7 +382,7 @@
         [self presentViewController:alert animated:YES completion:nil];
         
     }else if (type == 3) { //add subclass
-        NSLog(@"cell add subClass select %ld - %ld",indexPath.section,indexPath.row);
+        NSLog(@"cell add subClass select %ld - %ld",(long)indexPath.section,indexPath.row);
 //        _editSection = indexPath.section;
         _changeAlert.addClass = YES;
         _changeAlert.subClass = YES;
@@ -355,61 +393,112 @@
 
 - (void)albumClassTableHeadSelected:(NSInteger )index {
     AlbumClassTableModel * model = [self.dataArray objectAtIndex:index];
-    if (_isSubClass == NO) {
-        if (model.isVideo) {
-            AlbumPhotosCtr * albumPhotos = GETALONESTORYBOARDPAGE(@"AlbumPhotosCtr");
-            albumPhotos.type = @"video";
-            albumPhotos.uid = _uid;
-            albumPhotos.subClassid = -1;
-            albumPhotos.ptitle = @"视频列表";
-            [self.navigationController pushViewController:albumPhotos animated:YES];
-        }
-        else{
-            AlbumClassCtr * albumClass = GETALONESTORYBOARDPAGE(@"AlbumClassCtr");
-            albumClass.isSubClass = YES;
-            albumClass.uid = _uid;
-            albumClass.parentModel = model;
-            albumClass.isFromUploadPhoto = _isFromUploadPhoto;
-            albumClass.publish = _publish;
-            if (_isFromUploadPhoto) {
-                //            _needGoparent = YES;
+    if (self.table.isEditMode) {
+        [self albumClassTableHeadSelectCheck:!model.delChecked selectedPath:index];
+        
+    } else {
+        if (_isSubClass == NO) {
+            if (model.isVideo) {
+                AlbumPhotosCtr * albumPhotos = GETALONESTORYBOARDPAGE(@"AlbumPhotosCtr");
+                albumPhotos.type = @"video";
+                albumPhotos.uid = _uid;
+                albumPhotos.subClassid = -1;
+                albumPhotos.ptitle = @"视频列表";
+                [self.navigationController pushViewController:albumPhotos animated:YES];
             }
-            [self.navigationController pushViewController:albumClass animated:YES];
+            else{
+                AlbumClassCtr * albumClass = GETALONESTORYBOARDPAGE(@"AlbumClassCtr");
+                albumClass.isSubClass = YES;
+                albumClass.uid = _uid;
+                albumClass.parentModel = model;
+                albumClass.isFromUploadPhoto = _isFromUploadPhoto;
+                albumClass.isFromCopyPhoto = _isFromCopyPhoto;
+                albumClass.fromCtr = _fromCtr;
+                if (_isFromUploadPhoto) {
+                    //            _needGoparent = YES;
+                }
+                [self.navigationController pushViewController:albumClass animated:YES];
+            }
         }
-    }
-    else {
-        AlbumPhotosCtr * albumPhotos = GETALONESTORYBOARDPAGE(@"AlbumPhotosCtr");
-        albumPhotos.type = @"photo";
-        albumPhotos.uid = _uid;
-        albumPhotos.subClassid = model.Id;
-        albumPhotos.ptitle = model.name;
-        [self.navigationController pushViewController:albumPhotos animated:YES];
+        else {
+            if (_isFromUploadPhoto || _isFromCopyPhoto) {
+                NSMutableString *subClass = [[NSMutableString alloc]init];
+                NSMutableString *parentClass = [[NSMutableString alloc] init];
+                if (_isSubClass && (_isFromUploadPhoto || _isFromCopyPhoto)) {
+                    [subClass setString:model.name];
+                    [parentClass setString:_parentModel.name];
+                }
+                
+                if (self.isFromUploadPhoto) {
+                    [(PublishPhotoCtr *)_fromCtr setClassifies:parentClass subClass:subClass];
+                }
+                else if (self.isFromCopyPhoto){
+                    [(CopyPhotoCtr *)_fromCtr setClassifies:parentClass subClass:subClass];
+                }
+
+                NSArray *viewControllers = self.navigationController.viewControllers;
+                for (UIViewController *vc in viewControllers)
+                {
+                    if([vc isKindOfClass:_fromCtr.class])
+                    {
+                        [self.navigationController popToViewController:vc animated:YES];
+                        
+                    }
+                }
+
+            } else {
+                AlbumPhotosCtr * albumPhotos = GETALONESTORYBOARDPAGE(@"AlbumPhotosCtr");
+                albumPhotos.type = @"photo";
+                albumPhotos.uid = _uid;
+                albumPhotos.subClassid = model.Id;
+                albumPhotos.ptitle = model.name;
+                [self.navigationController pushViewController:albumPhotos animated:YES];
+
+            }
+        }
     }
 }
 
 //- (void)albumClassTableHeadSelectType:(NSInteger)type selectedPath:(NSInteger)section{}
 - (void)albumClassTableHeadSelectCheck:(BOOL)isChecked selectedPath:(NSInteger)index {
+    self.table.isAllSelect = YES;
     if (_isSubClass) {
         AlbumClassTableSubModel *subModel = [self.dataArray objectAtIndex:index];
         subModel.delChecked = isChecked;
-        if (_isFromUploadPhoto && isChecked == YES) {
-            for (int idx=0; idx<self.dataArray.count; idx++){
-                if (idx != index) {
-                    AlbumClassTableSubModel *sm = [self.dataArray objectAtIndex:idx];
-                    sm.delChecked = NO;
-                }
+//        if (_isFromUploadPhoto && isChecked == YES) {
+//            for (int idx=0; idx<self.dataArray.count; idx++){
+//                if (idx != index) {
+//                    AlbumClassTableSubModel *sm = [self.dataArray objectAtIndex:idx];
+//                    sm.delChecked = NO;
+//                }
+//            }
+//        }
+        for (int idx=0; idx<self.dataArray.count; idx++){
+            AlbumClassTableSubModel *sm = [self.dataArray objectAtIndex:idx];
+            if (sm.delChecked == NO) {
+                self.table.isAllSelect = NO;
+                break;
             }
         }
     }
     else {
         AlbumClassTableModel *model = [self.dataArray objectAtIndex:index];
         model.delChecked = isChecked;
+        for (int idx=0; idx<self.dataArray.count; idx++){
+            AlbumClassTableModel *sm = [self.dataArray objectAtIndex:idx];
+            if ((!sm.isVideo) && sm.delChecked == NO) {
+                self.table.isAllSelect = NO;
+                break;
+            }
+        }
     }
-    
+    if (self.table.isAllSelect) {
+        [self.editHead.all setTitle:@"清除" forState:UIControlStateNormal];
+    }else{
+        [self.editHead.all setTitle:@"全选" forState:UIControlStateNormal];
+    }
     self.table.dataArray = self.dataArray;
     [self.table.table reloadData];
-    
-    NSLog(@"del index %ld", index);
 }
 
 - (IBAction)addClassify:(id)sender {
@@ -426,23 +515,25 @@
 }
 
 #pragma makr - AFNetworking网络加载
-- (void)loadNetworkData {
+- (void)loadNetworkData:(NSString *)order {
 
+    [self showLoad];
     NSDictionary *data = nil;
     NSString *url = nil;
     CongfingURL * config = [self getValueWithKey:ShopPhotosApi];
     if (_isSubClass) {
-        data = [NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%ld",_parentModel.Id],@"classifyId",@"desc",@"order",@"updated_at",@"orderBy", nil];
+        data = [NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%ld",(long)_parentModel.Id],@"classifyId",@"desc",@"order",order,@"orderBy", nil];
         url = config.getSubclasses;
     }
     else {
-        data = [NSDictionary dictionaryWithObjectsAndKeys:_uid,@"uid",@"desc",@"order",@"updated_at",@"orderBy", nil];
+        data = [NSDictionary dictionaryWithObjectsAndKeys:_uid,@"uid",@"desc",@"order",order,@"orderBy", nil];
         url = config.getClassifies;
     }
     
     __weak __typeof(self)weakSelef = self;
     
     [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",url,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+       [self closeLoad];
        [weakSelef.table.table.mj_header endRefreshing];
         NSLog(@"%@",responseObject);
         AlbumClassModel * model = [[AlbumClassModel alloc] init];
@@ -456,7 +547,8 @@
             [weakSelef showToast:model.message];
         }
     } failure:^(NSError *error){
-        [weakSelef showToast:NETWORKTIPS];
+        [self closeLoad];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
         [weakSelef.table.table.mj_header endRefreshing];
     }];
 }
@@ -470,7 +562,7 @@
     CongfingURL * config = [self getValueWithKey:ShopPhotosApi];
     
     if (_isSubClass) { // sub class
-        data = [NSDictionary dictionaryWithObjectsAndKeys:name,@"name",[NSString stringWithFormat:@"%ld",index],@"classifyId", nil];
+        data = [NSDictionary dictionaryWithObjectsAndKeys:name,@"name",[NSString stringWithFormat:@"%ld",(long)index],@"classifyId", nil];
         url = config.createSubclass;
     }
     else { // parent class
@@ -480,7 +572,7 @@
         }
         else {
             AlbumClassTableModel * model = [self.dataArray objectAtIndex:index];
-            data = [NSDictionary dictionaryWithObjectsAndKeys:name,@"name",[NSString stringWithFormat:@"%ld",model.Id],@"classifyId", nil];
+            data = [NSDictionary dictionaryWithObjectsAndKeys:name,@"name",[NSString stringWithFormat:@"%ld",(long)model.Id],@"classifyId", nil];
             url = config.createSubclass;
         }
     }
@@ -499,7 +591,7 @@
         }
     } failure:^(NSError *error){
         [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
 }
 
@@ -508,7 +600,7 @@
     if ([_editOption.titleLabel.text isEqualToString:@"选择"]) {
         NSMutableString *subClass = [[NSMutableString alloc]init];
         NSMutableString *parentClass = [[NSMutableString alloc] init];
-        if (_isSubClass && _isFromUploadPhoto) {
+        if (_isSubClass && (_isFromUploadPhoto || _isFromCopyPhoto)) {
             for (AlbumClassTableSubModel *subModel in _dataArray) {
                 if (subModel.delChecked) {
                     [subClass setString:subModel.name];
@@ -517,8 +609,12 @@
                 }
             }
         }
-        
-        [_publish setClassifies:parentClass subClass:subClass];
+        if (self.isFromUploadPhoto) {
+            [(PublishPhotoCtr *)_fromCtr setClassifies:parentClass subClass:subClass];
+        }
+        else if (self.isFromCopyPhoto){
+            [(CopyPhotoCtr *)_fromCtr setClassifies:parentClass subClass:subClass];
+        }
         [self backSelected];
     }
     else {
@@ -538,7 +634,7 @@
     if (_isSubClass) {
         for(AlbumClassTableSubModel * subModel in self.dataArray) {
             if (subModel.delChecked) {
-                [data setValue:[NSString stringWithFormat:@"%ld",subModel.Id] forKey:[NSString stringWithFormat:@"subclassesId[%ld]",index]];
+                [data setValue:[NSString stringWithFormat:@"%ld",(long)subModel.Id] forKey:[NSString stringWithFormat:@"subclassesId[%ld]",index]];
             }
             index++;
         }
@@ -546,30 +642,36 @@
     }
     else {
         for(AlbumClassTableModel * model in self.dataArray) {
-            if (model.delChecked) {
-                [data setValue:[NSString stringWithFormat:@"%ld",model.Id] forKey:[NSString stringWithFormat:@"classifiesId[%ld]",index]];
+            if (model.delChecked && (!model.isVideo)) {
+                [data setValue:[NSString stringWithFormat:@"%ld",(long)model.Id] forKey:[NSString stringWithFormat:@"classifiesId[%ld]",index]];
             }
             index++;
         }
         url = config.deleteClassifies;
     }
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestDELETEUrl:[NSString stringWithFormat:@"%@%@",url,[self.appd getParameterString]] parametric:data succed:^(id responseObject) {
-        [weakSelef closeLoad];
-        NSLog(@"%@",responseObject);
-        BaseModel * model = [[BaseModel alloc] init];
-        [model analyticInterface:responseObject];
-        if(model.status == 0){
-            AlbumClassTableModel * model = [weakSelef.dataArray objectAtIndex:weakSelef.subEditIndexPath.section];
-            [model.dataArray removeObjectAtIndex:weakSelef.subEditIndexPath.row];
-            weakSelef.table.dataArray = weakSelef.dataArray;
-        }else{
-            [weakSelef showToast:model.message];
-        }
-    } failure:^(NSError *error){
-        [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
-    }];
+    if ([data allKeys].count > 0) {
+        [HTTPRequest requestDELETEUrl:[NSString stringWithFormat:@"%@%@",url,[self.appd getParameterString]] parametric:data succed:^(id responseObject) {
+            [weakSelef closeLoad];
+            NSLog(@"%@",responseObject);
+            BaseModel * model = [[BaseModel alloc] init];
+            [model analyticInterface:responseObject];
+            if(model.status == 0){
+                [weakSelef showToast:@"删除分类成功"];
+                [self.editHead.all setTitle:@"全选" forState:UIControlStateNormal];
+                [weakSelef loadNetworkData:@"updated_at"];
+            }else{
+                [weakSelef showToast:model.message];
+            }
+        } failure:^(NSError *error){
+            [weakSelef closeLoad];
+            [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
+        }];
+
+    } else {
+        [self closeLoad];
+        [self showToast:@"请先泽"];
+    }
 }
 
 - (void)deleteClass:(NSIndexPath *)indexPath {
@@ -582,12 +684,12 @@
     
     if (_isSubClass) {
         AlbumClassTableSubModel * subModel = [self.dataArray objectAtIndex:indexPath.section];
-        data = [NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%ld",subModel.Id],@"subclassId", nil];
+        data = [NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%ld",(long)subModel.Id],@"subclassId", nil];
         url = config.deleteSubclass;
     }
     else {
         AlbumClassTableModel * model = [self.dataArray objectAtIndex:indexPath.section];
-        data = [NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%ld",model.Id],@"classifyId", nil];
+        data = [NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%ld",(long)model.Id],@"classifyId", nil];
         url = config.deleteClassify;
     }
     
@@ -606,7 +708,7 @@
         }
     } failure:^(NSError *error){
         [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
 }
 
@@ -619,12 +721,12 @@
     
     if (_isSubClass == NO) { // parent class
         AlbumClassTableModel * model = [self.dataArray objectAtIndex:index];
-        data = [NSDictionary dictionaryWithObjectsAndKeys:name,@"name",[NSString stringWithFormat:@"%ld",model.Id],@"classifyId", nil];
+        data = [NSDictionary dictionaryWithObjectsAndKeys:name,@"name",[NSString stringWithFormat:@"%ld",(long)model.Id],@"classifyId", nil];
         url = config.updateClassify;
     }
     else { // sub class
         AlbumClassTableSubModel * model = [self.dataArray objectAtIndex:index];
-        data = [NSDictionary dictionaryWithObjectsAndKeys:name,@"name",[NSString stringWithFormat:@"%ld",model.Id],@"classifyId", nil];
+        data = [NSDictionary dictionaryWithObjectsAndKeys:name,@"name",[NSString stringWithFormat:@"%ld",(long)model.Id],@"subclassId", nil];
         url = config.updateSubclass;
     }
     __weak __typeof(self)weakSelef = self;
@@ -648,7 +750,7 @@
         }
     } failure:^(NSError *error){
         [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
 }
 

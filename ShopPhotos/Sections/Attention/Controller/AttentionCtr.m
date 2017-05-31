@@ -79,6 +79,7 @@
 
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
+    [self loadNetworkData];
 }
 
 - (void)viewDidLoad {
@@ -317,7 +318,7 @@
     CGFloat offsetX = scrollView.contentOffset.x;
     if(offsetX == 0){
         [self.like setTextColor:ThemeColor];
-        [self.likeMine setTextColor:ColorHex(0X000000)];
+        [self.likeMine setTextColor:ColorHex(0xb6bbc8)];
         self.userType = likeType;
         if(self.likeDataArray.count > 0){
             self.likeList.dataArray = self.likeDataArray;
@@ -326,7 +327,7 @@
         }
         
     }else if(offsetX == WindowWidth){
-        [self.like setTextColor:ColorHex(0X000000)];
+        [self.like setTextColor:ColorHex(0xb6bbc8)];
         [self.likeMine setTextColor:ThemeColor];
         self.userType = likeMineType;
         
@@ -349,7 +350,7 @@
 - (void)loadNetworkData{
     if ([self.userType isEqualToString:likeType]) {
         self.likePage = 1;
-    } else if ([self.userType isEqualToString:likeType]) {
+    } else  {
         self.likeMinePage = 1;
     }
     
@@ -377,6 +378,7 @@
                 }];
                 if(model.dataArray.count < 30){
                     [weakSelef.likeList.table.mj_footer endRefreshingWithNoMoreData];
+                    [weakSelef.likeList.table.mj_footer setHidden:YES];
                 }else{
                     [weakSelef.likeList.table.mj_footer resetNoMoreData];
                 }
@@ -390,6 +392,7 @@
                 }];
                 if(model.dataArray.count < 30){
                     [weakSelef.likeMineList.table.mj_footer endRefreshingWithNoMoreData];
+                    [weakSelef.likeMineList.table.mj_footer setHidden:YES];
                 }else{
                     [weakSelef.likeMineList.table.mj_footer resetNoMoreData];
                 }
@@ -403,7 +406,7 @@
         
     } failure:^(NSError *error){
         [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
         [weakSelef.likeList.table.mj_header endRefreshing];
         [weakSelef.likeMineList.table.mj_header endRefreshing];
     }];
@@ -432,6 +435,7 @@
                 }];
                 if(model.dataArray.count < 30){
                     [weakSelef.likeList.table.mj_footer endRefreshingWithNoMoreData];
+                    [weakSelef.likeList.table.mj_footer setHidden:YES];
                 }else{
                     [weakSelef.likeList.table.mj_footer resetNoMoreData];
                 }
@@ -445,6 +449,7 @@
                 }];
                 if(model.dataArray.count < 30){
                     [weakSelef.likeMineList.table.mj_footer endRefreshingWithNoMoreData];
+                    [weakSelef.likeMineList.table.mj_footer setHidden:YES];
                 }else{
                     [weakSelef.likeMineList.table.mj_footer resetNoMoreData];
                 }
@@ -458,7 +463,7 @@
         
     } failure:^(NSError *error){
         [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
         [weakSelef.likeList.table.mj_header endRefreshing];
         [weakSelef.likeMineList.table.mj_header endRefreshing];
     }];
@@ -480,7 +485,7 @@
         }
     } failure:^(NSError *error){
         [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
 }
 
@@ -496,14 +501,14 @@
             
             [weakSelef showToast:@"关注成功"];
             //                [self.navigationController popViewControllerAnimated:YES];
-            
+            [weakSelef loadNetworkData];
         }else{
             
             [weakSelef showToast:model.message];
             //            [weakSelef showToast:model.message];
         }
     } failure:^(NSError * error){
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
         [weakSelef closeLoad];
     }];
     

@@ -9,7 +9,6 @@
 #import "PhotosImageSearchCtr.h"
 #import "AttentionPhotoSearchCell.h"
 #import "AlbumPhotosRequset.h"
-#import "AttentionPhotoSearchCell.h"
 #import "PhotoDetailsCtr.h"
 #import <AFNetworking.h>
 #import "HTTPUserAgent.h"
@@ -27,7 +26,7 @@
 @property (strong, nonatomic) NSMutableArray * dataArray;
 @property (strong, nonatomic) UICollectionView * photos;
 @property (assign, nonatomic) NSInteger pageIndex;
-
+@property (assign, nonatomic) BOOL searchFlag;
 @end
 
 @implementation PhotosImageSearchCtr
@@ -45,6 +44,7 @@
     [super viewDidLoad];
     
     [self setup];
+    _searchFlag = NO;
 }
 
 - (void)setup{
@@ -56,15 +56,15 @@
     self.photos = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:layout];
     self.photos.delegate=self;
     self.photos.dataSource=self;
-    [self.photos setBackgroundColor:ColorHex(0Xeeeeee)];
+    [self.photos setBackgroundColor:ColorHex(0XFFFFFF)];
     [self.photos registerClass:[AttentionPhotoSearchCell class] forCellWithReuseIdentifier:AttentionPhotoSearchCellID];
     [self.view addSubview:self.photos];
     
     self.photos.sd_layout
-    .leftEqualToView(self.view)
-    .rightEqualToView(self.view)
-    .topSpaceToView(self.view,64)
-    .bottomEqualToView(self.view);
+    .leftSpaceToView(self.view,5)
+    .rightSpaceToView(self.view,5)
+    .topSpaceToView(self.view,69)
+    .bottomSpaceToView(self.view,5);
     
     
     if(self.searchImage){
@@ -139,6 +139,22 @@
 #pragma mark -- UICollectionViewDataSource
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
+    if(self.dataArray.count == 0 && _searchFlag)
+    {
+        UILabel *messageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
+        
+        messageLabel.text = @"没有找到你需要的哦！";
+        messageLabel.textColor = [UIColor lightGrayColor];
+        messageLabel.numberOfLines = 0;
+        messageLabel.textAlignment = NSTextAlignmentCenter;
+        messageLabel.font = [UIFont systemFontOfSize:18];
+        [messageLabel sizeToFit];
+        collectionView.backgroundView = messageLabel;
+    }
+    else
+    {
+        collectionView.backgroundView = nil;
+    }
     return self.dataArray.count;
 }
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
@@ -154,10 +170,16 @@
 #pragma mark --UICollectionViewDelegateFlowLayout
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    return CGSizeMake((WindowWidth-45)/2, 250);
+    return CGSizeMake((WindowWidth-15)/2, 70 + (WindowWidth - 15)/2);
 }
 -(UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section{
-    return UIEdgeInsetsMake(10, 15, 10, 15);
+    return UIEdgeInsetsMake(5, 0, 5, 0);
+}
+
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
+{
+    
+    return 5;
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
@@ -181,11 +203,15 @@
         }
     }
 }
+- (void)shareClicked:(NSIndexPath *)indexPath {
+    AlbumPhotosModel * model = [self.dataArray objectAtIndex:indexPath.row];
+    [self.appd showShareview:model.type collected:model.collected model:model from:self];
+}
 
 #pragma makr - AFNetworking网络加载
 - (void)loadSearchData{
     
-    
+    _searchFlag = YES;
     [self showLoad];
     __weak __typeof(self)weakSelf = self;
     NSDictionary * data = @{@"uid":self.uid,
@@ -195,7 +221,7 @@
     NSData * imageData = UIImageJPEGRepresentation(self.searchImage, 0.3);
     [HTTPRequest Manager:self.congfing.useImageSearch Method:nil dic:data file:imageData fileName:@"image" requestSucced:^(id responseObject){
         NSLog(@"%@",responseObject);
-        PhotosSearchRequset * requset = [[PhotosSearchRequset alloc] init];
+        AlbumPhotosRequset * requset = [[AlbumPhotosRequset alloc] init];
         [requset analyticInterface:responseObject];
         if(requset.status == 0){
             [weakSelf.dataArray removeAllObjects];
@@ -208,7 +234,7 @@
         [weakSelf closeLoad];
     } requestfailure:^(NSError * error){
         [weakSelf closeLoad];
-        [weakSelf showToast:NETWORKTIPS];
+        [weakSelf showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
 }
 

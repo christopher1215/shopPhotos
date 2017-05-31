@@ -35,23 +35,24 @@
     
     self.cancel = [UIButton buttonWithType:UIButtonTypeSystem];
     [self.cancel setTitle:@"取消" forState:UIControlStateNormal];
-    [self.cancel setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [self.cancel setTitleColor:ColorHex(0x333333) forState:UIControlStateNormal];
     [self.cancel setBackgroundColor:[UIColor whiteColor]];
     [self.cancel addTarget:self action:@selector(cancelSelected) forControlEvents:UIControlEventTouchUpInside];
-    [self.cancel.titleLabel setFont:Font(16)];
+    [self.cancel.titleLabel setFont:Font(15)];
     [self.navigation addSubview:self.cancel];
     
     self.title = [[UILabel alloc] init];
-    [self.title setText:@"已选择0项"];
-    [self.title setFont:[UIFont fontWithName:@"Helvetica-Bold" size:19]];
+    [self.title setText:@"已选择0个"];
+    [self.title setFont:[UIFont systemFontOfSize:17]];
+    [self.title setTextColor:ColorHex(0x333333)];
     [self.title setTextAlignment:NSTextAlignmentCenter];
     [self.navigation addSubview:self.title];
     
     self.all = [UIButton buttonWithType:UIButtonTypeSystem];
     [self.all setTitle:@"全选" forState:UIControlStateNormal];
-    [self.all.titleLabel setFont:Font(16)];
+    [self.all.titleLabel setFont:Font(15)];
     [self.all addTarget:self action:@selector(allSelected) forControlEvents:UIControlEventTouchUpInside];
-    [self.all setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [self.all setTitleColor:ColorHex(0x333333) forState:UIControlStateNormal];
     [self.all setBackgroundColor:[UIColor whiteColor]];
     [self.navigation addSubview:self.all];
     
@@ -63,13 +64,13 @@
     .bottomEqualToView(self);
     
     self.cancel.sd_layout
-    .leftSpaceToView(self.navigation,10)
+    .leftSpaceToView(self.navigation,0)
     .topSpaceToView(self.navigation,20)
     .bottomSpaceToView(self.navigation,0)
     .widthIs(60);
     
     self.all.sd_layout
-    .rightSpaceToView(self.navigation,10)
+    .rightSpaceToView(self.navigation,0)
     .topSpaceToView(self.navigation,20)
     .bottomSpaceToView(self.navigation,0)
     .widthIs(60);
@@ -91,6 +92,11 @@
 
     if(self.delegate && [self.delegate respondsToSelector:@selector(photosEditSelected:)]){
         [self.delegate photosEditSelected:2];
+        if([self.all.titleLabel.text isEqualToString:@"全选"]){
+            [self.all setTitle:@"清除" forState:UIControlStateNormal];
+        }else{
+            [self.all setTitle:@"全选" forState:UIControlStateNormal];
+        }
     }
 }
 
@@ -104,7 +110,7 @@
 }
 
 - (void)setSelectedCount:(NSInteger)count{
-    [self.title setText:[NSString stringWithFormat:@"已选择%ld项",count]];
+    [self.title setText:[NSString stringWithFormat:@"已选择%ld项",(long)count]];
 }
 
 

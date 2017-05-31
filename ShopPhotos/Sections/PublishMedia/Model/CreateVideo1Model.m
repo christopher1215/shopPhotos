@@ -2,7 +2,7 @@
 //  CreateVideo1Model.m
 //  ShopPhotos
 //
-//  Created by Park Jin Hyok on 4/28/17.
+//  Created by  on 4/28/17.
 //  Copyright © 2017 addcn. All rights reserved.
 //
 #import "CreateVideo1Model.h"
@@ -22,7 +22,7 @@
         }
         
     } @catch (NSException *exception) {
-        self.message = NETWORKTIPS;
+        self.message = exception.name;//NETWORKTIPS;
         self.status = 1;
     }
 }

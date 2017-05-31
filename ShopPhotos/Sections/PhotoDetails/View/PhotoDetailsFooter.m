@@ -46,7 +46,7 @@
     
     self.title = [[UILabel alloc] init];
     [self.title setText:@"详情"];
-    [self.title setFont:Font(20)];
+    [self.title setFont:Font(16)];
     [self addSubview:self.title];
     
     self.title.sd_layout

@@ -52,7 +52,8 @@
     .bottomSpaceToView(self,0);
 
     self.photoCount.sd_layout
-    .rightSpaceToView(self,30)
+    .rightSpaceToView(self,10)
+    .widthIs(40)
     .topSpaceToView(self,0)
     .bottomSpaceToView(self,0);
     

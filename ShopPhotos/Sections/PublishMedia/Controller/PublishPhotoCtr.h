@@ -2,7 +2,7 @@
 //  PublishPhotoCtr.h
 //  ShopPhotos
 //
-//  Created by Park Jin Hyok on 4/13/17.
+//  Created by  on 4/13/17.
 //  Copyright © 2017 addcn. All rights reserved.
 //
 
@@ -13,11 +13,15 @@
 
 @interface PublishPhotoCtr : BaseViewCtr
 
-@property (strong, nonatomic) NSMutableArray * imageArray;
-@property (strong, nonatomic) UITextView * photoTitle;
-@property (strong, nonatomic) UITextView * remarksContent;
 @property (assign, nonatomic) BOOL isAdd;
-@property (strong, nonatomic) NSString * photoId;
+@property (assign, nonatomic) BOOL isCopy;
+//@property (strong, nonatomic) NSString * headTitle;
+//@property (strong, nonatomic) NSString * strPhotoTitle;
+//@property (strong, nonatomic) NSString * strRemarksContent;
+//@property (strong, nonatomic) NSString * parentClass;
+//@property (strong, nonatomic) NSString * subClass;
+
+@property (strong, nonatomic) NSDictionary * editData;
 
 - (void)setClassifies:(NSString *)parent subClass:(NSString *)subclass;
 

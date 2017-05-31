@@ -76,7 +76,7 @@
                                             <constraint firstAttribute="width" constant="26" id="Jg2-nA-cCp"/>
                                         </constraints>
                                     </imageView>
-                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="搜索关注的相册" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="iii-lb-hRi">
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="搜索关注的相册" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="iii-lb-hRi">
                                         <rect key="frame" x="52" y="27" width="226" height="30"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="30" id="V2s-TC-krg"/>

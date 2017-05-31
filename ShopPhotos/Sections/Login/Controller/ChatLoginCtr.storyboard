@@ -28,11 +28,11 @@
                                         <rect key="frame" x="0.0" y="20" width="75" height="44"/>
                                         <subviews>
                                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="btn_back_black" translatesAutoresizingMaskIntoConstraints="NO" id="APH-Mf-TO1">
-                                                <rect key="frame" x="7" y="7" width="11" height="30"/>
+                                                <rect key="frame" x="10" y="7" width="11" height="30"/>
                                             </imageView>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="返回" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oAg-Bz-CQB">
-                                                <rect key="frame" x="24" y="11.5" width="35" height="21"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text=" 返回" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oAg-Bz-CQB">
+                                                <rect key="frame" x="21" y="12" width="35" height="21"/>
+                                                <fontDescription key="fontDescription" name="PingFangSC-Regular" family="PingFang SC" pointSize="15"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
@@ -40,13 +40,13 @@
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <constraints>
                                             <constraint firstItem="oAg-Bz-CQB" firstAttribute="centerY" secondItem="APH-Mf-TO1" secondAttribute="centerY" id="9H0-K1-e8D"/>
-                                            <constraint firstItem="oAg-Bz-CQB" firstAttribute="leading" secondItem="APH-Mf-TO1" secondAttribute="trailing" constant="6" id="Dek-l7-to8"/>
+                                            <constraint firstItem="oAg-Bz-CQB" firstAttribute="leading" secondItem="APH-Mf-TO1" secondAttribute="trailing" id="Dek-l7-to8"/>
                                             <constraint firstAttribute="width" constant="75" id="GkQ-on-NgB"/>
                                             <constraint firstAttribute="bottom" secondItem="APH-Mf-TO1" secondAttribute="bottom" constant="7" id="H1c-wg-3Cp"/>
                                             <constraint firstItem="APH-Mf-TO1" firstAttribute="top" secondItem="s4J-b7-IrL" secondAttribute="top" constant="7" id="NzW-rK-4Cy"/>
                                             <constraint firstAttribute="height" constant="44" id="Pv2-5B-2eu"/>
                                             <constraint firstItem="APH-Mf-TO1" firstAttribute="centerY" secondItem="s4J-b7-IrL" secondAttribute="centerY" id="RpC-5U-MA0"/>
-                                            <constraint firstItem="APH-Mf-TO1" firstAttribute="leading" secondItem="s4J-b7-IrL" secondAttribute="leading" constant="7" id="UVB-be-MNh"/>
+                                            <constraint firstItem="APH-Mf-TO1" firstAttribute="leading" secondItem="s4J-b7-IrL" secondAttribute="leading" constant="10" id="UVB-be-MNh"/>
                                         </constraints>
                                     </view>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="绑定微信" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="b7O-HJ-NZA">
@@ -54,7 +54,7 @@
                                         <constraints>
                                             <constraint firstAttribute="height" constant="43" id="8yW-xr-7BT"/>
                                         </constraints>
-                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="19"/>
+                                        <fontDescription key="fontDescription" name="PingFangSC-Regular" family="PingFang SC" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
@@ -90,7 +90,7 @@
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="90" id="u3V-Rf-8yY"/>
                                                 </constraints>
-                                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                <fontDescription key="fontDescription" name="PingFangSC-Regular" family="PingFang SC" pointSize="15"/>
                                                 <color key="textColor" red="0.24457728862762451" green="0.59819823503494263" blue="0.79627025127410889" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
@@ -99,8 +99,8 @@
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="90" id="lQq-JR-skm"/>
                                                 </constraints>
-                                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                                <nil key="textColor"/>
+                                                <fontDescription key="fontDescription" name="PingFangSC-Regular" family="PingFang SC" pointSize="15"/>
+                                                <color key="textColor" red="0.71372549019607845" green="0.73333333333333328" blue="0.78431372549019607" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uJU-CY-alY">

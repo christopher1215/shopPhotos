@@ -34,15 +34,9 @@
     [self.contactTabBar setUnreadCountBadge:totalUnreadCount];
 }
 - (void)onRCIMConnectionStatusChanged:(RCConnectionStatus)status{
-    NSLog(@"%@", status);
+    NSLog(@"%ld", (long)status);
 }
 
-- (void)onRCIMReceiveMessage:(RCMessage *)message left:(int)left{
-    int totalUnreadCount = [[RCIMClient sharedRCIMClient] getTotalUnreadCount];
-    NSLog(@"当前所有会话的未读消息数为：%d", totalUnreadCount);
-    NSDictionary * userInfo = @{ @"totalUnreadCount": [NSString stringWithFormat:@"%d", totalUnreadCount]};
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"getTotalUnreadCount" object:nil userInfo:userInfo];
-}
 
 - (void)createAutoLayout{
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setUnreadCountBadge:) name:@"getTotalUnreadCount" object:nil];
@@ -56,7 +50,7 @@
     TabBarModel * model2 = [[TabBarModel alloc] init];
     model2.defaultImage = @"ico_discovery_default";
     model2.selectedImage = @"ico_discovery_selected";
-    model2.text = @"发现";
+    model2.text = @"动态";
     
     TabBarModel * model3 = [[TabBarModel alloc] init];
     //model3.imageName = @"";
@@ -70,7 +64,7 @@
     TabBarModel * model5 = [[TabBarModel alloc] init];
     model5.defaultImage = @"ico_mine_default";
     model5.selectedImage = @"ico_mine_selected";
-    model5.text = @"我";
+    model5.text = @"我的";
     
     NSArray * tabbarArray = @[model1,model2,model3,model4,model5];
     CGFloat width = WindowWidth/ tabbarArray.count;
@@ -82,12 +76,18 @@
             [item addTarget:self action:@selector(tabbarItemSelect:)];
             [self addSubview:item];
             item.tag = index;
+//            item.sd_layout
+//            .leftSpaceToView(self,width*index+8)
+//            .topSpaceToView(self, 35 - WindowWidth / 375 * 35)
+//            //.bottomEqualToView(self)
+//            .widthIs(width-18 * WindowWidth / 375)
+//            .heightIs(width-18 * WindowWidth / 375);
             item.sd_layout
-            .leftSpaceToView(self,width*index+8)
-            .topEqualToView(self)
-            .bottomEqualToView(self)
-            .widthIs(width-16);
-            
+            .leftSpaceToView(self,width*index+(width-50)/2)
+            .bottomSpaceToView(self,7)
+            .widthIs(50)
+            .heightIs(50);
+
         }else{
             TabBarItem * item = [[TabBarItem alloc] initWithModel:[tabbarArray objectAtIndex:index]];
             [self addSubview:item];

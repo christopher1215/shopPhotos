@@ -9,7 +9,7 @@
 #import "BaseViewCtr.h"
 #import "AlbumClassTableModel.h"
 #import "AlbumClassTableSubModel.h"
-#import "PublishPhotoCtr.h"
+//#import "PublishPhotoCtr.h"
 
 @interface AlbumClassCtr : BaseViewCtr
 
@@ -17,6 +17,7 @@
 @property (strong, nonatomic) AlbumClassTableModel * parentModel;
 @property (readwrite, nonatomic) BOOL isSubClass;
 @property (readwrite, nonatomic) BOOL isFromUploadPhoto;
-@property (strong, nonatomic) PublishPhotoCtr * publish;
+@property (readwrite, nonatomic) BOOL isFromCopyPhoto;
+@property (strong, nonatomic) BaseViewCtr * fromCtr;
 
 @end

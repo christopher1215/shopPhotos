@@ -14,6 +14,7 @@
 #import "WXApi.h"
 #import "Order.h"
 #import "DataSigner.h"
+#import "ChargeResultViewController.h"
 
 @interface ChargeViewController (){
     int productIndex;
@@ -55,7 +56,7 @@
     [self.product6 addTarget:self action:@selector(product6Selected)];
     [self product1Selected];
     [self wechatSelected];
-    self.lblPoint.text = [NSString stringWithFormat:@"%d", _currentPoint];
+    self.lblPoint.text = [NSString stringWithFormat:@"%d积分", _currentPoint];
     self.lblAccount.text = self.photosUserName;
     [self productArray];
     [self loadNetworkData];
@@ -155,7 +156,7 @@
         }
         
     } failure:^(NSError *error){
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
 }
 
@@ -166,10 +167,11 @@
             UIView *view = (UIView *)[self.productView viewWithTag:1000 + cnt];
             [view setHidden: NO];
             view.borderWidth = 1;
-            UILabel *title = (UILabel *)[view viewWithTag:100];
+            UILabel *price = (UILabel *)[view viewWithTag:100];
+            price.text = [NSString stringWithFormat:@"%@元", product.price];
+            
+            UILabel *title = (UILabel *)[view viewWithTag:101];
             title.text = product.name;
-            UILabel *price = (UILabel *)[view viewWithTag:101];
-            price.text = [NSString stringWithFormat:@"¥%@", product.price];
         }
         cnt ++;
     }
@@ -181,11 +183,11 @@
                             @"channel":_payMethod
                             };
     __weak __typeof(self)weakSelef = self;
-    
+    [self showLoad];
     NSString *serverApi = self.congfing.createOrder;
     [HTTPRequest requestPOSTUrl:[NSString stringWithFormat:@"%@%@",serverApi,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
         NSLog(@"1  %@",responseObject);
-        
+        [weakSelef closeLoad];
         PaymentRequest * request = [[PaymentRequest alloc] init];
         [request analyticInterface:responseObject];
         if(request.status == 0){
@@ -206,6 +208,10 @@
                      [WXApi sendReq:req];
                      //日志输出
                      NSLog(@"appid=%@\npartid=%@\nprepayid=%@\nnoncestr=%@\ntimestamp=%ld\npackage=%@\nsign=%@",[request.config objectForKey:@"appid"],req.partnerId,req.prepayId,req.nonceStr,(long)req.timeStamp,req.package,req.sign );
+                    
+                    ChargeResultViewController *vc=[[ChargeResultViewController alloc] initWithNibName:@"ChargeResultViewController" bundle:nil];
+                    vc.orderId = request.orderId;
+                    [self.navigationController pushViewController:vc animated:YES];
 
                 } else
                 {
@@ -223,8 +229,20 @@
                   [[AlipaySDK defaultService] payOrder:orderString fromScheme:appScheme callback:^(NSDictionary *resultDic) {
                       NSLog(@"reslut = %@",resultDic);
                       //                              [self gotoOrderViewer:2];
+//                      NSString *strTitle = [NSString stringWithFormat:@"支付结果"];
+//                      UIAlertView *alert = [[UIAlertView alloc] initWithTitle:strTitle message:[resultDic objectForKey:@"memo"] delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+//                      [alert show];
+                      if ([[resultDic objectForKey:@"resultStatus"] intValue] == 9000) {
+                          [[NSNotificationCenter defaultCenter] postNotificationName:@"successNoti" object:@{}];
+                      } else {
+                          [[NSNotificationCenter defaultCenter] postNotificationName:@"failNoti" object:@{}];
+                      }
                       
                   }];
+                ChargeResultViewController *vc=[[ChargeResultViewController alloc] initWithNibName:@"ChargeResultViewController" bundle:nil];
+                vc.orderId = request.orderId;
+                [self.navigationController pushViewController:vc animated:YES];
+
 //                }
 
             }
@@ -233,7 +251,8 @@
         }
         
     } failure:^(NSError *error){
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef closeLoad];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
     
 }

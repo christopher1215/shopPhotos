@@ -11,7 +11,9 @@
 #import "StaticCollectionViewCell.h"
 #import <MJRefresh.h>
 
-@interface AlbumPhotoTableView ()<UICollectionViewDelegate,UICollectionViewDataSource,StaticCollectionViewCellDelegate>
+@interface AlbumPhotoTableView ()<UICollectionViewDelegate,UICollectionViewDataSource,StaticCollectionViewCellDelegate>{
+    BOOL searchFlag;
+}
 
 @property (strong, nonatomic) NSMutableArray * dataArray;
 
@@ -36,7 +38,7 @@
 }
 
 - (void)createAutoLayout{
-    
+    searchFlag = NO;
     self.backgroundColor = [UIColor whiteColor];
     
     UICollectionViewFlowLayout * layout = [[UICollectionViewFlowLayout alloc]init];
@@ -59,12 +61,13 @@
 }
 
 - (void)loadData:(NSArray *)dataArray{
+    searchFlag = YES;
     [self.dataArray removeAllObjects];
     [self.dataArray addObjectsFromArray:dataArray];
     [self.photos reloadData];
-    
 }
 - (void)loadMoreData:(NSArray *)dataArray{
+    searchFlag = YES;
     
     [self.dataArray addObjectsFromArray:dataArray];
     [self.photos reloadData];
@@ -73,6 +76,22 @@
 #pragma mark -- UICollectionViewDataSource
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
+    if(self.dataArray.count == 0 && searchFlag)
+    {
+        UILabel *messageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.bounds.size.width, self.bounds.size.height)];
+        
+        messageLabel.text = @"没有找到你需要的哦！";
+        messageLabel.textColor = [UIColor lightGrayColor];
+        messageLabel.numberOfLines = 0;
+        messageLabel.textAlignment = NSTextAlignmentCenter;
+        messageLabel.font = [UIFont systemFontOfSize:18];
+        [messageLabel sizeToFit];
+        collectionView.backgroundView = messageLabel;
+    }
+    else
+    {
+        collectionView.backgroundView = nil;
+    }
     return self.dataArray.count;
 }
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
@@ -125,6 +144,16 @@
 - (void)shareClicked:(NSIndexPath *)indexPath{
     if(self.delegate && [self.delegate respondsToSelector:@selector(shareClicked:)]){
         [self.delegate shareClicked:indexPath];
+    }
+}
+- (void)pyqClicked:(NSIndexPath *)indexPath{
+    if(self.delegate && [self.delegate respondsToSelector:@selector(pyqClicked:)]){
+        [self.delegate pyqClicked:indexPath];
+    }
+}
+- (void)editClicked:(NSIndexPath *)indexPath{
+    if(self.delegate && [self.delegate respondsToSelector:@selector(editClicked:)]){
+        [self.delegate editClicked:indexPath];
     }
 }
 

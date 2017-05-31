@@ -33,7 +33,7 @@
     
     self.cancelRecommended = [UIButton buttonWithType:UIButtonTypeSystem];
     [self.cancelRecommended setTitle:@"取消推荐" forState:UIControlStateNormal];
-    [self.cancelRecommended setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [self.cancelRecommended setTitleColor:ColorHex(0x333333) forState:UIControlStateNormal];
     [self.cancelRecommended setBackgroundColor:[UIColor whiteColor]];
     [self.cancelRecommended addTarget:self action:@selector(cancelRecommendedSelected) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:self.cancelRecommended];

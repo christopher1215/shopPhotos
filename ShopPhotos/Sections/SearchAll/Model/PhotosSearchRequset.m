@@ -16,7 +16,7 @@
         self.message = [RequestErrorGrab getStringwitKey:@"message'" toTarget:data];
         if(self.status)return;
         
-        NSArray * photos = [RequestErrorGrab getArrwitKey:@"data" toTarget:data];
+        NSArray * photos = [RequestErrorGrab getArrwitKey:@"photos" toTarget:[RequestErrorGrab getDicwitKey:@"data" toTarget:data]];
         if(photos && photos.count > 0){
             
             self.dataArray = [NSMutableArray array];
@@ -24,11 +24,11 @@
                 
                 for(NSDictionary * photo in photos){
                     AlbumPhotosModel * model = [[AlbumPhotosModel alloc] init];
-                    model.title = [RequestErrorGrab getStringwitKey:@"name" toTarget:photo];
+                    model.title = [RequestErrorGrab getStringwitKey:@"title" toTarget:photo];
 //                    model.big = [RequestErrorGrab getStringwitKey:@"big" toTarget:photo];
                     model.cover = [RequestErrorGrab getStringwitKey:@"cover" toTarget:photo];
                     model.createdAt = [RequestErrorGrab getStringwitKey:@"createdAt" toTarget:photo];
-                    model.Id = [NSString stringWithFormat:@"%ld",[RequestErrorGrab getIntegetKey:@"id" toTarget:photo]];
+                    model.Id = [NSString stringWithFormat:@"%ld",(long)[RequestErrorGrab getIntegetKey:@"id" toTarget:photo]];
                     model.user = [RequestErrorGrab getDicwitKey:@"user" toTarget:photo];
                     model.collected = [RequestErrorGrab getIntegetKey:@"collected" toTarget:photo];
                     model.recommend = [RequestErrorGrab getBooLwitKey:@"recommend" toTarget:photo];
@@ -40,7 +40,7 @@
         }
         
     } @catch (NSException *exception) {
-        self.message = NETWORKTIPS;
+        self.message = exception.name;//NETWORKTIPS;
         self.status = 0;
     }
 }

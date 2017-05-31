@@ -49,14 +49,14 @@
     
     self.lblBack = [[UILabel alloc] init];
     [self.lblBack setText:@"返回"];
-    [self.lblBack setFont:[UIFont systemFontOfSize:17]];
+    [self.lblBack setFont:[UIFont systemFontOfSize:15]];
     [self.lblBack setTextColor:[UIColor blackColor]];
     [backView addSubview:self.lblBack];
     
     self.title = [[UILabel alloc] init];
     [self.title setTextAlignment:NSTextAlignmentCenter];
     [self.title setText:@"扫一扫"];
-    [self.title setFont:[UIFont fontWithName:@"Helvetica-Bold" size:19]];
+    [self.title setFont:[UIFont systemFontOfSize:17]];
     [self.title setTextColor:[UIColor blackColor]];
     [self addSubview:self.title];
     
@@ -82,9 +82,9 @@
     .widthIs(45);
     
     self.back.sd_layout
-    .leftSpaceToView(backView,7)
+    .leftSpaceToView(backView,10)
     .topSpaceToView(backView,7)
-    .rightSpaceToView(_lblBack,6)
+    .rightSpaceToView(_lblBack,0)
     .widthIs(11)
     .bottomSpaceToView(backView,7);
     

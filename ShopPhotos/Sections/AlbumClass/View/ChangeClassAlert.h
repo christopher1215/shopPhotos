@@ -19,6 +19,7 @@
 
 @property (weak, nonatomic) id<ChangeClassAlertDelegate>delegate;
 @property (assign, nonatomic) BOOL subClass;
+@property (assign, nonatomic) BOOL isVideoUpdate;
 @property (assign, nonatomic) BOOL addClass;
 @property (assign, nonatomic) NSInteger index;
 @property (strong, nonatomic) NSString * dName;

@@ -25,6 +25,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *lblAllowState;
 @property (weak, nonatomic) IBOutlet UIButton *btnDeny;
 @property (weak, nonatomic) IBOutlet UIButton *btnAllow;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *btnHeight;
+@property (weak, nonatomic) IBOutlet UIView *btnTopLine;
 
 @end
 
@@ -45,6 +47,17 @@
     self.contentView.cornerRadius = 15;
     [_lblContent sizeToFit];
     self.lblContent.text = self.content;
+    if ([self.type isEqualToString:@"copyRequestReply"]) {
+        [_btnDeny setEnabled:NO];
+        [_btnAllow setEnabled:NO];
+        
+        [_btnDeny setHidden:YES];
+        [_btnAllow setHidden:YES];
+        [_btnTopLine setHidden:YES];
+        _btnHeight.constant = 0;
+        [_contentView updateConstraints];
+
+    }
 
     [self.imgAvatarSec sd_setImageWithURL:[NSURL URLWithString:self.avatar] placeholderImage:[UIImage imageNamed:@"default-avatar.png"]];
     self.imgAvatarSec.cornerRadius = 25;
@@ -65,6 +78,12 @@
         }
         [_btnDeny setEnabled:NO];
         [_btnAllow setEnabled:NO];
+        
+        [_btnDeny setHidden:YES];
+        [_btnAllow setHidden:YES];
+        [_btnTopLine setHidden:YES];
+        _btnHeight.constant = 0;
+        [_contentView updateConstraints];
     } else {
         [self.imgAvatarSec setHidden:YES];
         [self.lblDateSec setHidden:YES];
@@ -77,7 +96,7 @@
 - (IBAction)onHandleCopyRequest:(id)sender {
     UIButton *btn = sender;
     NSDictionary * data = @{@"noticeId":[NSString stringWithFormat:@"%d",self.noticeId],
-                            @"allow":[NSString stringWithFormat:@"%ld",btn.tag]};
+                            @"allow":[NSString stringWithFormat:@"%ld",(long)btn.tag]};
     
     [self showLoad];
     __weak __typeof(self)weakSelef = self;
@@ -96,7 +115,7 @@
         
     } failure:^(NSError *error){
         [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
     
 }

@@ -20,7 +20,6 @@
 #import <TOCropViewController.h>
 #import "PhotosController.h"
 #import <TZImagePickerController.h>
-#import "ShareCtr.h"
 #import <ShareSDK/ShareSDK.h>
 #import "PhotoImagesModel.h"
 #import "DynamicImagesModel.h"
@@ -29,10 +28,10 @@
 #import "HasCollectPhotoRequset.h"
 #import "CopyRequset.h"
 #import "PublishPhotoCtr.h"
-#import "DynamicQRAlert.h"
+#import "StaticCollectionViewCell.h"
 
 
-@interface SearchAllCtr ()<UICollectionViewDelegate,UICollectionViewDataSource,UITextFieldDelegate,UIImagePickerControllerDelegate, UINavigationControllerDelegate,AttentionPhotoSearchCellDelegate,TOCropViewControllerDelegate,PhotosControllerDelegate,TZImagePickerControllerDelegate,ShareDelegate,AlbumPhotoTableCellDelegate>{
+@interface SearchAllCtr ()<UICollectionViewDelegate,UICollectionViewDataSource,UITextFieldDelegate,UIImagePickerControllerDelegate, UINavigationControllerDelegate,AttentionPhotoSearchCellDelegate,TOCropViewControllerDelegate,PhotosControllerDelegate,TZImagePickerControllerDelegate,AlbumPhotoTableCellDelegate,StaticCollectionViewCellDelegate>{
     int currentSection;
 }
 @property (weak, nonatomic) IBOutlet UIView *titleBackground;
@@ -45,13 +44,12 @@
 @property (weak, nonatomic) IBOutlet UIView *attentionPersonal;
 @property (weak, nonatomic) IBOutlet UIView *photos;
 @property (strong, nonatomic) UICollectionView * table;
+@property (strong, nonatomic) UILabel * tableFooter;
 @property (strong, nonatomic) NSMutableArray * userArray;
 @property (strong, nonatomic) NSMutableArray * photoArray;
 @property (strong, nonatomic) NSMutableArray * imageArray;
 @property (strong, nonatomic) NSMutableArray * selfPhotoArray;
 @property (assign, nonatomic) NSInteger itmeSelectedIndex;
-@property (strong, nonatomic) ShareCtr * shareView;
-@property (strong, nonatomic) DynamicQRAlert * qrAlert;
 @end
 
 @implementation SearchAllCtr
@@ -82,7 +80,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
+    [self imageArray];
     [self setup];
     
 }
@@ -110,7 +108,7 @@
     [self.table setBackgroundColor:ColorHex(0Xffffff)];
     [self.table registerClass:[AttentionPhotoSearchCell class] forCellWithReuseIdentifier:AttentionPhotoSearchCellID];
     [self.table registerClass:[AttentionPersonalSearchCell class] forCellWithReuseIdentifier:AttentionPersonalSearchCellID];
-    [self.table registerClass:[AlbumPhotoTableCell class] forCellWithReuseIdentifier:@"AlbumPhotoTableCellID"];
+    [self.table registerClass:[StaticCollectionViewCell class] forCellWithReuseIdentifier:AlbumPhotoTableCellID];
     [self.table registerClass:[UICollectionReusableView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"SearchAllHeaderView"];
     [self.table registerClass:[UICollectionReusableView class] forSupplementaryViewOfKind:UICollectionElementKindSectionFooter withReuseIdentifier:@"SearchAllFooterView"];
     [self.view addSubview:self.table];
@@ -123,11 +121,18 @@
     self.table.contentInset = UIEdgeInsetsMake(5, 5, 5, 5);
     [self.table setHidden:YES];
     
-    self.shareView = GETALONESTORYBOARDPAGE(@"ShareCtr");
-    self.shareView.delegate = self;
-    [self.view addSubview:self.shareView.view];
-    [self.shareView.view setHidden:YES];
-    [self.shareView closeAlert];
+    self.tableFooter = [[UILabel alloc] init];
+    [self.tableFooter setText:@"没有找到你需要的哦！"];
+    [self.tableFooter setFont:Font(15)];
+    [self.tableFooter setTextColor:[UIColor darkGrayColor]];
+    [self.tableFooter setTextAlignment:NSTextAlignmentCenter];
+    [self.tableFooter setHidden:YES];
+    [self.table addSubview:self.tableFooter];
+    self.tableFooter.sd_layout
+    .leftEqualToView(self.table)
+    .rightEqualToView(self.table)
+    .bottomSpaceToView(self.table, 30)
+    .heightIs(40);
 
 }
 
@@ -259,8 +264,6 @@
     
 }
 
-
-
 #pragma mark - UITextFieldDelegate
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
     if(textField == self.searchText){
@@ -276,7 +279,14 @@
     return YES;
 }
 
-
+-(BOOL)textFieldShouldClear:(UITextField *)textField
+{
+    textField.text = @"";
+    [textField resignFirstResponder];
+    [self.selectOption setHidden:NO];
+    [self.table setHidden:YES];
+    return NO;
+}
 #pragma mark -- UICollectionViewDataSource
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView{
     return 3;
@@ -314,10 +324,12 @@
     }else{
         static NSString * CellIdentifier = AlbumPhotoTableCellID;
         
-        AlbumPhotoTableCell * cell = [collectionView dequeueReusableCellWithReuseIdentifier:CellIdentifier forIndexPath:indexPath];
-        cell.showPrice = YES;
-        cell.model = [self.selfPhotoArray objectAtIndex:indexPath.row];
+        StaticCollectionViewCell * cell = [collectionView dequeueReusableCellWithReuseIdentifier:CellIdentifier forIndexPath:indexPath];
+        
+        [cell createAutoLayout:NO cellType:1];
+        cell.indexPath = indexPath;
         if(!cell.delegate)cell.delegate = self;
+        cell.model = [self.selfPhotoArray objectAtIndex:indexPath.row];
         return cell;
     }
 }
@@ -372,16 +384,16 @@
         label.tag = indexPath.section;
         [headerView addSubview:label];
         label.sd_layout
-        .leftSpaceToView(headerView,16)
+        .leftSpaceToView(headerView,10)
         .topEqualToView(headerView)
-        .rightSpaceToView(headerView,16)
+        .rightSpaceToView(headerView,10)
         .bottomEqualToView(headerView);
         
         UIView * line = [[UIView alloc] init];
         [line setBackgroundColor:ColorHex(0XEEEEEE)];
         [headerView addSubview:line];
         line.sd_layout
-        .leftSpaceToView(headerView,0)
+        .leftSpaceToView(headerView,10)
         .rightSpaceToView(headerView,0)
         .bottomEqualToView(headerView)
         .heightIs(1);
@@ -398,7 +410,7 @@
         [label setText:@"查看全部"];
         [label setFont:Font(13)];
         [label setTextColor:[UIColor darkGrayColor]];
-        [label setTextAlignment:NSTextAlignmentCenter];
+        [label setTextAlignment:NSTextAlignmentLeft];
 
         
         label.tag = indexPath.section;
@@ -411,17 +423,6 @@
         .rightSpaceToView(footerview,10)
         .heightIs(50);
         
-        
-        
-        UIView * line = [[UIView alloc] init];
-        [line setBackgroundColor:ColorHex(0XEEEEEE)];
-        [footerview addSubview:line];
-        line.sd_layout
-        .leftSpaceToView(footerview,0)
-        .rightSpaceToView(footerview,0)
-        .topEqualToView(footerview)
-        .heightIs(1);
-        
         UIView * line2 = [[UIView alloc] init];
         [line2 setBackgroundColor:ColorHex(0XEEEEEE)];
         [footerview addSubview:line2];
@@ -431,18 +432,63 @@
         .bottomEqualToView(footerview)
         .heightIs(10);
         
-        if(indexPath.section == 0 && self.userArray.count == 0){
-            [label setText:@"没有搜索到结果"];
-            [label setTextColor:[UIColor blackColor]];
-            [label setUserInteractionEnabled:NO];
-        }else if(indexPath.section == 1 && self.photoArray.count == 0){
-            [label setText:@"没有搜索到结果"];
-            [label setTextColor:[UIColor blackColor]];
-            [label setUserInteractionEnabled:NO];
-        }else if(indexPath.section == 2 && self.selfPhotoArray.count == 0){
-            [label setText:@"没有搜索到结果"];
-            [label setTextColor:[UIColor blackColor]];
-            [label setUserInteractionEnabled:NO];
+        if(indexPath.section == 0){
+            if (self.userArray.count == 0){
+                [label setText:@"没有搜索到我关注的人"];
+                [label setTextColor:[UIColor darkGrayColor]];
+                [label setUserInteractionEnabled:NO];
+            } else {
+                UIView * line = [[UIView alloc] init];
+                [line setBackgroundColor:ColorHex(0XEEEEEE)];
+                [footerview addSubview:line];
+                line.sd_layout
+                .leftSpaceToView(footerview,10)
+                .rightSpaceToView(footerview,0)
+                .topEqualToView(footerview)
+                .heightIs(1);
+
+            }
+        }else if(indexPath.section == 1){
+            if(self.photoArray.count == 0){
+                [label setText:@"没有搜索到关注的相册"];
+                [label setTextColor:[UIColor darkGrayColor]];
+                [label setUserInteractionEnabled:NO];
+            } else {
+                UIView * line = [[UIView alloc] init];
+                [line setBackgroundColor:ColorHex(0XEEEEEE)];
+                [footerview addSubview:line];
+                line.sd_layout
+                .leftSpaceToView(footerview,10)
+                .rightSpaceToView(footerview,0)
+                .topEqualToView(footerview)
+                .heightIs(1);
+            }
+        }else if(indexPath.section == 2){
+            if(self.selfPhotoArray.count == 0){
+                [label setText:@"没有搜索到自己的相册"];
+                [label setTextColor:[UIColor darkGrayColor]];
+                [label setUserInteractionEnabled:NO];
+            } else {
+                UIView * line = [[UIView alloc] init];
+                [line setBackgroundColor:ColorHex(0XEEEEEE)];
+                [footerview addSubview:line];
+                line.sd_layout
+                .leftSpaceToView(footerview,10)
+                .rightSpaceToView(footerview,0)
+                .topEqualToView(footerview)
+                .heightIs(1);
+            }
+        }
+        if (self.userArray.count > 0 || self.photoArray.count > 0 || self.selfPhotoArray.count > 0) {
+            [self.tableFooter setHidden:YES];
+        } else {
+            if (indexPath.section == 2) {
+                if (self.userArray.count == 0 && self.photoArray.count == 0 && self.selfPhotoArray.count == 0) {
+                    [self.tableFooter setHidden:NO];
+                } else {
+                    [self.tableFooter setHidden:YES];
+                }
+            }
         }
         
     }
@@ -526,7 +572,6 @@
     }
 }
 -(void)footerSelected:(UITapGestureRecognizer *)tap{
-    NSLog(@"foot -- %ld",tap.view.tag);
     if(tap.view.tag == 0){
         AttentionPersonalSearchCtr * photo = GETALONESTORYBOARDPAGE(@"AttentionPersonalSearchCtr");
         photo.searchKey = self.searchText.text;
@@ -562,270 +607,54 @@
     self.itmeSelectedIndex = indexPath.row;
     currentSection = indexPath.section;
     [self getPhotoImages];
-    [self.shareView showAlert];
+    AlbumPhotosModel * model = [currentSection == 1 ? self.photoArray : self.selfPhotoArray objectAtIndex:self.itmeSelectedIndex];
+    [self.appd showShareview:model.type collected:model.collected model:model from:self];
+}
+- (void)pyqClicked:(NSIndexPath *)indexPath {
+    self.itmeSelectedIndex = indexPath.row;
+    //    [self showLoad];
+    [self getPhotoImages];
+    NSMutableArray * images = [NSMutableArray array];
+    for(PhotoImagesModel * imageModel in _imageArray){
+        DynamicImagesModel * model = [[DynamicImagesModel alloc] init];
+        model.bigImageUrl = imageModel.bigImageUrl;
+        model.thumbnailUrl = imageModel.thumbnailUrl;
+        [images addObject:model];
+    }
+    AlbumPhotosModel * model = [self.selfPhotoArray objectAtIndex:self.itmeSelectedIndex];
+    
+    UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
+    pasteboard.string = model.title;
+    ShareContentSelectCtr * shareSelect = GETALONESTORYBOARDPAGE(@"ShareContentSelectCtr");
+    shareSelect.dataArray = images;
+    [self.navigationController pushViewController:shareSelect animated:YES];
 }
 
 - (void)getPhotoImages{
-    NSDictionary * model = [currentSection == 1 ? self.photoArray : self.selfPhotoArray objectAtIndex:self.itmeSelectedIndex];
-    self.imageArray = [RequestErrorGrab getArrwitKey:@"images" toTarget:model];
-}
-#pragma mark - ShareDelegate
-- (void)shareSelected:(NSInteger)type{
+    [_imageArray removeAllObjects];
+    AlbumPhotosModel * model = [self.selfPhotoArray objectAtIndex:self.itmeSelectedIndex];
     
-    AlbumPhotosModel * model = [currentSection == 1 ? self.photoArray : self.selfPhotoArray objectAtIndex:self.itmeSelectedIndex];
-    NSString * text = [NSString stringWithFormat:@"%@%@/photo/detail/%@",URLHead,self.uid,model.Id];
-    
-    //1、创建分享参数（必要）
-    NSMutableDictionary *shareParams = [NSMutableDictionary dictionary];
-    [shareParams SSDKSetupShareParamsByText:text
-                                     images:nil
-                                        url:nil
-                                      title:text
-                                       type:SSDKContentTypeAuto];
-    
-    switch (type) {
-        case 1: //微信好友
-        {
-            UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
-            pasteboard.string = text;
-            [ShareSDK share:SSDKPlatformSubTypeWechatSession parameters:shareParams onStateChanged:^(SSDKResponseState state, NSDictionary *userData, SSDKContentEntity *contentEntity, NSError *error){
-            }];
+    for(NSDictionary * image in model.images){
+        PhotoImagesModel * model = [[PhotoImagesModel alloc] init];
+        model.Id = [NSString stringWithFormat:@"%ld",(long)[RequestErrorGrab getIntegetKey:@"id" toTarget:image]];
+        //                model.imageLink_id = [NSString stringWithFormat:@"%ld",[RequestErrorGrab getIntegetKey:@"imageLink_id" toTarget:images]];
+        model.thumbnailUrl = [RequestErrorGrab getStringwitKey:@"thumbnailUrl" toTarget:image];
+        model.bigImageUrl = [RequestErrorGrab getStringwitKey:@"bigImageUrl" toTarget:image];
+        model.srcUrl = [RequestErrorGrab getStringwitKey:@"srcUrl" toTarget:image];
+        model.isCover = [RequestErrorGrab getBooLwitKey:@"isCover" toTarget:image];
+        if (model.isCover) {
+            [_imageArray insertObject:model atIndex:0];
+        }else{
+            [_imageArray addObject:model];
         }
-            break;
-        case 2:// 朋友圈
-        {
-            
-            NSMutableArray * images = [NSMutableArray array];
-            for(PhotoImagesModel * imageModel in self.imageArray){
-                DynamicImagesModel * model = [[DynamicImagesModel alloc] init];
-                model.bigImageUrl = imageModel.bigImageUrl;
-                model.thumbnailUrl = imageModel.thumbnailUrl;
-                [images addObject:model];
-            }
-            UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
-            pasteboard.string = model.title;
-            ShareContentSelectCtr * shareSelect = GETALONESTORYBOARDPAGE(@"ShareContentSelectCtr");
-            shareSelect.dataArray = images;
-            [self.navigationController pushViewController:shareSelect animated:YES];
-        }
-            break;
-        case 3:// QQ好友
-        {
-            UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
-            pasteboard.string = text;
-            [ShareSDK share:SSDKPlatformSubTypeQQFriend parameters:shareParams onStateChanged:^(SSDKResponseState state, NSDictionary *userData, SSDKContentEntity *contentEntity, NSError *error){
-            }];
-        }
-            
-            break;
-        case 4:// 复制相册
-        {
-            
-            NSString * uid = self.uid;
-            if(uid && uid.length > 0){
-                if([self.photosUserID isEqualToString:uid]){
-                    [self showToast:@"不能复制自己的相册"];
-                    break;
-                }
-                
-                [self getAllowPurview:@{@"uid":self.uid}];
-            }
-        }
-            break;
-        case 5:// 复制链接
-        {
-            NSString * text = [NSString stringWithFormat:@"%@%@/photo/detail/%@",URLHead,self.uid,model.Id];
-            UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
-            pasteboard.string = text;
-            [self showToast:@"复制成功"];
-        }
-            
-            break;
-        case 6:// 复制标题
-        {
-            UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
-            pasteboard.string = model.title;
-            [self showToast:@"复制成功"];
-        }
-            break;
-        case 7:// 查看二维码
-        {
-            self.qrAlert.titleText = model.title;
-            self.qrAlert.contentText = [NSString stringWithFormat:@"%@%@/photo/detail/%@",URLHead,self.uid,model.title];
-            [self.qrAlert showAlert];
-        }
-            
-            break;
-        case 8:// 收藏相册
-        {
-            NSString * uid = self.uid;
-            if(uid && uid.length > 0){
-                if([self.photosUserID isEqualToString:uid]){
-                    [self showToast:@"不能收藏自己的相册"];
-                    break;
-                }
-            }
-            
-            [self hasCollectPhoto:@{@"photoId":model.Id}];
-        }
-            break;
-        case 9:// 下载图片
-        {
-            NSMutableArray * images = [NSMutableArray array];
-            for(PhotoImagesModel * imageModel in self.imageArray){
-                DynamicImagesModel * model = [[DynamicImagesModel alloc] init];
-                model.bigImageUrl = imageModel.bigImageUrl;
-                model.thumbnailUrl = imageModel.thumbnailUrl;
-                [images addObject:model];
-            }
-            
-            DownloadImageCtr * shareSelect = GETALONESTORYBOARDPAGE(@"DownloadImageCtr");
-            shareSelect.dataArray = images;
-            [self.navigationController pushViewController:shareSelect animated:YES];
-            
-        }
-            break;
     }
-}
-- (void)sendCopyRequest:(NSDictionary *)data{
-    
-    NSLog(@"1--- %@",data);
-    
-    NSLog(@"2--- %@",self.congfing.sendCopyRequest);
-    //[self showLoad];
-    __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.sendCopyRequest parametric:data succed:^(id responseObject){
-        //[weakSelef closeLoad];
-        NSLog(@"%@",responseObject);
-        BaseModel * model = [[BaseModel alloc] init];
-        [model analyticInterface:responseObject];
-        if(model.status == 0){
-            [weakSelef showToast:@"发送成功，请耐心等待"];
-        }else{
-            [weakSelef showToast:model.message];
-        }
-    } failure:^(NSError *error){
-        //[weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
-    }];
-}
-
-- (void)hasCollectPhoto:(NSDictionary *)data{
-    
-    //[self showLoad];
-    __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.hasCollectPhoto parametric:data succed:^(id responseObject){
-        //[weakSelef closeLoad];
-        NSLog(@"%@",responseObject);
-        HasCollectPhotoRequset * requset = [[HasCollectPhotoRequset alloc] init];
-        [requset analyticInterface:responseObject];
-        if(requset.status == 0){
-            
-            if(requset.hasCollect){
-                
-                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:@"您已经收藏该相册，是否取消收藏" preferredStyle:UIAlertControllerStyleAlert];
-                [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
-                [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action){
-                    
-                    [weakSelef cancelCollectPhotos:@{@"photosId":[NSString stringWithFormat:@"%@,",[data objectForKey:@"photoId"]]}];
-                }]];
-                
-                [weakSelef presentViewController:alert animated:YES completion:nil];
-            }else{
-                [weakSelef collectPhoto:data];
-            }
-            
-        }else{
-            [weakSelef showToast:requset.message];
-        }
-    } failure:^(NSError *error){
-        //[weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
-    }];
-}
-
-- (void)collectPhoto:(NSDictionary *)data{
-    //[self showLoad];
-    __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.collssssCopy parametric:data succed:^(id responseObject){
-        //[weakSelef closeLoad];
-        NSLog(@"%@",responseObject);
-        BaseModel * model = [[BaseModel alloc] init];
-        if(model.status == 0){
-            [weakSelef showToast:@"收藏成功"];
-        }else{
-            [weakSelef showToast:model.message];
-        }
-    } failure:^(NSError *error){
-        //[weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
-    }];
-}
-
-- (void)cancelCollectPhotos:(NSDictionary * )data{
-    
-    //[self showLoad];
-    __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.cancelCollectPhotos parametric:data succed:^(id responseObject){
-        //[weakSelef closeLoad];
-        NSLog(@"%@",responseObject);
-        BaseModel * model = [[BaseModel alloc] init];
-        if(model.status == 0){
-            [weakSelef showToast:@"取消收藏成功"];
-        }else{
-            [weakSelef showToast:model.message];
-        }
-    } failure:^(NSError *error){
-        //[weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
-    }];
-}
-
-- (void)getAllowPurview:(NSDictionary *)data{
-    
-    //[self showLoad];
-    __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.isPassiveUserAllow parametric:data succed:^(id responseObject){
-        //[weakSelef closeLoad];
-        NSLog(@"%@",responseObject);
-        CopyRequset * model = [[CopyRequset alloc] init];
-        [model analyticInterface:responseObject];
-        if(model.status == 0){
-            
-            if(model.allow){
-                PublishPhotoCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotoCtr");
-                AlbumPhotosModel * albumModel = [currentSection == 1 ? self.photoArray : self.selfPhotoArray objectAtIndex:self.itmeSelectedIndex];
-                /*
-                 pulish.is_copy = YES;
-                 pulish.photoTitleText = albumModel.title;
-                 pulish.photoTitleText = @"";
-                 pulish.imageCopy = [[NSMutableArray alloc] initWithArray:self.imageArray];*/
-                [weakSelef.navigationController pushViewController:pulish animated:YES];
-            }else{
-                
-                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:@"对方设置了限制复制，是否发送请求复制" preferredStyle:UIAlertControllerStyleAlert];
-                [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
-                [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action){
-                    
-                    [weakSelef sendCopyRequest:data];
-                    
-                }]];
-                
-                [weakSelef presentViewController:alert animated:YES completion:nil];
-            }
-            
-        }else{
-            [weakSelef showToast:model.message];
-        }
-        
-    } failure:^(NSError *error){
-        //[weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
-    }];
 }
 
 - (void)loadSearchData{
-    
+    if ([self.searchText.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]].length <= 0) {
+        [self showToast:@"请输入关键字"];
+        return;
+    }
     [self showLoad];
     NSDictionary * data = @{@"keyword":self.searchText.text, @"limit":@"20"};
     __weak __typeof(self)weakSelef = self;
@@ -848,7 +677,7 @@
         NSLog(@"%@",responseObject);
     } failure:^(NSError *error){
         [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
     
 }

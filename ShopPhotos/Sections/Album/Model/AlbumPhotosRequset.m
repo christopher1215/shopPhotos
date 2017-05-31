@@ -14,7 +14,7 @@
 - (void)analyticInterface:(NSDictionary *)data{
     @try {
         self.status = [RequestErrorGrab getIntegetKey:@"code" toTarget:data];
-        self.message = [RequestErrorGrab getStringwitKey:@"message'" toTarget:data];
+        self.message = [RequestErrorGrab getStringwitKey:@"message" toTarget:data];
         if(self.status)return;
         
         NSDictionary * json = [RequestErrorGrab getDicwitKey:@"data" toTarget:data];
@@ -39,7 +39,7 @@
             }
         }
     } @catch (NSException *exception) {
-        self.message = NETWORKTIPS;
+        self.message = exception.name;//NETWORKTIPS;
         self.status = 0;
     }
 }
@@ -54,7 +54,7 @@
     model.cover = [RequestErrorGrab getStringwitKey:@"cover" toTarget:photo];
     model.video = [RequestErrorGrab getStringwitKey:@"video" toTarget:photo];
     model.desc = [RequestErrorGrab getStringwitKey:@"description" toTarget:photo];
-    model.Id = [NSString stringWithFormat:@"%ld",[RequestErrorGrab getIntegetKey:@"id" toTarget:photo]];
+    model.Id = [NSString stringWithFormat:@"%ld",(long)[RequestErrorGrab getIntegetKey:@"id" toTarget:photo]];
     model.createdAt = [RequestErrorGrab getStringwitKey:@"createdAt" toTarget:photo];
     model.user = [RequestErrorGrab getDicwitKey:@"user" toTarget:photo];
     model.classify = [RequestErrorGrab getDicwitKey:@"classify" toTarget:photo];

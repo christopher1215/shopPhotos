@@ -27,6 +27,7 @@
 @implementation PublishPhoto
 
 - (void)startTask:(NSDictionary *)data complete:(CompletePublish)completeStatu {
+    
     _completeStatu = completeStatu;
     NSLog(@"---- > %@",self);
     _appd = (AppDelegate*)[UIApplication sharedApplication].delegate;
@@ -43,7 +44,7 @@
     
     for(NSData *imgData in imageArray) {
         [data setValue:[NSString stringWithFormat:@"%d.png",index+1] forKey:[NSString stringWithFormat:@"images[%d][filename]",index]];
-        [data setValue:[NSString stringWithFormat:@"%ld",imgData.length] forKey:[NSString stringWithFormat:@"images[%d][size]",index]];
+        [data setValue:[NSString stringWithFormat:@"%ld",(unsigned long)imgData.length] forKey:[NSString stringWithFormat:@"images[%d][size]",index]];
         index++;
     }
     
@@ -89,10 +90,10 @@
             
             if(index == 0){
                 [imageName appendFormat:@"%@",key];
-                [dataSize appendFormat:@"%ld",imageData.length];
+                [dataSize appendFormat:@"%ld",(unsigned long)imageData.length];
             }else{
                 [imageName appendFormat:@"*%@",key];
-                [dataSize appendFormat:@"*%ld",imageData.length];
+                [dataSize appendFormat:@"*%ld",(unsigned long)imageData.length];
             }
             NSDictionary * postData = @{@"key":key,
                                        @"token":[data objectForKey:@"token"]};
@@ -115,12 +116,11 @@
                 }
             }progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject){
                 NSLog(@"%@",responseObject);
-                ++count;
-                NSLog(@"%ld---->>>><<<<<<-- %ld",count,images.count);
+                count++;
                 CreatePhoto2Model * model  = [[CreatePhoto2Model alloc] init];
                 [model analyticInterface:responseObject];
                 [aryRet addObject:@{@"hash":model.hhash,@"key":model.key}];
-                if ((index+1) == images.count) {
+                if (count == images.count) {
                     [self.postData setValue:aryRet forKey:@"imagekeys"];
                     if (self.isAdd == NO) {
                         [self savePhotos];

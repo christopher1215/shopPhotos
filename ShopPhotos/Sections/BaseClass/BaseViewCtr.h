@@ -33,6 +33,6 @@ static NSString * const URLHead = @"http://www.uootu.com/";
 
 - (void)showLoad;
 - (void)closeLoad;
-
 - (void)showToast:(NSString *)title;
+
 @end

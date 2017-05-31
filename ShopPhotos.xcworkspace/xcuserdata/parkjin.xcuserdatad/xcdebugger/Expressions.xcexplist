@@ -3,6 +3,17 @@
    version = "1.0">
    <ContextStates>
       <ContextState
+         contextName = "-[PublishPhotoCtr publishSelected]:PublishPhotoCtr.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.photoTitle.text">
+            </PersistentString>
+            <PersistentString
+               value = "self.remarksContent.text">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "-[BaseViewCtr viewDidLoad]:BaseViewCtr.m">
          <PersistentStrings>
             <PersistentString
@@ -71,14 +82,6 @@
          contextName = "__29-[PublishVideoCtr saveVideo:]_block_invoke_2:PublishVideoCtr.m">
       </ContextState>
       <ContextState
-         contextName = "__35-[PublishPhotoCtr addPublishImage:]_block_invoke:PublishPhotoCtr.m">
-         <PersistentStrings>
-            <PersistentString
-               value = "self.imageArray.count">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
          contextName = "-[PublishPhotoCtr drawImages]:PublishPhotoCtr.m">
          <PersistentStrings>
             <PersistentString
@@ -87,7 +90,26 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "__35-[PublishPhotoCtr addPublishImage:]_block_invoke:PublishPhotoCtr.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.imageArray.count">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "__29-[PublishVideoCtr saveVideo:]_block_invoke:PublishVideoCtr.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[PublishPhotoCtr viewDidLoad]:PublishPhotoCtr.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.photoTitle.text">
+            </PersistentString>
+            <PersistentString
+               value = "self.remarksContent.text">
+            </PersistentString>
+         </PersistentStrings>
       </ContextState>
       <ContextState
          contextName = "-[PublishPhotoCtr selectClass]:PublishPhotoCtr.m">

@@ -125,7 +125,8 @@
     if(!self.hud)
         self.hud = [MBProgressHUD showHUDAddedTo:self animated:YES];
     self.hud.mode = MBProgressHUDModeText;
-    self.hud.labelText = [message isKindOfClass:[NSString class]]?message:@"";
+    self.hud.labelText=[message isKindOfClass:[NSString class]]?message:@"";
+    //self.hud.label.text =
     self.hud.yOffset = -50.0f;
     self.hud.userInteractionEnabled = NO;
     [self.hud show:YES];

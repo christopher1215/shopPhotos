@@ -34,6 +34,11 @@
     [self setBackgroundColor:ColorHex(0xf5f5f5)];
     [self.contentView setBackgroundColor:ColorHex(0xf5f5f5)];
     
+    
+    for(UIView *v in self.subviews) {
+        [v removeFromSuperview];
+    }
+    
     int space = 50;
     if (isSubClass == TRUE) {
         space = self.frame.size.width/4;
@@ -61,8 +66,8 @@
     
     UILabel *lab_edit = [[UILabel alloc] init];
     [lab_edit setText:@"编辑"];
-    [lab_edit setTextColor:[UIColor darkGrayColor]];
-    [lab_edit setFont:Font(13)];
+    [lab_edit setTextColor:ColorHex(0x7e8599)];
+    [lab_edit setFont:Font(11)];
     [lab_edit setTextAlignment:NSTextAlignmentCenter];
     [lab_edit addTarget:self action:@selector(changSelected)];
     [editView addSubview:lab_edit];
@@ -94,8 +99,8 @@
         
         UILabel *lab_add = [[UILabel alloc] init];
         [lab_add setText:@"添加子分类"];
-        [lab_add setTextColor:[UIColor darkGrayColor]];
-        [lab_add setFont:Font(13)];
+        [lab_add setTextColor:ColorHex(0x7e8599)];
+        [lab_add setFont:Font(11)];
         [lab_add setTextAlignment:NSTextAlignmentCenter];
         [lab_add addTarget:self action:@selector(addSubSelected)];
         [addView addSubview:lab_add];
@@ -129,9 +134,9 @@
     
     UILabel *lab_del = [[UILabel alloc] init];
     [lab_del setText:@"删除"];
-    [lab_del setTextColor:[UIColor darkGrayColor]];
+    [lab_del setTextColor:ColorHex(0x7e8599)];
     [lab_del setTextAlignment:NSTextAlignmentCenter];
-    [lab_del setFont:Font(13)];
+    [lab_del setFont:Font(11)];
     [lab_del addTarget:self action:@selector(deleteSelected)];
     [delView addSubview:lab_del];
     lab_del.sd_layout

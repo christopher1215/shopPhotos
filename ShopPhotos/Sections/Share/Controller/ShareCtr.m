@@ -19,8 +19,12 @@
 @property (weak, nonatomic) IBOutlet UIButton *titleCopy;
 @property (weak, nonatomic) IBOutlet UIButton *lookQR;
 @property (weak, nonatomic) IBOutlet UIButton *favorite;
+@property (weak, nonatomic) IBOutlet UILabel *lblFavorite;
 @property (weak, nonatomic) IBOutlet UIButton *download;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *alertOffset;
+@property (weak, nonatomic) IBOutlet UIView *viewCopyPhoto;
+@property (weak, nonatomic) IBOutlet UIView *bBackView;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *viewCopyLinkLeft;
 
 @end
 
@@ -32,10 +36,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
-    
     [self setup];
-    
 }
 
 - (void)setup{
@@ -97,6 +98,34 @@
     }
 }
 
+- (void)setLayout:(NSString *)type isCollected:(BOOL)collected whoisPhoto:(BOOL) isMyPhoto{
+    
+    if ([type isEqualToString:@"video"]) {
+        [_viewCopyPhoto setHidden:YES];
+        float tmpWidth = _viewCopyPhoto.frame.size.width;
+        self.viewCopyLinkLeft.constant = - tmpWidth;
+        [self.bBackView updateConstraints];
+    } else {
+        [_viewCopyPhoto setHidden:NO];
+        self.viewCopyLinkLeft.constant = 10;
+        [self.bBackView updateConstraints];
+    }
+    
+    if(isMyPhoto) {
+        [_lblFavorite setText:@"收藏"];
+        [_favorite setBackgroundImage:[UIImage imageNamed:@"share_uncollect.png"] forState:UIControlStateNormal];
+    }
+    else{
+        if (collected == YES) {
+            [_lblFavorite setText:@"取消收藏"];
+            [_favorite setBackgroundImage:[UIImage imageNamed:@"share_collect.png"] forState:UIControlStateNormal];
+        } else {
+            [_lblFavorite setText:@"收藏"];
+            [_favorite setBackgroundImage:[UIImage imageNamed:@"share_uncollect.png"] forState:UIControlStateNormal];
+        }
+    }
+}
+
 - (void)showAlert{
     [self.view setHidden:NO];
     [self.view setBackgroundColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:0]];
@@ -110,18 +139,16 @@
     }];
 }
 
-
 - (void)closeAlert{
-
     
     [UIView animateWithDuration:0.5 animations:^{
-    
         [self.view setBackgroundColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:0]];
         self.alertOffset.constant = -360;
         [self.view layoutIfNeeded];
         
     } completion:^(BOOL finished){
-        [self.view setHidden:YES];
+        [self.view removeFromSuperview];
+//        [self.view setHidden:YES];
     }];
 }
 

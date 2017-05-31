@@ -27,6 +27,8 @@
 #import "DynamicCtr.h"
 #import "MypointViewController.h"
 #import "AddUserViewController.h"
+#import "PublishPhotoCtr.h"
+#import "MJPhoto.h"
 
 @interface HomePageCtr ()<MoreAlertDelegate,AddFriendAlertDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate>
 {
@@ -46,9 +48,9 @@
 @property (weak, nonatomic) IBOutlet UIButton *uidView;
 @property (weak, nonatomic) IBOutlet UILabel *uidText;
 @property (weak, nonatomic) IBOutlet UIButton *qqView;
-@property (weak, nonatomic) IBOutlet UILabel *qqText;
+@property (strong, nonatomic) UILabel *qqText;
 @property (weak, nonatomic) IBOutlet UIButton *chatView;
-//@property (weak, nonatomic) IBOutlet UILabel *chatText;
+@property (strong, nonatomic) UILabel *chatText;
 @property (weak, nonatomic) IBOutlet UILabel *signature;
 @property (weak, nonatomic) IBOutlet UIButton *recommend;
 @property (weak, nonatomic) IBOutlet UIButton *album;
@@ -61,6 +63,7 @@
 @property (strong, nonatomic) AddFriendAlert * addAlert;
 @property (weak, nonatomic) IBOutlet UIButton *scan;
 @property (weak, nonatomic) IBOutlet UIButton *point;
+@property (weak, nonatomic) IBOutlet UILabel *lblNumber;
 
 @end
 
@@ -91,7 +94,8 @@
 }
 
 - (void)setup{
-    
+    self.qqText = [[UILabel alloc] init];
+    self.chatText = [[UILabel alloc] init];
     self.uidView.cornerRadius = 12;
     self.qqView.cornerRadius = 12;
     self.chatView.cornerRadius = 12;
@@ -164,6 +168,14 @@
 - (IBAction)uidSelect:(id)sender {
 }
 - (IBAction)qqSelect:(id)sender {
+    NSString * qqStr = self.qqText.text;
+    if(qqStr && qqStr.length >0){
+        UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
+        pasteboard.string = qqStr;
+    }else {
+        [self showToast:@"QQ号为空"];
+        return;
+    }
     __weak __typeof(self)weakSelef = self;
     NSString * msg = [NSString stringWithFormat:@"QQ号已复制，可以进入QQ粘贴"];
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:msg preferredStyle:UIAlertControllerStyleAlert];
@@ -180,6 +192,15 @@
     [self presentViewController:alert animated:YES completion:nil];
 }
 - (IBAction)wechatSelect:(id)sender {
+    NSString * chatStr = self.chatText.text;
+    if(chatStr && chatStr.length > 0){
+        UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
+        pasteboard.string = chatStr;
+    }else{
+        [self showToast:@"微信号为空"];
+        return;
+    }
+
     __weak __typeof(self)weakSelef = self;
     NSString * msg = [NSString stringWithFormat:@"微信号已复制，可以进入微信粘贴"];
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:msg preferredStyle:UIAlertControllerStyleAlert];
@@ -329,8 +350,8 @@
 - (void)moreAlertSelected:(NSInteger)indexPath{
     
     if(indexPath == 0){
-        PublishPhotoCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotoCtr");
-        [self.navigationController pushViewController:pulish animated:YES];
+        PublishPhotoCtr * publish = GETALONESTORYBOARDPAGE(@"PublishPhotoCtr");
+        [self.navigationController pushViewController:publish animated:YES];
     }else if(indexPath == 2){
         QRCodeScanCtr * qrCode = [[QRCodeScanCtr alloc] init];
         [self.navigationController pushViewController:qrCode animated:YES];
@@ -373,7 +394,7 @@
 #pragma mark - 修改样式
 - (void)setStyle:(UserInfoModel *)model{
     
-    [self.head sd_setImageWithURL:[NSURL URLWithString:model.bg_image]];
+//    [self.head sd_setImageWithURL:[NSURL URLWithString:model.bg_image]];
     [self.headImage sd_setImageWithURL:[NSURL URLWithString:model.avatar]];
     self.iconURL = model.avatar;
     [self.name setText:model.name];
@@ -400,18 +421,8 @@
     
     if(model.qq && model.qq.length > 0){
         NSString * qqs = model.qq;
-        if(qqs.length >11){
-            qqs = [qqs substringToIndex:11];
-        }
-        NSMutableAttributedString * qqText = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@" %@",qqs]];
-        NSTextAttachment * qqIocn = [[NSTextAttachment alloc] init];
-        qqIocn.image = [UIImage imageNamed:@"qq_icon_white"];
-        qqIocn.bounds = CGRectMake(0, -2, 13, 13);
-        NSAttributedString *string = [NSAttributedString attributedStringWithAttachment:qqIocn];
-        [qqText insertAttributedString:string atIndex:0];
         
-        [self.qqText setAttributedText:qqText];
-        [self.qqText setTextAlignment:NSTextAlignmentCenter];
+        [self.qqText setText:qqs];
     }else{
         NSMutableAttributedString * qqText = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@""]];
         NSTextAttachment * qqIocn = [[NSTextAttachment alloc] init];
@@ -420,26 +431,13 @@
         NSAttributedString *string = [NSAttributedString attributedStringWithAttachment:qqIocn];
         [qqText insertAttributedString:string atIndex:0];
         
-        [self.qqText setAttributedText:qqText];
-        [self.qqText setTextAlignment:NSTextAlignmentLeft];
+        [self.qqText setText:@""];
     }
     
     if(model.wechat && model.wechat.length >0){
         
         NSString * qqs = model.wechat;
-        if(qqs.length >11){
-            qqs = [qqs substringToIndex:11];
-            NSString * qqr = [NSString stringWithFormat:@"%@..",qqs];
-            qqs = qqr;
-        }
-        NSMutableAttributedString * chatText = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@" %@",qqs]];
-        NSTextAttachment * chatIocn = [[NSTextAttachment alloc] init];
-        chatIocn.image = [UIImage imageNamed:@"wexin_icon_white"];
-        chatIocn.bounds = CGRectMake(0, -3, 15, 13);
-        NSAttributedString *chatIocnStr = [NSAttributedString attributedStringWithAttachment:chatIocn];
-        [chatText insertAttributedString:chatIocnStr atIndex:0];
-        //        [self.chatText setAttributedText:chatText];
-        //        [self.chatText setTextAlignment:NSTextAlignmentCenter];
+        [self.chatText setText:qqs];
     }else{
         NSMutableAttributedString * chatText = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@""]];
         NSTextAttachment * chatIocn = [[NSTextAttachment alloc] init];
@@ -447,23 +445,23 @@
         chatIocn.bounds = CGRectMake(5, -3, 15, 13);
         NSAttributedString *chatIocnStr = [NSAttributedString attributedStringWithAttachment:chatIocn];
         [chatText insertAttributedString:chatIocnStr atIndex:0];
-        //        [self.chatText setAttributedText:chatText];
-        //        [self.chatText setTextAlignment:NSTextAlignmentLeft];
+        [self.chatText setText:@""];
+        [self.chatText setTextAlignment:NSTextAlignmentLeft];
     }
     
     NSString * sign = @"";
     if(model.signature && model.signature.length > 0){
         sign = [NSString stringWithFormat:@"%@",model.signature];
     }else{
-        sign = [NSString stringWithFormat:@"这个人很懒什么都没有留下"];
+        //sign = [NSString stringWithFormat:@"这个人很懒什么都没有留下"];
     }
     //    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     //    paragraphStyle.lineSpacing = 3;
     //    NSDictionary *attributes = @{NSFontAttributeName:[UIFont systemFontOfSize:12],NSParagraphStyleAttributeName:paragraphStyle};
     //    self.signature.attributedText = [[NSAttributedString alloc] initWithString:sign attributes:attributes];
     self.signature.text = sign;
-    
-    [self.point setTitle:[NSString stringWithFormat:@"积分:%ld", model.integral] forState:UIControlStateNormal];
+    self.lblNumber.text = [NSString stringWithFormat:@"有图号:%@", model.uid];
+    //[self.point setTitle:[NSString stringWithFormat:@"积分:%ld", (long)model.integral] forState:UIControlStateNormal];
     //    [self.keep setTitle:[NSString stringWithFormat:@"收藏:%ld", model.concerned] forState:UIControlStateNormal];
 }
 
@@ -491,7 +489,7 @@
         [weakSelef.table.mj_header endRefreshing];
     } failure:^(NSError *error){
         [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
         [weakSelef.table.mj_header endRefreshing];
     }];
 }
@@ -503,8 +501,8 @@
         HomePageCountModel * model = [[HomePageCountModel alloc] init];
         [model analyticInterface:responseObject];
         if(model.status == 0){
-            [weakSelef.keep setTitle:[NSString stringWithFormat:@"收藏:%ld",(model.collectPhotosCount + model.collectVideosCount)] forState:UIControlStateNormal];
-            [weakSelef.point setTitle:[NSString stringWithFormat:@"积分:%ld",model.integral] forState:UIControlStateNormal];
+//            [weakSelef.keep setTitle:[NSString stringWithFormat:@"收藏:%ld",(model.collectPhotosCount + model.collectVideosCount)] forState:UIControlStateNormal];
+//            [weakSelef.point setTitle:[NSString stringWithFormat:@"积分:%ld",(long)model.integral] forState:UIControlStateNormal];
         }
     } failure:nil];
 }
@@ -529,7 +527,7 @@
         }
     } failure:^(NSError *error){
         [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
         [weakSelef.table.mj_header endRefreshing];
     }];
 }

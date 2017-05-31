@@ -65,7 +65,7 @@
     [self.view addSubview:self.selectOption];
     self.optionTitle = [[UILabel alloc] initWithFrame:CGRectMake((self.view.frame.size.width-100)/2, 0, 100, 50)];
     [self.optionTitle setTextAlignment:NSTextAlignmentCenter];
-    [self.optionTitle setText:[NSString stringWithFormat:@"0/%ld",self.maxIndex]];
+    [self.optionTitle setText:[NSString stringWithFormat:@"0/%ld",(long)self.maxIndex]];
     [self.optionTitle setBackgroundColor:[UIColor whiteColor]];
     [self.selectOption addSubview:self.optionTitle];
     
@@ -184,11 +184,11 @@
 
 - (void)setCount:(NSInteger)count{
     if(count > self.maxIndex){
-        NSString * msg = [NSString stringWithFormat:@"最大选择%ld张",self.maxIndex];
+        NSString * msg = [NSString stringWithFormat:@"最大选择%ld张",(long)self.maxIndex];
         SPAlert(msg,self);
         return;
     }
-    [self.optionTitle setText:[NSString stringWithFormat:@"%ld/%ld",count,self.maxIndex]];
+    [self.optionTitle setText:[NSString stringWithFormat:@"%ld/%ld",(long)count,self.maxIndex]];
 }
 
 @end

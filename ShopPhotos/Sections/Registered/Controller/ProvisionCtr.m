@@ -29,11 +29,12 @@
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     paragraphStyle.lineSpacing = 5;// 字体的行间距
     
-    NSDictionary *attributes = @{NSFontAttributeName:[UIFont systemFontOfSize:13],NSParagraphStyleAttributeName:paragraphStyle};
+    NSDictionary *attributes = @{NSFontAttributeName:[UIFont systemFontOfSize:14],NSParagraphStyleAttributeName:paragraphStyle};
     self.text.attributedText = [[NSAttributedString alloc] initWithString:textStr attributes:attributes];
 }
 
 - (void)backSelected{
+    
     [self.navigationController popViewControllerAnimated:YES];
 }
 

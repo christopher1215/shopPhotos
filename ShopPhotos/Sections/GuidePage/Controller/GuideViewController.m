@@ -45,50 +45,54 @@
     [super viewDidAppear:animated];
     slider.frame = CGRectMake(0, 0, self.sliderView.frame.size.width,self.sliderView.frame.size.height);
     [self getInfo];
-    UserModel * userModel = [self getValueWithKey:CacheUserModel];
-    if(userModel){
-        // 已登入
-        NSString *pass = [self getValueWithKey:@"password"];
-        if (pass) {
-            NSDictionary *data = @{@"name":userModel.uid, @"password":pass};
-            [self showLoad];
-            __weak __typeof(self)weakSelef = self;
-            [HTTPRequest requestPOSTUrl:[NSString stringWithFormat:@"%@%@",self.congfing.login,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
-                [weakSelef closeLoad];
-                LoginLoadModel * model = [[LoginLoadModel alloc] init];
-                [model analyticInterface:responseObject];
-                if(model.status == 0 || model.status == 200){
-                    [[RCIM sharedRCIM] connectWithToken:model.imToken     success:^(NSString *userId) {
-                        NSLog(@"登陆成功。当前登录的用户ID：%@", userId);
-                        int totalUnreadCount = [[RCIMClient sharedRCIMClient] getTotalUnreadCount];
-                        NSLog(@"当前所有会话的未读消息数为：%d", totalUnreadCount);
-                        NSDictionary * userInfo = @{ @"totalUnreadCount": [NSString stringWithFormat:@"%d", totalUnreadCount]};
-                        [[NSNotificationCenter defaultCenter] postNotificationName:@"getTotalUnreadCount" object:nil userInfo:userInfo];
-                    } error:^(RCConnectErrorCode status) {
-                        NSLog(@"登陆的错误码为:%d", status);
-                    } tokenIncorrect:^{
-                        //token过期或者不正确。
-                        //如果设置了token有效期并且token过期，请重新请求您的服务器获取新的token
-                        //如果没有设置token有效期却提示token错误，请检查您客户端和服务器的appkey是否匹配，还有检查您获取token的流程。
-                        NSLog(@"token错误");
-                    }];
-                }else{
-                    
-                    LoginCtr * login = GETALONESTORYBOARDPAGE(@"LoginCtr");
-                    [self.appd setStartViewController:login];
-                    [weakSelef showToast:model.message];
-                }
-            } failure:^(NSError * error){
-                [weakSelef showToast:NETWORKTIPS];
-                [weakSelef closeLoad];
-            }];
-
-        }
-        
-    }else{
-        LoginCtr * login = GETALONESTORYBOARDPAGE(@"LoginCtr");
-        [self.appd setStartViewController:login];
-    }
+//    UserModel * userModel = [self getValueWithKey:CacheUserModel];
+//    if(userModel){
+//        // 已登入
+//        NSString *pass = [self getValueWithKey:@"password"];
+//        if (pass) {
+//            NSDictionary *data = @{@"name":userModel.uid, @"password":pass};
+//            [self showLoad];
+//            __weak __typeof(self)weakSelef = self;
+//            [HTTPRequest requestPOSTUrl:[NSString stringWithFormat:@"%@%@",self.congfing.login,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+//                [weakSelef closeLoad];
+//                LoginLoadModel * model = [[LoginLoadModel alloc] init];
+//                [model analyticInterface:responseObject];
+//                if(model.status == 0 || model.status == 200){
+//                    [[RCIM sharedRCIM] connectWithToken:model.imToken     success:^(NSString *userId) {
+//                        NSLog(@"登陆成功。当前登录的用户ID：%@", userId);
+//                        dispatch_async(dispatch_get_main_queue(), ^{
+//                            [weakSelef closeLoad];
+//                            //更新UI操作
+//                            int totalUnreadCount = [[RCIMClient sharedRCIMClient] getTotalUnreadCount];
+//                            NSLog(@"当前所有会话的未读消息数为：%d", totalUnreadCount);
+//                            NSDictionary * userInfo = @{ @"totalUnreadCount": [NSString stringWithFormat:@"%d", totalUnreadCount]};
+//                            [[NSNotificationCenter defaultCenter] postNotificationName:@"getTotalUnreadCount" object:nil userInfo:userInfo];
+//                        });
+//                    } error:^(RCConnectErrorCode status) {
+//                        NSLog(@"登陆的错误码为:%d", status);
+//                    } tokenIncorrect:^{
+//                        //token过期或者不正确。
+//                        //如果设置了token有效期并且token过期，请重新请求您的服务器获取新的token
+//                        //如果没有设置token有效期却提示token错误，请检查您客户端和服务器的appkey是否匹配，还有检查您获取token的流程。
+//                        NSLog(@"token错误");
+//                    }];
+//                }else{
+//                    
+//                    LoginCtr * login = GETALONESTORYBOARDPAGE(@"LoginCtr");
+//                    [self.appd setStartViewController:login];
+//                    [weakSelef showToast:model.message];
+//                }
+//            } failure:^(NSError * error){
+//                [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
+//                [weakSelef closeLoad];
+//            }];
+//
+//        }
+//        
+//    }else{
+////        LoginCtr * login = GETALONESTORYBOARDPAGE(@"LoginCtr");
+////        [self.appd setStartViewController:login];
+//    }
 }
 - (IBAction)gotoBase:(id)sender {
     if([self getValueWithKey:CacheUserModel]){
@@ -136,7 +140,7 @@
 //        }
 //        
 //    } failure:^(NSError * error){
-//        [weakSelef showToast:NETWORKTIPS];
+//        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
 //        [weakSelef closeLoad];
 //    }];
     

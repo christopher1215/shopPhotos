@@ -41,17 +41,27 @@
     [self.folder setContentMode:UIViewContentModeScaleAspectFit];
     [self addSubview:self.folder];
 
+    self.iconView = [[UIView alloc] init];
+    [self addSubview:self.iconView];
+    [self.iconView addTarget:self action:@selector(toolSelected)];
+    
     self.icon = [[UIImageView alloc] init];
-    [self.icon setImage:[UIImage imageNamed:@"ico_triangle"]];
+    [self.icon setImage:[UIImage imageNamed:@"ico_edit"]];
     [self.icon setContentMode:UIViewContentModeScaleAspectFit];
     [self.icon addTarget:self action:@selector(toolSelected)];
-    [self addSubview:self.icon];
+    [self.iconView addSubview:self.icon];
     
     self.title = [[UILabel alloc] init];
-    [self.title setTextColor:[UIColor blackColor]];
-    [self.title setFont:Font(17)];
+    [self.title setTextColor:ColorHex(0x333333)];
+    [self.title setFont:Font(16)];
     [self addSubview:self.title];
-    
+
+    self.subNums = [[UILabel alloc] init];
+    [self.subNums setTextColor:ColorHex(0x333333)];
+    [self.subNums setFont:Font(16)];
+    [self.subNums setTextAlignment:NSTextAlignmentRight];
+    [self addSubview:self.subNums];
+
     UIView * line = [[UIView alloc] init];
     [line setBackgroundColor:ColorHex(0Xeeeeee)];
     [self addSubview:line];
@@ -69,12 +79,6 @@
         .bottomSpaceToView(self,18)
         .widthIs(26)
         .heightIs(22);
-        
-        self.title.sd_layout
-        .leftSpaceToView(_folder,10)
-        .topSpaceToView(self,0)
-        .bottomSpaceToView(self,0)
-        .rightSpaceToView(self,40);
     }
     else {
         self.folder.sd_layout
@@ -84,19 +88,32 @@
         .widthIs(26)
         .heightIs(22);
         
-        self.title.sd_layout
-        .leftSpaceToView(self.folder,10)
-        .topSpaceToView(self,0)
-        .bottomSpaceToView(self,0)
-        .rightSpaceToView(self,40);
     }
 
+    self.title.sd_layout
+    .leftSpaceToView(self.folder,10)
+    .topSpaceToView(self,0)
+    .bottomSpaceToView(self,0)
+    .rightSpaceToView(self,40);
+
+    self.iconView.sd_layout
+    .rightSpaceToView(self,5)
+    .topSpaceToView(self,8)
+    .bottomSpaceToView(self,8)
+    .widthIs(34);
+
     self.icon.sd_layout
-    .rightSpaceToView(self,15)
-    .topSpaceToView(self,18)
-    .bottomSpaceToView(self,18)
+    .rightSpaceToView(self.iconView,10)
+    .topSpaceToView(self.iconView,10)
+    .bottomSpaceToView(self.iconView,10)
     .widthIs(14);
     
+    self.subNums.sd_layout
+    .topSpaceToView(self,0)
+    .bottomSpaceToView(self,0)
+    .rightSpaceToView(self.iconView,4)
+    .widthIs(40);
+
     line.sd_layout
     .leftEqualToView(self)
     .bottomEqualToView(self)
@@ -126,13 +143,18 @@
 }
 
 - (void)openOption {
-    [self.icon setImage:[UIImage imageNamed:@"ico_triangle_top"]];
-    [self.folder setImage:[UIImage imageNamed:@"ico_opened_folder"]];
+    [self.icon setImage:[UIImage imageNamed:@"ico_edit"]];
+    [self.folder setImage:[UIImage imageNamed:@"ico_photo_folder"]];
 }
 
 - (void)closeOption {
-    [self.icon setImage:[UIImage imageNamed:@"ico_triangle"]];
+    [self.icon setImage:[UIImage imageNamed:@"ico_edit"]];
     [self.folder setImage:[UIImage imageNamed:@"ico_photo_folder"]];
+}
+
+- (void)videoFolder {
+    [self.folder setImage:[UIImage imageNamed:@"ico_movie_folder"]];
+    [self.iconView setHidden:YES];
 }
 
 @end

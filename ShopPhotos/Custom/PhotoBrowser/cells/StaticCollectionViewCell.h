@@ -2,7 +2,7 @@
 //  StaticCollectionViewCell.h
 //  ShopPhotos
 //
-//  Created by Park Jin Hyok on 4/8/17.
+//  Created by  on 4/8/17.
 //  Copyright © 2017 addcn. All rights reserved.
 //
 
@@ -19,7 +19,9 @@
 - (void)collectionSelected:(NSIndexPath *)indexPath;
 - (void)collectionUserSelecte:(NSIndexPath *)indexPath;
 - (void)shareClicked:(NSIndexPath *)indexPath;
-
+- (void)pyqClicked:(NSIndexPath *)indexPath;
+- (void)editClicked:(NSIndexPath *)indexPath;
+- (void)favoriteClicked:(NSIndexPath *)indexPath;
 @end
 
 @interface StaticCollectionViewCell : UICollectionViewCell

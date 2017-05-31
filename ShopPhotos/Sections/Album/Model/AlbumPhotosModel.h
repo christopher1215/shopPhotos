@@ -2,7 +2,7 @@
 //  AlbumPhotosModel.h
 //  ShopPhotos
 //
-//  Created by Park Jin Hyok on 4/24/17.
+//  Created by  on 4/24/17.
 //  Copyright © 2017 addcn. All rights reserved.
 //
 
@@ -29,7 +29,13 @@
 @property (strong, nonatomic) NSDictionary * user;
 
 @property (assign, nonatomic) BOOL openEdit;
+@property (assign, nonatomic) BOOL isExpend;
 @property (assign, nonatomic) BOOL selected;
+
+@property (assign, nonatomic) NSInteger imageRows;
+
+@property (assign, nonatomic) NSInteger textLines;
+@property (assign, nonatomic) NSInteger extraHeight;
 
 @end
 

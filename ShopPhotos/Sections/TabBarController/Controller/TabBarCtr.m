@@ -94,8 +94,7 @@
             break;
         case 2:
         {
-            UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:@"" message:@"" preferredStyle:UIAlertControllerStyleActionSheet];
-            [actionSheet setTitle:@"上传"];
+            UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
             [actionSheet addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
                 
                 // Cancel button tappped.
@@ -105,8 +104,8 @@
             
             [actionSheet addAction:[UIAlertAction actionWithTitle:@"上传图片" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
                 // Distructive button tapped.
-                PublishPhotoCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotoCtr");
-                [self.navigationController pushViewController:pulish animated:YES];
+                PublishPhotoCtr * publish = GETALONESTORYBOARDPAGE(@"PublishPhotoCtr");
+                [self.navigationController pushViewController:publish animated:YES];
 
                 [self dismissViewControllerAnimated:YES completion:^{
                 }];
@@ -122,8 +121,8 @@
             }]];
             // Present action sheet.
             [self presentViewController:actionSheet animated:YES completion:nil];
-        }
             break;
+        }
         case 3:
         {
             //self.selectedIndex = 2;

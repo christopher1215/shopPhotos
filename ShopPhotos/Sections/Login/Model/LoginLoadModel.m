@@ -30,6 +30,9 @@
                 UserModel * userModel = [[UserModel alloc] init];
 
                 userModel.uid = [RequestErrorGrab getStringwitKey:@"uid" toTarget:user];
+                if (userModel.uid.length == 0) {
+                    userModel.uid = [NSString stringWithFormat:@"%ld", [RequestErrorGrab getIntegetKey:@"uid" toTarget:user]];
+                }
                 userModel.address = [RequestErrorGrab getStringwitKey:@"address" toTarget:user];
                 userModel.avatar = [RequestErrorGrab getStringwitKey:@"avatar" toTarget:user];
                 userModel.bg_image = [RequestErrorGrab getStringwitKey:@"bg_image" toTarget:user];
@@ -46,7 +49,7 @@
         }
     } @catch (NSException *exception) {
         self.status = 1;
-        self.message = NETWORKTIPS;
+        self.message = exception.name;//NETWORKTIPS;
     }
 }
 

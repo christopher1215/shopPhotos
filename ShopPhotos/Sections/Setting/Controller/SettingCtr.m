@@ -18,6 +18,7 @@
 #import "AppDelegate.h"
 #import "ResetPasswordCtr.h"
 #import "FeedbackCtr.h"
+#import "successView.h"
 
 @interface SettingCtr (){
     //    AppDelegate *appd;
@@ -31,9 +32,10 @@
 @property (weak, nonatomic) IBOutlet UIView *checkUpdata;
 @property (weak, nonatomic) IBOutlet UIView *removeCache;
 @property (weak, nonatomic) IBOutlet UILabel *dataSize;
+@property (weak, nonatomic) IBOutlet UILabel *lblVersion;
 @property (weak, nonatomic) IBOutlet UIButton *loginOut;
 @property (weak, nonatomic) IBOutlet UIView *feedback;
-
+@property (strong, nonatomic) successView *sucView;
 @end
 
 @implementation SettingCtr
@@ -62,6 +64,9 @@
     [self.showPrize addTarget:self action:@selector(showPrizeSelected:) forControlEvents:UIControlEventValueChanged];
     [self.loginOut addTarget:self action:@selector(loginoutSelected) forControlEvents:UIControlEventTouchUpInside];
     [self.feedback addTarget:self action:@selector(feedbackSelected)];
+    self.sucView = [[[NSBundle mainBundle] loadNibNamed:@"successView" owner:self options:nil] firstObject];
+    self.lblVersion.text = [NSString stringWithFormat:@"V %@",[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]]
+    ;
 }
 
 - (NSDictionary *)getPostData{
@@ -120,8 +125,30 @@
 }
 
 - (void)checkUpdataSelected{
+    [self showLoad];
+    NSDictionary * data = @{};
+    __weak __typeof(self)weakSelef = self;
+    [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",self.congfing.version,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+        [weakSelef closeLoad];
+        NSLog(@"%@",responseObject);
+        BaseModel * model = [[UserModel alloc] init];
+        [model analyticInterface:responseObject];
+        if(model.status == 0){
+            if([[[[responseObject objectForKey:@"data"] objectForKey:@"ios"] objectForKey:@"version"] isEqualToString:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]]){
+                [weakSelef showToast:@"已是最新版本"];
+            } else {
+                [weakSelef showToast:[[[responseObject objectForKey:@"data"] objectForKey:@"ios"] objectForKey:@"description"]];
+                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[[[responseObject objectForKey:@"data"] objectForKey:@"ios"] objectForKey:@"url"]] options:@{} completionHandler:nil];
+            }
+        }else{
+            [self showToast:model.message];
+        }
+    } failure:^(NSError *error){
+        [weakSelef closeLoad];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
+    }];
     
-    [self showToast:@"当前为最新版本"];
+//    [self showToast:@"当前为最新版本"];
 }
 
 - (void)removeCacheSelected{
@@ -140,6 +167,8 @@
                 //回调或者说是通知主线程刷新，
                 [weakSelef.dataSize setText:[NSString stringWithFormat:@"%.2fM",[cache getCacheSize]]];
                 [weakSelef closeLoad];
+                [weakSelef showSuccess];
+                
             });
         });
         
@@ -147,10 +176,37 @@
     [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
     [self presentViewController:alert animated:YES completion:nil];
 }
-
-- (void)loginoutSelected{
+-(void)showSuccess{
+    self.sucView.frame = [[UIScreen mainScreen] bounds];
+    [self.view addSubview:self.sucView];
+    self.sucView.transform = CGAffineTransformMakeScale(1.3, 1.3);
+    self.sucView.alpha = 0;
+    [UIView animateWithDuration:.25 animations:^{
+        self.sucView.alpha = 1;
+        self.sucView.transform = CGAffineTransformMakeScale(1, 1);
+    }];
     
-    [self loadLoginOutData];
+}
+- (void)loginoutSelected{
+    UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    [actionSheet addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+        
+        // Cancel button tappped.
+        [self dismissViewControllerAnimated:YES completion:^{
+        }];
+    }]];
+    
+    [actionSheet addAction:[UIAlertAction actionWithTitle:@"确认" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        // Distructive button tapped.
+        [self loadLoginOutData];
+
+        
+        [self dismissViewControllerAnimated:YES completion:^{
+        }];
+    }]];
+    [self presentViewController:actionSheet animated:YES completion:nil];
+
+    
 }
 - (void)feedbackSelected{
     
@@ -175,7 +231,7 @@
         }
     } failure:^(NSError *error){
         [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
 }
 
@@ -196,7 +252,7 @@
         [self loadNetworkData:@{@"uid":self.uid}];
     } failure:^(NSError *error){
         [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
         [self loadNetworkData:@{@"uid":self.uid}];
     }];
 }
@@ -221,7 +277,7 @@
         LoginCtr * login = GETALONESTORYBOARDPAGE(@"LoginCtr");
         [weakSelef.navigationController pushViewController:login animated:YES];
         [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
 }
 

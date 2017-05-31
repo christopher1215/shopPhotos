@@ -56,8 +56,9 @@
                 //            [weakSelef showToast:model.message];
             }
         } failure:^(NSError * error){
-            [weakSelef showToast:NETWORKTIPS];
+            //[weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
             [weakSelef closeLoad];
+            [popupErrVC showInView:self animated:YES type:@"error" message:[NSString stringWithFormat:@"找不到有图号为%@的用户",_txtUid.text]];
         }];
 
     } else {

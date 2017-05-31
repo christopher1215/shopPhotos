@@ -12,11 +12,13 @@
 #import <MJRefresh.h>
 #import "PointLog.h"
 #import "PointLogRequest.h"
+#import "MypointHelpCtr.h"
 
 @interface MypointViewController ()<UITableViewDataSource,UITableViewDelegate>
 @property (weak, nonatomic) IBOutlet UIView *back;
 @property (assign, nonatomic) NSInteger page;
 @property (strong, nonatomic) NSMutableArray * dataArray;
+@property (weak, nonatomic) IBOutlet UIView *helpView;
 
 @end
 
@@ -31,7 +33,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     [self.back addTarget:self action:@selector(backSelected)];
-    _lblCurrentPoint.text = [NSString stringWithFormat:@"%d",_currentPoint];
+    [self.helpView addTarget:self action:@selector(goHelpView)];
     self.tblHistory.delegate = self;
     self.tblHistory.dataSource = self;
     [self.tblHistory registerNib:[UINib nibWithNibName:@"PointHistoryTableViewCell" bundle:nil] forCellReuseIdentifier:@"PointHistoryTableViewCell"];
@@ -49,6 +51,8 @@
 }
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
+    _lblCurrentPoint.text = [NSString stringWithFormat:@"%d",_currentPoint];
+
     if(self.dataArray.count > 0){
         [self loadNetworkData];
     }else{
@@ -64,6 +68,12 @@
 
 - (IBAction)gotoExplain:(id)sender {
 }
+
+- (void) goHelpView {
+    MypointHelpCtr *vc=[[MypointHelpCtr alloc] initWithNibName:@"MypointHelpCtr" bundle:nil];
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
 - (IBAction)onPay:(id)sender {
     ChargeViewController *vc=[[ChargeViewController alloc] initWithNibName:@"ChargeViewController" bundle:nil];
     vc.currentPoint = _currentPoint;
@@ -75,7 +85,7 @@
 - (void)loadNetworkData{
     self.page = 1;
     NSDictionary * data = @{
-                            @"page":[NSString stringWithFormat:@"%ld",self.page],
+                            @"page":[NSString stringWithFormat:@"%ld",(long)self.page],
                             @"pageSize":@"30"
                             };
     __weak __typeof(self)weakSelef = self;
@@ -95,6 +105,7 @@
             }];
             if(request.dataArray.count < 30){
                 [weakSelef.tblHistory.mj_footer endRefreshingWithNoMoreData];
+                [weakSelef.tblHistory.mj_footer setHidden:YES];
             }else{
                 [weakSelef.tblHistory.mj_footer resetNoMoreData];
             }
@@ -107,7 +118,7 @@
         
     } failure:^(NSError *error){
         [weakSelef.tblHistory.mj_header endRefreshing];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
 }
 
@@ -115,7 +126,7 @@
     
     
     NSDictionary * data = @{
-                            @"page":[NSString stringWithFormat:@"%ld",self.page],
+                            @"page":[NSString stringWithFormat:@"%ld",(long)self.page],
                             @"pageSize":@"30"
                             };
     __weak __typeof(self)weakSelef = self;
@@ -132,6 +143,7 @@
             weakSelef.page ++;
             if(request.dataArray.count < 30){
                 [weakSelef.tblHistory.mj_footer endRefreshingWithNoMoreData];
+                [weakSelef.tblHistory.mj_footer setHidden:YES];
             }else{
                 [weakSelef.tblHistory.mj_footer resetNoMoreData];
             }
@@ -142,7 +154,7 @@
         }
         
     } failure:^(NSError *error){
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
         [weakSelef.tblHistory.mj_footer endRefreshing];
     }];
 }

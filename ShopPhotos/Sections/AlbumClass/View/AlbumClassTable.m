@@ -119,6 +119,7 @@
     if(self.dataArray.count > 0) {
         BOOL isOpen = NO;
         BOOL isChecked = NO;
+        BOOL isVideo = NO;
         
         if (_isSubClass) {
             AlbumClassTableSubModel *subModel = [self.dataArray objectAtIndex:section];
@@ -130,7 +131,14 @@
         }
         
         AlbumClassTableHead * head = [[AlbumClassTableHead alloc] init];
-        [head creteAutoLayout:_isEditMode selected:isChecked];
+        BOOL editModeFlag;
+        if (_isSubClass) {
+            editModeFlag = _isEditMode;
+        } else {
+            AlbumClassTableModel * model = [self.dataArray objectAtIndex:section];
+            editModeFlag = (!model.isVideo) && _isEditMode;
+        }
+        [head creteAutoLayout:editModeFlag selected:_isAllSelect?YES:isChecked];
         head.section = section;
         head.tag = section;
         head.delegate = self;
@@ -140,25 +148,34 @@
         if (_isSubClass) {
             AlbumClassTableSubModel * subModel = [self.dataArray objectAtIndex:section];
             isOpen = subModel.open;
-            head.title.text = [NSString stringWithFormat:@"%@ (%lu)",subModel.name,(unsigned long)subModel.photoCount] ;
+            head.title.text = [NSString stringWithFormat:@"%@",subModel.name] ;
+            head.subNums.text = [NSString stringWithFormat:@"(%lu)",(unsigned long)subModel.photoCount];
         }
         else {
             AlbumClassTableModel * model = [self.dataArray objectAtIndex:section];
             isOpen = model.open;
+            isVideo = model.isVideo;
             if (model.isVideo == NO) {
-                head.title.text = [NSString stringWithFormat:@"%@ (%lu)",model.name,(unsigned long)model.subclassCount];
+                head.title.text = [NSString stringWithFormat:@"%@",model.name];
+                head.subNums.text = [NSString stringWithFormat:@"(%lu)",(unsigned long)model.subclassCount];
             }
             else {
-                head.title.text = [NSString stringWithFormat:@"%@ (%lu)",model.name,(unsigned long)model.videosCount];
+                head.title.text = [NSString stringWithFormat:@"%@ (%lu)",@"视频",(unsigned long)model.videosCount];
             }
         }
         
-        if(isOpen){
-            [head openOption];
-        }else{
-            [head closeOption];
+        if (isVideo) {
+            [head videoFolder];
+        }
+        else {
+            if(isOpen){
+                [head openOption];
+            }else{
+                [head closeOption];
+            }
         }
         return head;
+        
     } else {
         return nil;
     }
@@ -189,25 +206,25 @@
 
 #pragma mark - AlbumClassTableHeadDelegate
 - (void)albumClassTableHeadShowRow:(NSInteger)index{
-    
-    BOOL isOpen = NO;
-    
-    if (_isSubClass) {
-        AlbumClassTableSubModel * subModel = [self.dataArray objectAtIndex:index];
-        subModel.open = !subModel.open;
-        isOpen = subModel.open;
-    }
-    else{
-        AlbumClassTableModel * model = [self.dataArray objectAtIndex:index];
-        model.open = !model.open;
-        isOpen = model.open;
-    }
-    
-    [self.table reloadData];
-    if(isOpen){
-        NSIndexPath * dayOne = [NSIndexPath indexPathForRow:0 inSection:index];
-        [self.table scrollToRowAtIndexPath:dayOne atScrollPosition:UITableViewScrollPositionTop animated:YES];
-    }
+    [self albumClassTableSelectType:1 selectPath:[NSIndexPath indexPathForRow:0 inSection:index]];
+//    BOOL isOpen = NO;
+//    
+//    if (_isSubClass) {
+//        AlbumClassTableSubModel * subModel = [self.dataArray objectAtIndex:index];
+//        subModel.open = !subModel.open;
+//        isOpen = subModel.open;
+//    }
+//    else{
+//        AlbumClassTableModel * model = [self.dataArray objectAtIndex:index];
+//        model.open = !model.open;
+//        isOpen = model.open;
+//    }
+//    
+//    [self.table reloadData];
+//    if(isOpen){
+//        NSIndexPath * dayOne = [NSIndexPath indexPathForRow:0 inSection:index];
+//        [self.table scrollToRowAtIndexPath:dayOne atScrollPosition:UITableViewScrollPositionTop animated:YES];
+//    }
 }
 - (void)albumClassTableHeadSelectCheck:(BOOL)isChecked selectedPath:(NSInteger)index {
     if(self.albumDelegage && [self.albumDelegage respondsToSelector:@selector(albumClassTableHeadSelectCheck:selectedPath:)]){

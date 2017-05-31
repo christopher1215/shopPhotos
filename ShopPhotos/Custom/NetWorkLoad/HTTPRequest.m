@@ -22,7 +22,7 @@
 @implementation HTTPRequest
 
 //默认网络请求时间
-static const NSUInteger kDefaultTimeoutInterval = 5;
+static const NSUInteger kDefaultTimeoutInterval = 10;
 
 #pragma mark - 异步GET请求
 + (void)requestGETUrl:(NSString*)url

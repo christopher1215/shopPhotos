@@ -59,13 +59,14 @@
             congfing.searchPhotos = [RequestErrorGrab getStringwitKey:@"searchPhotos" toTarget:api];
             congfing.advancedSearch = [RequestErrorGrab getStringwitKey:@"advancedSearch" toTarget:api];
             congfing.deletePhotoImage = [RequestErrorGrab getStringwitKey:@"deletePhotoImage" toTarget:api];
-            
+            congfing.version = [RequestErrorGrab getStringwitKey:@"version" toTarget:api];
+            congfing.updateVideo = [RequestErrorGrab getStringwitKey:@"updateVideo" toTarget:api];
             
             congfing.getMyOrders = [RequestErrorGrab getStringwitKey:@"getMyOrders" toTarget:api];
             congfing.getProducts = [RequestErrorGrab getStringwitKey:@"getProducts" toTarget:api];
             congfing.createOrder = [RequestErrorGrab getStringwitKey:@"createOrder" toTarget:api];
             congfing.getUserIntegralLog = [RequestErrorGrab getStringwitKey:@"getUserIntegralLog" toTarget:api];
-            
+            congfing.checkOrderState = [RequestErrorGrab getStringwitKey:@"checkOrderState" toTarget:api];
             
             congfing.appLogin = [RequestErrorGrab getStringwitKey:@"appLogin" toTarget:api];
             congfing.captcha = [RequestErrorGrab getStringwitKey:@"captcha" toTarget:api];
@@ -77,7 +78,7 @@
             congfing.getNewDynamics = [RequestErrorGrab getStringwitKey:@"getNewDynamics" toTarget:api];
             
             congfing.getUserDynamics = [RequestErrorGrab getStringwitKey:@"getUserDynamics" toTarget:api];
-            congfing.publishedFeedback = [RequestErrorGrab getStringwitKey:@"publishedFeedback" toTarget:api];
+            congfing.publishFeedback = [RequestErrorGrab getStringwitKey:@"publishFeedback" toTarget:api];
             congfing.getClassifies = [RequestErrorGrab getStringwitKey:@"getClassifies" toTarget:api];
             congfing.getUsers = [RequestErrorGrab getStringwitKey:@"getUsers" toTarget:api];
             congfing.getUserPhotos = [RequestErrorGrab getStringwitKey:@"getUserPhotos" toTarget:api];
@@ -134,10 +135,9 @@
             congfing.getSubclasses = [RequestErrorGrab getStringwitKey:@"getSubclasses" toTarget:api];
             congfing.isPassiveUserAllow = [RequestErrorGrab getStringwitKey:@"isPassiveUserAllow" toTarget:api];
             congfing.hasCollectPhoto = [RequestErrorGrab getStringwitKey:@"hasCollectPhoto" toTarget:api];
-            congfing.collectPhotos = [RequestErrorGrab getStringwitKey:@"collectPhotos" toTarget:api];
+            congfing.collectMultiPhotos = [RequestErrorGrab getStringwitKey:@"collectPhotos" toTarget:api];
             congfing.collectPhoto = [RequestErrorGrab getStringwitKey:@"collectPhoto" toTarget:api];
             congfing.collectVideo = [RequestErrorGrab getStringwitKey:@"collectVideo" toTarget:api];
-            congfing.collssssCopy = [RequestErrorGrab getStringwitKey:@"collectPhotos" toTarget:api];
             
             congfing.cancelCollectPhotos = [RequestErrorGrab getStringwitKey:@"cancelCollectPhotos" toTarget:api];
             congfing.cancelCollectVideos = [RequestErrorGrab getStringwitKey:@"cancelCollectVideos" toTarget:api];
@@ -150,6 +150,8 @@
             congfing.getSubclassPhotos = [RequestErrorGrab getStringwitKey:@"getSubclassPhotos" toTarget:api];
             congfing.getAllClassifies = [RequestErrorGrab getStringwitKey:@"getAllClassifies" toTarget:api];
             congfing.getCollectVideos = [RequestErrorGrab getStringwitKey:@"getCollectVideos" toTarget:api];
+            congfing.handleRecommendPhotos = [RequestErrorGrab getStringwitKey:@"handleRecommendPhotos" toTarget:api];
+            congfing.ccopyPhoto = [RequestErrorGrab getStringwitKey:@"copyPhoto" toTarget:api];
 
             //            }
             //

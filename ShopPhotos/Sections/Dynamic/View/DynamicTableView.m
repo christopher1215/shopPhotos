@@ -81,7 +81,17 @@
 
 #pragma mark - UITableViewDelegate
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    return 314;
+    AlbumPhotosModel *model = [self.dataArray objectAtIndex:indexPath.row];
+    CGFloat width = ((WindowWidth - 14 * 2 - (Clearance*2))/3);
+//    NSInteger height = (model.isExpend? 33:0) + 125 + 28 * (WindowWidth / 375) + (model.imageRows > 0 ? model.imageRows : 1) * width + ((model.imageRows > 0 ? model.imageRows : 1) - 1) * Clearance;
+    NSInteger height = 27 + 125 + 20 * (WindowWidth / 375) + (model.imageRows > 0 ? model.imageRows : 1) * width + ((model.imageRows > 0 ? model.imageRows : 1) - 1) * Clearance;
+    if(ceil(model.images.count/3.f) > 1)
+        height += 27;
+    if(model.extraHeight < 0)
+        height += 0;
+    else if(model.extraHeight > 0)
+        height += (0 + model.extraHeight);
+    return height;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -108,5 +118,12 @@
     }
 }
 
+- (void)rowExpanded
+{
+    [self.table reloadData];
+    [self.table beginUpdates];
+    [self.table endUpdates];
+    
+}
 
 @end

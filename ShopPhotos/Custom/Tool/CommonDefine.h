@@ -20,6 +20,8 @@
 
 #endif
 
+#define SESSIONCOOKKEY @"sessionCookies"
+
 // 屏幕宽度
 #define WindowWidth     [UIScreen mainScreen].bounds.size.width
 // 屏幕高度
@@ -31,7 +33,7 @@
 // 通知中心
 #define NotificationCenter [NSNotificationCenter defaultCenter]
 
-#define Clearance 10
+#define Clearance 6
 // 接口
 //#define UOOTUURL @"https://www.uootu.com/_api/get/api"
 #define UOOTUURL @"https://uootu.com/_api/get/api"

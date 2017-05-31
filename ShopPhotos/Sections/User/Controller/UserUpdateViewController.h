@@ -11,7 +11,7 @@
 
 @interface UserUpdateViewController : BaseViewCtr
 @property (weak, nonatomic) IBOutlet UILabel *lblTitle;
-@property (weak, nonatomic) IBOutlet UITextField *txtValue;
+@property (weak, nonatomic) IBOutlet UITextView *txtValue;
 @property (assign, nonatomic) short type;
 @property (weak, nonatomic) IBOutlet UIView *back;
 @property (strong, nonatomic) UserCtr *parentVC;

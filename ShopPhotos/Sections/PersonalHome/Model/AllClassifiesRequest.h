@@ -2,7 +2,7 @@
 //  AllClassifiesRequest.h
 //  ShopPhotos
 //
-//  Created by Park Jin Hyok on 5/4/17.
+//  Created by  on 5/4/17.
 //  Copyright © 2017 addcn. All rights reserved.
 //
 

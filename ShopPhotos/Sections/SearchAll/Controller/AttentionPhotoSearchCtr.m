@@ -29,6 +29,7 @@
 @property (strong, nonatomic) UICollectionView * photos;
 @property (assign, nonatomic) NSInteger pageIndex;
 @property (strong, nonatomic) UIImage * searchImage;
+@property (assign, nonatomic) BOOL searchFlag;
 
 @end
 
@@ -47,7 +48,7 @@
     [super viewDidLoad];
     
     [self setup];
-    
+    _searchFlag = NO;
     
 }
 
@@ -60,7 +61,25 @@
     self.search.cornerRadius = 3;
     if(self.searchKey && self.searchKey.length > 0){
         [self.searchText setText:self.searchKey];
-        [self loadSearchData];
+        self.searchText.text = [self.searchText.text stringByReplacingOccurrencesOfString:@"%" withString:@""];
+        
+        NSDictionary * data = @{@"uid":self.uid,
+                                @"keyword":self.searchText.text,
+                                @"includeFriends":@"1",
+                                @"excludesUsers[0]":self.uid,
+                                @"page":@"1",
+                                @"pageSize":@"30"};
+        
+        [self loadSearchData:data];
+    } else {
+        NSDictionary * data = @{@"uid":self.uid,
+                                
+                                @"includeFriends":@"1",
+                                @"excludesUsers[0]":self.uid,
+                                @"page":@"1",
+                                @"pageSize":@"30"};
+        
+//        [self loadSearchData:data];
     }
     
     UICollectionViewFlowLayout * layout = [[UICollectionViewFlowLayout alloc]init];
@@ -93,6 +112,11 @@
     [self.navigationController popViewControllerAnimated:YES];
     
 }
+- (void)shareClicked:(NSIndexPath *)indexPath {
+    AlbumPhotosModel * model = [self.dataArray objectAtIndex:indexPath.row];
+    [self.appd showShareview:model.type collected:model.collected model:model from:self];
+}
+
 - (void)searchSelected{
     [self.searchText resignFirstResponder];
     if(!self.searchText.text ||self.searchText.text.length == 0){
@@ -103,7 +127,18 @@
     [self.dataArray removeAllObjects];
     [self.photos reloadData];
     
-    [self loadSearchData];
+    self.searchText.text = [self.searchText.text stringByReplacingOccurrencesOfString:@"%" withString:@""];
+    self.pageIndex = 1;
+
+    NSDictionary * data = @{@"uid":self.uid,
+                            @"keyword":self.searchText.text,
+                            @"includeFriends":@"1",
+                            @"excludesUsers[0]":self.uid,
+                            @"page":[NSString stringWithFormat:@"%ld",(long)self.pageIndex],
+                            @"pageSize":@"30"};
+    
+    [self loadSearchData:data];
+    _searchFlag = YES;
 }
 
 - (void)imageSearchSelected{
@@ -167,6 +202,22 @@
 #pragma mark -- UICollectionViewDataSource
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
+    if(self.dataArray.count == 0 && _searchFlag)
+    {
+        UILabel *messageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
+        
+        messageLabel.text = @"没有找到你需要的哦！";
+        messageLabel.textColor = [UIColor lightGrayColor];
+        messageLabel.numberOfLines = 0;
+        messageLabel.textAlignment = NSTextAlignmentCenter;
+        messageLabel.font = [UIFont systemFontOfSize:18];
+        [messageLabel sizeToFit];
+        collectionView.backgroundView = messageLabel;
+    }
+    else
+    {
+        collectionView.backgroundView = nil;
+    }
     return self.dataArray.count;
 }
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
@@ -210,15 +261,15 @@
 }
 
 #pragma makr - AFNetworking网络加载
-- (void)loadSearchData{
+- (void)loadSearchData:(NSDictionary *)data{
+    if (data[@"keyword"]) {
+        if ([[data objectForKey:@"keyword"] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]].length <= 0) {
+            [self showToast:@"请输入关键字"];
+            return;
+        }
+        
+    }
     
-    self.pageIndex = 1;
-    NSDictionary * data = @{@"uid":self.uid,
-                            @"keyword":self.searchText.text,
-                            @"includeFriends":@"1",
-                            @"excludesUsers[0]":self.uid,
-                            @"page":[NSString stringWithFormat:@"%ld",self.pageIndex],
-                            @"pageSize":@"30"};
     
     [self showLoad];
     __weak __typeof(self)weakSelef = self;
@@ -234,9 +285,13 @@
             }];
             if(requset.dataArray.count < 30){
                 [weakSelef.photos.mj_footer endRefreshingWithNoMoreData];
-                if(requset.dataArray.count == 0){
-                    [weakSelef showToast:@"未搜索到结果"];
-                }
+                [weakSelef.photos.mj_footer setHidden:YES];
+//                if(requset.dataArray.count == 0){
+//                    [weakSelef.photos.mj_footer setHidden:YES];
+//                } else {
+//                    [weakSelef.photos.mj_footer setHidden:NO];
+//                    
+//                }
             }else{
                 [weakSelef.photos.mj_footer resetNoMoreData];
             }
@@ -247,7 +302,7 @@
         NSLog(@"%@",responseObject);
     } failure:^(NSError *error){
         [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
 }
 
@@ -257,7 +312,7 @@
                             @"keyword":self.searchText.text,
                             @"includeFriends":@"1",
                             @"excludesUsers[0]":self.uid,
-                            @"page":[NSString stringWithFormat:@"%ld",self.pageIndex],
+                            @"page":[NSString stringWithFormat:@"%ld",(long)self.pageIndex],
                             @"pageSize":@"30"};
     
     [self showLoad];
@@ -274,6 +329,7 @@
             }];
             if(requset.dataArray.count < 30){
                 [weakSelef.photos.mj_footer endRefreshingWithNoMoreData];
+                [weakSelef.photos.mj_footer setHidden:YES];
             }else{
                  [weakSelef.photos.mj_footer resetNoMoreData];
             }
@@ -284,7 +340,7 @@
         NSLog(@"%@",responseObject);
     } failure:^(NSError *error){
         [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
 }
 
@@ -301,7 +357,7 @@
     NSData * imageData = UIImageJPEGRepresentation(self.searchImage, 0.3);
     [HTTPRequest Manager:[NSString stringWithFormat:@"%@%@",self.congfing.useImageSearch,[self.appd getParameterString]] Method:nil dic:data file:imageData fileName:@"image" requestSucced:^(id responseObject){
         NSLog(@"%@",responseObject);
-        PhotosSearchRequset * requset = [[PhotosSearchRequset alloc] init];
+        AlbumPhotosRequset * requset = [[AlbumPhotosRequset alloc] init];
         [requset analyticInterface:responseObject];
         if(requset.status == 0){
             [weakSelf.dataArray removeAllObjects];
@@ -314,7 +370,7 @@
         [weakSelf closeLoad];
     } requestfailure:^(NSError * error){
         [weakSelf closeLoad];
-        [weakSelf showToast:NETWORKTIPS];
+        [weakSelf showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
 }
 

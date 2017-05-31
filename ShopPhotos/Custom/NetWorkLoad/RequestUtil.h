@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#define SESSIONCOOKKEY @"sessionCookies"
 
 @interface RequestUtil : NSObject
 

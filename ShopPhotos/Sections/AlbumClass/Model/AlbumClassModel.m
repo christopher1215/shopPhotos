@@ -37,14 +37,19 @@
                     [self.dataArray addObject:model];
                 }
                 
-                if(video){
-                    AlbumClassTableModel * model = [[AlbumClassTableModel alloc] init];
-                    model.Id = [RequestErrorGrab getIntegetKey:@"id" toTarget:video];
-                    model.name = [RequestErrorGrab getStringwitKey:@"name" toTarget:video];
-                    model.videosCount = [RequestErrorGrab getIntegetKey:@"videosCount" toTarget:video];
-                    model.isVideo = YES;
+            }
+            if(video){
+                AlbumClassTableModel * model = [[AlbumClassTableModel alloc] init];
+                model.Id = [RequestErrorGrab getIntegetKey:@"id" toTarget:video];
+                model.name = [RequestErrorGrab getStringwitKey:@"name" toTarget:video];
+                model.videosCount = [RequestErrorGrab getIntegetKey:@"videosCount" toTarget:video];
+                model.isVideo = YES;
+                if (self.dataArray.count) {
                     [self.dataArray insertObject:model atIndex:0];
+                } else {
+                    [self.dataArray addObject:model];
                 }
+                
             }
            
             if(subclasses && subclasses.count){
@@ -71,7 +76,7 @@
         }
     } @catch (NSException *exception) {
         self.status = 1;
-        self.message = NETWORKTIPS;
+        self.message = exception.name;//NETWORKTIPS;
     }
 }
 

@@ -39,7 +39,7 @@
     msgLbl.text = message;
     self.view.frame = [[UIScreen mainScreen] bounds];
     [aView.view addSubview:self.view];
-    [self.btnOk addTarget:aView action:@selector(closePopupErr)];
+//    [self.btnOk addTarget:aView action:@selector(closePopupErr)];
 
     if (animated) {
         [self showAnimate];

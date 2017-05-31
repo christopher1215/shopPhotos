@@ -9,11 +9,19 @@
 #import "ChattingViewController.h"
 #import "PersonalHomeCtr.h"
 
-@interface ChattingViewController ()
+@interface ChattingViewController ()<RCChatSessionInputBarControlDelegate>{
+    RCConversationViewController *chatVC;
+    float posY;
+    BOOL firstFlag;
+    CGRect oldInputBarFrame;
+    CGRect oldMessageCollectionFrame;
+}
 @property (weak, nonatomic) IBOutlet UIView *back;
 @property (weak, nonatomic) IBOutlet UIView *viewChatting;
 @property (weak, nonatomic) IBOutlet UILabel *lblName;
 @property (weak, nonatomic) IBOutlet UIView *profile;
+@property (weak, nonatomic) IBOutlet UIView *navBar;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *navbarTop;
 
 @end
 
@@ -28,19 +36,50 @@
     [self.back addTarget:self action:@selector(backSelected)];
     [self.profile addTarget:self action:@selector(profileSelected)];
     self.lblName.text = self.name;
-}
-- (void)viewDidAppear:(BOOL)animated{
-    [super viewDidAppear:animated];
-    RCConversationViewController *chatVC = [[RCConversationViewController alloc] init];
-//    [chatVC.view setFrame:CGRectMake(0, -64, _viewChatting.frame.size.width, _viewChatting.frame.size.height)];
+    
+    [self.viewChatting setFrame:CGRectMake(0, 0, WindowWidth, WindowHeight)];
+    chatVC = [[RCConversationViewController alloc] init];
+    
     chatVC.conversationType = self.conversationType;
     chatVC.targetId = self.targetId;
     chatVC.title = self.name;
     [chatVC setMessageAvatarStyle:RC_USER_AVATAR_CYCLE];
     [chatVC willMoveToParentViewController:self];
+//    [chatVC.view  setFrame:CGRectMake(0, 0, self.viewChatting.frame.size.width, self.viewChatting.frame.size.height)];
     [self.viewChatting addSubview:chatVC.view];
+    
+    [chatVC.conversationMessageCollectionView  setFrame:CGRectMake(0, 44, self.viewChatting.frame.size.width, self.viewChatting.frame.size.height+50)];
+    oldInputBarFrame = chatVC.chatSessionInputBarControl.frame;
+    oldMessageCollectionFrame = chatVC.conversationMessageCollectionView.frame;
+//    chatVC.chatSessionInputBarControl.delegate = nil;
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardDidShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardDidHideNotification object:nil];
+
     [self addChildViewController:chatVC];
     [chatVC didMoveToParentViewController:self];
+    [chatVC.pluginBoardView removeItemAtIndex:3];
+    [chatVC.pluginBoardView removeItemAtIndex:2];
+    firstFlag = YES;
+    
+}
+- (void)keyboardWillShow:(NSNotification *)notification{
+    if (firstFlag) {
+        posY = WindowHeight - [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
+        firstFlag = NO;
+    }
+    
+    _navbarTop.constant = 0;
+    [self.navBar updateConstraints];
+}
+- (void)keyboardWillHide:(NSNotification *)notification{
+    chatVC.chatSessionInputBarControl.frame = oldInputBarFrame;
+    chatVC.conversationMessageCollectionView.frame = oldMessageCollectionFrame;
+    [_navBar setFrame:CGRectMake(0, 0, _navBar.frame.size.width, _navBar.frame.size.height)];
+}
+
+- (void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
 
 }
 - (void)backSelected{

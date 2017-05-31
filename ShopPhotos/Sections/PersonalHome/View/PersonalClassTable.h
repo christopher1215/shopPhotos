@@ -9,7 +9,7 @@
 #import "BaseView.h"
 
 @protocol PersonalClassTableDelegate <NSObject>
-//- (void)personalClassTableSelected:(NSIndexPath *)indexPath;
+- (void)personalClassTableSelected:(NSIndexPath *)indexPath;
 - (void)personalClassTableHeadSelectType:(NSInteger)type selectedPath:(NSInteger)section;
 //- (void)personalClassTableSelectType:(NSInteger)type selectPath:(NSIndexPath *)indexPath;
 @end

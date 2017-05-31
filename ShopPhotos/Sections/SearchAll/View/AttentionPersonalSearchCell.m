@@ -22,7 +22,7 @@
     self = [super initWithFrame:frame];
     if (self) {
         [self creteAutoLayout];
-        [self setBackgroundColor:ColorHex(0Xeeeeee)];
+        //[self setBackgroundColor:ColorHex(0Xeeeeee)];
         [self.contentView setBackgroundColor:[UIColor whiteColor]];
     }
     return self;
@@ -31,7 +31,7 @@
 - (void)creteAutoLayout{
     
     self.icon = [[UIImageView alloc] init];
-//    [self.icon setContentMode:UIViewContentModeScaleAspectFit];
+    [self.icon setContentMode:UIViewContentModeScaleAspectFit];
     [self.contentView addSubview:self.icon];
     
     self.name = [[UILabel alloc] init];
@@ -67,9 +67,9 @@
     [self.contentView addSubview:self.accessory];
     self.accessory.sd_layout
     .rightSpaceToView(self.contentView,15)
-    .topSpaceToView(self.contentView,20)
-    .heightIs(20)
-    .widthIs(20);
+    .topSpaceToView(self.contentView,23)
+    .heightIs(16)
+    .widthIs(16);
 
 }
 

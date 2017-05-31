@@ -212,7 +212,7 @@
                     [weakSelef.sendMessage setTitle:@"获取验证码" forState:UIControlStateNormal];
                 }else{
                     [weakSelef.sendMessage setUserInteractionEnabled:YES];
-                    NSString * title = [NSString stringWithFormat:@"%ldS",index];
+                    NSString * title = [NSString stringWithFormat:@"%ldS",(long)index];
                     [weakSelef.sendMessage setTitle:title forState:UIControlStateNormal];
                 }
             });
@@ -239,7 +239,7 @@
         }
         
     } failure:^(NSError * error){
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
         [weakSelef closeLoad];
     }];
     
@@ -262,7 +262,7 @@
         }
         
     } failure:^(NSError * error){
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
         [weakSelef closeLoad];
     }];
 }
@@ -285,7 +285,7 @@
         }
         
     } failure:^(NSError * error){
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
         [weakSelef closeLoad];
     }];
 

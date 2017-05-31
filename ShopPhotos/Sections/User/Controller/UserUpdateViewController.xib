@@ -13,7 +13,7 @@
             <connections>
                 <outlet property="back" destination="1Ir-sJ-IHc" id="IaV-ZT-8qQ"/>
                 <outlet property="lblTitle" destination="Y6h-E1-koB" id="cfQ-v1-qxM"/>
-                <outlet property="txtValue" destination="rHF-Wx-sA3" id="H6a-Si-jve"/>
+                <outlet property="txtValue" destination="fdQ-JW-yTC" id="PQR-KG-aqn"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -30,7 +30,7 @@
                             <subviews>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="取消" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rkI-dz-6On">
                                     <rect key="frame" x="15" y="12" width="54" height="21"/>
-                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                    <fontDescription key="fontDescription" name="PingFangSC-Regular" family="PingFang SC" pointSize="15"/>
                                     <nil key="textColor"/>
                                     <nil key="highlightedColor"/>
                                 </label>
@@ -46,7 +46,7 @@
                         </view>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="注册" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Y6h-E1-koB">
                             <rect key="frame" x="50" y="20" width="275" height="43"/>
-                            <fontDescription key="fontDescription" type="boldSystem" pointSize="19"/>
+                            <fontDescription key="fontDescription" name="PingFangSC-Regular" family="PingFang SC" pointSize="17"/>
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
                         </label>
@@ -58,8 +58,12 @@
                             </constraints>
                         </view>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oql-ua-B3U">
-                            <rect key="frame" x="325" y="26.5" width="35" height="33"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <rect key="frame" x="315" y="20" width="60" height="44"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="60" id="KH1-gt-apC"/>
+                                <constraint firstAttribute="height" constant="44" id="sSe-Ir-40b"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" name="PingFangSC-Regular" family="PingFang SC" pointSize="15"/>
                             <state key="normal" title="确定"/>
                             <connections>
                                 <action selector="onComplete:" destination="-1" eventType="touchUpInside" id="Pfr-OY-4na"/>
@@ -78,38 +82,33 @@
                         <constraint firstAttribute="bottom" secondItem="1Ir-sJ-IHc" secondAttribute="bottom" id="UPR-iU-FlQ"/>
                         <constraint firstItem="oql-ua-B3U" firstAttribute="centerY" secondItem="rkI-dz-6On" secondAttribute="centerY" id="UXx-54-pfb"/>
                         <constraint firstAttribute="trailing" secondItem="mb4-wx-YIs" secondAttribute="trailing" id="b3d-Op-lJu"/>
-                        <constraint firstAttribute="trailing" secondItem="oql-ua-B3U" secondAttribute="trailing" constant="15" id="fqz-Rf-cQR"/>
+                        <constraint firstAttribute="trailing" secondItem="oql-ua-B3U" secondAttribute="trailing" id="fqz-Rf-cQR"/>
                         <constraint firstItem="mb4-wx-YIs" firstAttribute="leading" secondItem="BSr-xH-Hxh" secondAttribute="leading" id="lxC-OF-Z05"/>
                     </constraints>
                 </view>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="J6U-ba-8pD">
-                    <rect key="frame" x="0.0" y="74" width="375" height="45"/>
-                    <subviews>
-                        <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="rHF-Wx-sA3">
-                            <rect key="frame" x="10" y="13.5" width="355" height="19"/>
-                            <nil key="textColor"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                            <textInputTraits key="textInputTraits"/>
-                        </textField>
-                    </subviews>
+                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="fdQ-JW-yTC">
+                    <rect key="frame" x="0.0" y="74" width="375" height="237"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <constraints>
-                        <constraint firstItem="rHF-Wx-sA3" firstAttribute="leading" secondItem="J6U-ba-8pD" secondAttribute="leading" constant="10" id="E7D-Tc-BGs"/>
-                        <constraint firstAttribute="height" constant="45" id="UF3-Oq-ice"/>
-                        <constraint firstAttribute="trailing" secondItem="rHF-Wx-sA3" secondAttribute="trailing" constant="10" id="nBv-13-KUk"/>
-                        <constraint firstItem="rHF-Wx-sA3" firstAttribute="centerY" secondItem="J6U-ba-8pD" secondAttribute="centerY" id="saY-wJ-3V1"/>
+                        <constraint firstAttribute="height" constant="237" id="zYQ-9u-AfT"/>
                     </constraints>
-                </view>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                    <connections>
+                        <outlet property="delegate" destination="-1" id="5ZR-q2-5r6"/>
+                    </connections>
+                </textView>
             </subviews>
-            <color key="backgroundColor" red="0.9646109938621521" green="0.96477228403091431" blue="0.96458977460861206" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
             <constraints>
+                <constraint firstAttribute="trailing" secondItem="fdQ-JW-yTC" secondAttribute="trailing" id="0qK-ZW-Lgq"/>
+                <constraint firstItem="fdQ-JW-yTC" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="Ayo-PD-6ZP"/>
                 <constraint firstItem="BSr-xH-Hxh" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="Gn3-II-7iC"/>
                 <constraint firstAttribute="trailing" secondItem="BSr-xH-Hxh" secondAttribute="trailing" id="YaV-Dl-l3B"/>
-                <constraint firstItem="J6U-ba-8pD" firstAttribute="top" secondItem="BSr-xH-Hxh" secondAttribute="bottom" constant="10" id="dqg-C5-Om8"/>
-                <constraint firstItem="J6U-ba-8pD" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="oJw-qm-Tdt"/>
+                <constraint firstItem="fdQ-JW-yTC" firstAttribute="top" secondItem="BSr-xH-Hxh" secondAttribute="bottom" constant="10" id="iPD-gn-3HB"/>
                 <constraint firstItem="BSr-xH-Hxh" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="sAn-Q5-0Us"/>
-                <constraint firstAttribute="trailing" secondItem="J6U-ba-8pD" secondAttribute="trailing" id="xkZ-d0-kiA"/>
             </constraints>
+            <point key="canvasLocation" x="26.5" y="52.5"/>
         </view>
     </objects>
 </document>

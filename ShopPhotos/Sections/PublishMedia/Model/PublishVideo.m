@@ -61,7 +61,6 @@
 - (void)postImageToQiniu:(NSDictionary *)data{
     //    __weak __typeof(self)weakSelef = self;
     NSArray * keys = [[NSArray alloc] initWithObjects:[data objectForKey:@"coverkey"],[data objectForKey:@"videokey"], nil];
-    NSMutableArray *aryRet = [[NSMutableArray alloc] init];
     if(keys && keys.count > 0){
         NSInteger index = 0;
         __block NSInteger count = 0;
@@ -73,6 +72,8 @@
             CongfingURL * config = [self getValueWithKey:ShopPhotosApi];
             AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
             manager.requestSerializer.timeoutInterval = 300;
+            
+
             [manager POST:config.createVideo2 parameters:postData constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
                 if(index == 0){
                     [formData appendPartWithFileData:[self.postData objectForKey:@"cover"] name:@"file" fileName:@"cover.png" mimeType:@"image/jpeg"];

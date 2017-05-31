@@ -52,18 +52,18 @@
             case WXSuccess:
                 strMsg = @"支付成功！";
                 NSLog(@"支付成功－PaySuccess，retcode = %d", resp.errCode);
-                [[NSNotificationCenter defaultCenter] postNotificationName:@"gotoProfileViewer" object:@{@"tabID":@"2"}];
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"successNoti" object:@{}];
 
                 break;
                 
             default:
                 strMsg = @"支付失败！";
                 NSLog(@"错误，retcode = %d, retstr = %@", resp.errCode,resp.errStr);
-                [[NSNotificationCenter defaultCenter] postNotificationName:@"refreshOrderViewer" object:@{@"tabID":@"1"}];
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"failNoti" object:@{}];
                 break;
         }
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:strTitle message:strMsg delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-        [alert show];
+//        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:strTitle message:strMsg delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+//        [alert show];
     }
 
 }

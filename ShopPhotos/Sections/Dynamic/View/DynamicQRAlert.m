@@ -38,9 +38,10 @@
         [self addSubview:self.alert];
 
         self.title = [[UILabel alloc] init];
-        [self.title setNumberOfLines:0];
+        [self.title setNumberOfLines:2];
         [self.title setTextAlignment:NSTextAlignmentCenter];
-        [self.title setTextColor:ColorHex(0X888888)];
+        [self.title setTextColor:ColorHex(0X333333)];
+        [self.title setFont:Font(18)];
         [self.alert addSubview:self.title];
         
         self.content = [[UIImageView alloc] init];
@@ -48,11 +49,11 @@
         [self.alert addSubview:self.content];
         
         self.tip = [[UILabel alloc] init];
-        [self.tip setNumberOfLines:2];
+        [self.tip setNumberOfLines:3];
         [self.tip setTextAlignment:NSTextAlignmentCenter];
-        [self.tip setFont:Font(14)];
-        [self.tip setTextColor:ColorHex(0X888888)];
-        [self.tip setText:@"长按保存二维码\n扫一扫上面的二维码图案，查看相册详情"];
+        [self.tip setFont:Font(12)];
+        [self.tip setTextColor:ColorHex(0X7e8599)];
+        [self.tip setText:@"长按保存二维码\n\n扫一扫上面的二维码图案，查看相册详情"];
         [self.alert addSubview:self.tip];
         
         self.alert.sd_layout
@@ -65,7 +66,7 @@
         .leftSpaceToView(self.alert,20)
         .rightSpaceToView(self.alert,20)
         .topSpaceToView(self.alert,20)
-        .heightIs(60);
+        .heightIs(45);
         
         self.content.sd_layout
         .leftSpaceToView(self.alert,20)
@@ -77,7 +78,7 @@
         .leftSpaceToView(self.alert,20)
         .rightSpaceToView(self.alert,20)
         .topSpaceToView(self.content,20)
-        .heightIs(40);
+        .heightIs(50);
     }
     return self;
 }
@@ -106,7 +107,8 @@
     [UIView animateWithDuration:0.5 animations:^{
         [self setAlpha:0];
     } completion:^(BOOL finished){
-        [self setHidden:YES];
+//        [self setHidden:YES];
+        [self removeFromSuperview];
     }];
     
 }

@@ -28,7 +28,7 @@
             }
         }
     } @catch (NSException *exception) {
-        self.message = NETWORKTIPS;
+        self.message = exception.name;//NETWORKTIPS;
         self.status = 0;
     }
 }

@@ -19,7 +19,13 @@
 @property (strong, nonatomic) FeedbackOptionAlert * alert;
 @property (weak, nonatomic) IBOutlet UILabel *contentPlaceholder;
 @property (weak, nonatomic) IBOutlet UILabel *submit;
-@property (assign, nonatomic) NSInteger selectType;
+@property (assign, nonatomic) NSString * selectType;
+@property (weak, nonatomic) IBOutlet UIView *funcFeedback;
+@property (weak, nonatomic) IBOutlet UIView *bugFeedback;
+@property (weak, nonatomic) IBOutlet UIView *compliantFeedback;
+@property (weak, nonatomic) IBOutlet UIImageView *ico_function;
+@property (weak, nonatomic) IBOutlet UIImageView *ico_bug;
+@property (weak, nonatomic) IBOutlet UIImageView *ico_compliant;
 
 @end
 
@@ -37,10 +43,13 @@
 
 - (void)setup{
     
-    self.selectType = 1;
+    self.selectType = @"功能建议";
     [self.back addTarget:self action:@selector(backSelected)];
     [self.submit addTarget:self action:@selector(submitSelected)];
     [self.option addTarget:self action:@selector(optionSelected)];
+    [self.funcFeedback addTarget:self action:@selector(funcFeedbackSelected)];
+    [self.bugFeedback addTarget:self action:@selector(bugFeedbackSelected)];
+    [self.compliantFeedback addTarget:self action:@selector(compliantFeedbackSelected)];
     
     self.content.delegate = self;
     self.email.delegate = self;
@@ -55,6 +64,8 @@
     .rightEqualToView(appDelegate.window)
     .bottomEqualToView(appDelegate.window);
     [self.alert setHidden:YES];
+    [_email addTarget:self action:@selector(textChanged:) forControlEvents:UIControlEventEditingChanged];
+
 }
 
 - (BOOL)feedbackValidateEmail:(NSString *)email
@@ -94,10 +105,35 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
+- (void)funcFeedbackSelected {
+    [self.ico_function setImage:[UIImage imageNamed:@"icon_checked.png"]];
+    [self.ico_bug setImage:[UIImage imageNamed:@"icon_unchecked.png"]];
+    [self.ico_compliant setImage:[UIImage imageNamed:@"icon_unchecked.png"]];
+    _selectType = @"功能建议";
+}
+
+- (void)bugFeedbackSelected {
+    [self.ico_function setImage:[UIImage imageNamed:@"icon_unchecked.png"]];
+    [self.ico_bug setImage:[UIImage imageNamed:@"icon_checked.png"]];
+    [self.ico_compliant setImage:[UIImage imageNamed:@"icon_unchecked.png"]];
+    _selectType = @"发现BUG";
+}
+
+- (void)compliantFeedbackSelected {
+    [self.ico_function setImage:[UIImage imageNamed:@"icon_unchecked.png"]];
+    [self.ico_bug setImage:[UIImage imageNamed:@"icon_unchecked.png"]];
+    [self.ico_compliant setImage:[UIImage imageNamed:@"icon_checked.png"]];
+    _selectType = @"投诉";
+}
+
 - (void)submitSelected{
     
     if(self.content.text.length == 0){
         [self showToast:@"请输入反馈内容"];
+        return;
+    }
+    if(self.content.text.length < 6){
+        [self showToast:@"反馈内容不能少于6个字符"];
         return;
     }
     if([self isEmpty:self.content.text]){
@@ -120,7 +156,7 @@
     
     [self submitFeedbackData:@{@"email":self.email.text,
                                @"content":self.content.text,
-                               @"type":[NSString stringWithFormat:@"%ld",self.selectType]}];
+                               @"type":self.selectType}];
 }
 
 - (void)optionSelected{
@@ -135,7 +171,7 @@
 - (void)feedbackOption:(NSString *)titiel selectedType:(NSInteger)type{
     
     [self.optionText setText:titiel];
-    self.selectType = type+1;
+    //self.selectType = type+1;
 }
 
 
@@ -151,8 +187,22 @@
     }else{
         [self.contentPlaceholder setHidden:YES];
     }
+    if ((self.content.text.length > 1 || ( text.length > 0)) && self.email.text.length > 0) {
+        [self.submit setTextColor:ThemeColor];
+    } else {
+        [self.submit setTextColor:ColorHex(0xbfc1cf)];
+    }
     return YES;
 }
+-(void)textChanged:(UITextField *)textField
+{
+    if (self.content.text.length > 0 && self.email.text.length > 0) {
+        [self.submit setTextColor:ThemeColor];
+    } else {
+        [self.submit setTextColor:ColorHex(0xbfc1cf)];
+    }
+}
+
 #pragma mark - UITextFieldDelegate
 - (BOOL)textFieldShouldReturn:(UITextField *)textField{
     [textField resignFirstResponder];
@@ -163,10 +213,10 @@
 #pragma makr - AFNetworking网络加载
 - (void)submitFeedbackData:(NSDictionary *)data{
     NSLog(@"%@",data);
-    NSLog(@"%@",self.congfing.getUserInfo);
+    [self showLoad];
     __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.publishedFeedback parametric:data succed:^(id responseObject){
-        
+    [HTTPRequest requestPOSTUrl:[NSString stringWithFormat:@"%@%@",self.congfing.publishFeedback,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+        [self closeLoad];
         NSLog(@"%@",responseObject);
         BaseModel * model = [[BaseModel alloc] init];
         [model analyticInterface:responseObject];
@@ -178,8 +228,9 @@
         }
         
     } failure:^(NSError *error){
+        [self closeLoad];
         NSLog(@"%@",error.userInfo);
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
 }
 

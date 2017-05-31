@@ -130,6 +130,11 @@
     }else{
         [self.attenIcon  setImage:[UIImage imageNamed:@"btn_favorite_b"]];
     }
+    if(model.concerned){
+        [self.concernIcon  setImage:[UIImage imageNamed:@"ico_favorite_done.png"]];
+    }else{
+        [self.concernIcon  setImage:[UIImage imageNamed:@"concern.png"]];
+    }
     
     if(self.attentionStatu){
         [self.attention setHidden:YES];

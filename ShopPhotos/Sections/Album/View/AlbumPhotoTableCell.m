@@ -24,6 +24,7 @@
 @property (strong, nonatomic) UIImageView * select;
 @property (strong, nonatomic) UILabel * share;
 @property (strong, nonatomic) UIButton * btn_pyq;
+@property (strong, nonatomic) UIButton *btn_favorite;
 
 @end
 
@@ -58,7 +59,7 @@
     [self.contentView addSubview:self.content];
     
     self.icon = [[UIImageView alloc] init];
-//    [self.icon setContentMode:UIViewContentModeScaleAspectFit];
+    [self.icon setContentMode:UIViewContentModeScaleAspectFit];
     [self.icon setBackgroundColor:ColorHex(0XF5F5F5)];
     [self.content addSubview:self.icon];
     
@@ -79,11 +80,18 @@
 //    [self.btn_pyq addTarget:self action:@selector(shareClicked)];
     [self.content addSubview:_btn_pyq];
     
+    _btn_favorite = [[UIButton alloc] init];
+    [_btn_favorite setBackgroundColor:[UIColor clearColor]];
+    [_btn_favorite setImage:[UIImage imageNamed:@"btn_favorite"] forState:UIControlStateNormal];
+//    [_btn_favorite addTarget:self action:@selector(collectSelected)];
+    [self.content addSubview:_btn_favorite];
+    
     self.share = [[UILabel alloc] init];
-    [self.share setFont:Font(19)];
+    [self.share setFont:Font(22)];
     [self.share setText:@"..."];
+    [self.share setTextColor:ColorHex(0x4c5364)];
     [self.share addTarget:self action:@selector(shareClicked)];
-    self.share.textAlignment = NSTextAlignmentLeft;
+    self.share.textAlignment = NSTextAlignmentCenter;
     [self.content addSubview:self.share];
     
     self.selectView = [[UIView alloc] init];
@@ -138,11 +146,18 @@
     .widthIs(25)
     .heightIs(25);
     
+    self.btn_favorite.sd_layout
+    .leftSpaceToView(self.btn_pyq,13)
+    .topSpaceToView(self.title,5)
+    .widthIs(25)
+    .heightIs(25);
+    //[_btn_favorite setImageEdgeInsets: UIEdgeInsetsMake(7, 7, 7, 7)];
+    
     self.share.sd_layout
     .rightSpaceToView(self.content,5)
-    .topSpaceToView(self.title,5)
-    .widthIs(20)
-    .heightIs(25);
+    .topSpaceToView(self.title,0)
+    .widthIs(30)
+    .heightIs(22);
 
     self.selectView.sd_layout
     .leftEqualToView(self.contentView)

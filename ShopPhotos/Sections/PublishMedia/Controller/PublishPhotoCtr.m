@@ -2,7 +2,7 @@
 //  PublishPhotoCtr.m
 //  ShopPhotos
 //
-//  Created by Park Jin Hyok on 4/13/17.
+//  Created by  on 4/13/17.
 //  Copyright © 2017 addcn. All rights reserved.
 //
 
@@ -17,7 +17,7 @@
 #import "AlbumPhotosRequset.h"
 #import "AlbumPhotosModel.h"
 #import "PhotoImagesRequset.h"
-//#import <UITextView+Placeholder.h>
+#import <UITextView+Placeholder.h>
 
 @interface PublishPhotoCtr ()<UIScrollViewDelegate,UITextViewDelegate,TZImagePickerControllerDelegate>
 
@@ -25,21 +25,18 @@
 @property (weak, nonatomic) IBOutlet UIButton *btn_cancel;
 @property (weak, nonatomic) IBOutlet UIButton *btn_ok;
 @property (weak, nonatomic) IBOutlet UIScrollView *content;
-
 @property (strong, nonatomic) UIView * photoClassView;
 @property (strong, nonatomic) UILabel * photoClassContent;
-
 @property (strong, nonatomic) UISwitch * recommendSwitch;
-
 @property (strong, nonatomic) UIView *photoView;
 @property (strong, nonatomic) UIButton *clearMessage;
-
-@property (strong, nonatomic) NSString *parentClass;
-@property (strong, nonatomic) UIButton *subClass;
-
+@property (strong, nonatomic) NSMutableArray * imageArray;
+@property (strong, nonatomic) UITextView * photoTitle;
+@property (strong, nonatomic) UITextField * remarksContent;
 @property (strong, nonatomic) NSString* classify_id;
 @property (strong, nonatomic) NSString* subclassification_id;
 @property (strong, nonatomic) NSMutableArray *addImageArray;
+@property (strong, nonatomic) NSString * photoId;
 
 @end
 
@@ -69,11 +66,28 @@
     self.content.delegate = self;
     [self imageArray];
     [self addImageArray];
+    
     [self createAutoLayout];
+    self.classify_id = @"";
+    self.subclassification_id = @"";
+    
+    if (self.isAdd) {
+        self.photoId = [self.editData objectForKey:@"photoId"];
+        [self.imageArray setArray:[self.editData objectForKey:@"images"]];
+        [self.mtitle setText:[self.editData objectForKey:@"headtitle"]];
+        [self.photoTitle setText:[self.editData objectForKey:@"title"]];
+        [self.remarksContent setText:[self.editData objectForKey:@"remarks"]];
+        [self setClassifies:[self.editData objectForKey:@"parentclass"] subClass:[self.editData objectForKey:@"subclass"]];
+        [self.clearMessage setHidden:YES];
+        [self.recommendSwitch setOn:[[self.editData objectForKey:@"recommend"] boolValue]];
+        
+        [self.btn_ok setTitle:@"完成" forState:UIControlStateNormal];
+    }
+    [self drawImages];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
-    [self.content setContentSize:CGSizeMake(0, _photoClassView.top+_photoClassView.height+20)];
+//    [self.content setContentSize:CGSizeMake(0, _photoClassView.top+_photoClassView.height+20)];
     NSLog(@"%f", _photoClassView.top);
 }
 - (void)createAutoLayout {
@@ -86,19 +100,30 @@
     .topSpaceToView(self.content,Clearance)
     .heightIs((WindowWidth-40)/3);
     
+    UIView *line0 = [[UIView alloc]init];
+    [line0 setBackgroundColor:ColorHex(0xebebeb)];
+    [_content addSubview:line0];
+    line0.sd_layout
+    .leftEqualToView(_content)
+    .rightEqualToView(_content)
+    .topSpaceToView(_photoView,7)
+    .heightIs(10);
+    
     self.photoTitle = [[UITextView alloc] init];
-    self.photoTitle.contentInset = UIEdgeInsetsMake(2,-4,-2,-4);
-    self.photoTitle.delegate = self;
-    [self.photoTitle setFont:Font(15)];
-    [self.photoTitle setBorderWidth:1.0];
-    [self.photoTitle setBorderColor:ColorHex(0xe0e0e0)];
+//    self.photoTitle.contentInset = UIEdgeInsetsMake(2,-4,-2,-4);
+//    self.photoTitle.delegate = self;
+    [self.photoTitle setFont:Font(13)];
+//    [self.photoTitle setBorderWidth:1.0];
+//    [self.photoTitle setBorderColor:ColorHex(0xe0e0e0)];
+    [self.photoTitle setPlaceholder:@"添加相册的描述..."];
     [self.photoTitle setTextColor:[UIColor darkGrayColor]];
     [self.photoTitle setBackgroundColor:[UIColor whiteColor]];
+    
     [self.content addSubview:self.photoTitle];
     self.photoTitle.sd_layout
     .leftSpaceToView(_content,Clearance)
     .rightSpaceToView(_content,Clearance+30)
-    .topSpaceToView(_photoView,5)
+    .topSpaceToView(line0,5)
     .heightIs(60);
     
     UIButton * btnClear = [[UIButton alloc]init];
@@ -108,8 +133,8 @@
     btnClear.sd_layout
     .rightSpaceToView(_content,15)
     .bottomEqualToView(_photoTitle)
-    .widthIs(16)
-    .heightIs(16);
+    .widthIs(25)
+    .heightIs(25);
     
     UIView *line1 = [[UIView alloc]init];
     [line1 setBackgroundColor:ColorHex(0xebebeb)];
@@ -126,12 +151,12 @@
     .leftEqualToView(self.content)
     .rightEqualToView(self.content)
     .topEqualToView(line1)
-    .heightIs(120);
+    .heightIs(90);
 
     UILabel *reamrksTitle = [[UILabel alloc] init];
     [reamrksTitle setText:@"备注"];
     [reamrksTitle setTextColor:[UIColor blackColor]];
-    [reamrksTitle setFont:Font(17)];
+    [reamrksTitle setFont:Font(14)];
     [remarksView addSubview:reamrksTitle];
     reamrksTitle.sd_layout
     .leftSpaceToView(remarksView,Clearance)
@@ -139,18 +164,19 @@
     .widthIs(40)
     .heightIs(30);
     
-    self.remarksContent = [[UITextView alloc] init];
-    self.remarksContent.delegate = self;
-    self.remarksContent.contentInset = UIEdgeInsetsMake(2,0,2,0);
+    self.remarksContent = [[UITextField alloc] init];
+    //self.remarksContent.delegate = self;
+    //self.remarksContent.contentInset = UIEdgeInsetsMake(2,0,2,0);
     [self.remarksContent setBackgroundColor:[UIColor clearColor]];
-    [self.remarksContent setFont:Font(15)];
+    [self.remarksContent setFont:Font(13)];
+    [self.remarksContent setPlaceholder:@"请输入备注，仅限自己查看"];
     [self.remarksContent setTextColor:[UIColor darkGrayColor]];
     [remarksView addSubview:self.remarksContent];
     self.remarksContent.sd_layout
     .leftSpaceToView(reamrksTitle,15)
-    .topSpaceToView(remarksView,20)
+    .topSpaceToView(remarksView,15)
     .rightSpaceToView(remarksView,15)
-    .heightIs(50);
+    .heightIs(40);
     
     UIView *line2 = [[UIView alloc]init];
     [line2 setBackgroundColor:ColorHex(0xe0e0e0)];
@@ -158,20 +184,20 @@
     line2.sd_layout
     .leftSpaceToView(remarksView,Clearance)
     .rightSpaceToView(remarksView,Clearance)
-    .topSpaceToView(_remarksContent,15)
+    .topSpaceToView(_remarksContent,5)
     .heightIs(1);
     
     UILabel *reamrksNote = [[UILabel alloc] init];
     [reamrksNote setText:@"*备注信息仅自己可见"];
     [reamrksNote setTextColor:[UIColor grayColor]];
-    [reamrksNote setFont:Font(15)];
+    [reamrksNote setFont:Font(11)];
     [reamrksNote setTextAlignment:NSTextAlignmentRight];
     [remarksView addSubview:reamrksNote];
     reamrksNote.sd_layout
     .rightSpaceToView(remarksView,Clearance)
-    .topSpaceToView(line2,10)
+    .topSpaceToView(line2,0)
     .widthIs(150)
-    .heightIs(30);
+    .heightIs(40);
     
     UIView *line3 = [[UIView alloc]init];
     [line3 setBackgroundColor:ColorHex(0xebebeb)];
@@ -193,7 +219,7 @@
     UILabel *photoClassTitle = [[UILabel alloc] init];
     [photoClassTitle setText:@"选择分类"];
     [photoClassTitle setTextColor:[UIColor blackColor]];
-    [photoClassTitle setFont:Font(17)];
+    [photoClassTitle setFont:Font(14)];
     [_photoClassView addSubview:photoClassTitle];
     photoClassTitle.sd_layout
     .leftSpaceToView(_photoClassView,Clearance)
@@ -209,10 +235,10 @@
     .topEqualToView(_photoClassView)
     .leftSpaceToView(photoClassTitle,20)
     .heightIs(50);
-    [photoClassContentView addTarget:self action:@selector(selectPhotoClass)];
     
     UIButton *arrow_right = [[UIButton alloc] init];
     [arrow_right setBackgroundImage:[UIImage imageNamed:@"ico_arrow_right"] forState:UIControlStateNormal];
+    [arrow_right addTarget:self action:@selector(selectClass)];
     [photoClassContentView addSubview:arrow_right];
     arrow_right.sd_layout
     .rightSpaceToView(photoClassContentView,10)
@@ -223,7 +249,7 @@
     _photoClassContent = [[UILabel alloc] init];
 //    [_photoClassContent setText:@"耐克/2017新款"];
     [_photoClassContent setTextColor:ColorHex(0x4893d7)];
-    [_photoClassContent setFont:Font(18)];
+    [_photoClassContent setFont:Font(14)];
     [_photoClassContent setTextAlignment:NSTextAlignmentRight];
     [_photoClassContent addTarget:self action:@selector(selectClass)];
     [photoClassContentView addSubview:_photoClassContent];
@@ -245,7 +271,7 @@
     UILabel *recommendClassTitle = [[UILabel alloc] init];
     [recommendClassTitle setText:@"是否推荐"];
     [recommendClassTitle setTextColor:[UIColor blackColor]];
-    [recommendClassTitle setFont:Font(17)];
+    [recommendClassTitle setFont:Font(14)];
     [_photoClassView addSubview:recommendClassTitle];
     recommendClassTitle.sd_layout
     .leftSpaceToView(_photoClassView,Clearance)
@@ -278,6 +304,7 @@
     _clearMessage.cornerRadius = 5;
     [_clearMessage addTarget:self action:@selector(clearSelecteds) forControlEvents:UIControlEventTouchUpInside];
     [_clearMessage setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [_clearMessage.titleLabel setFont:[UIFont systemFontOfSize:15]];
     [self.content addSubview:_clearMessage];
     
     _clearMessage.sd_layout
@@ -287,8 +314,8 @@
     .heightIs(40);
     
     [_clearMessage updateLayout];
-    [self.content setContentSize:CGSizeMake(0, WindowHeight)];
-    [self drawImages];
+//    [self.content setContentSize:CGSizeMake(0, WindowHeight)];
+    
 }
 
 - (void) drawImages {
@@ -340,7 +367,7 @@
         [image setEditStyle:imageModel.edit];
         [image.deleteBtn addTarget:self action:@selector(deleteSelected:) forControlEvents:UIControlEventTouchUpInside];
         [image.settingBtn addTarget:self action:@selector(settingSelected:) forControlEvents:UIControlEventTouchUpInside];
-        [image.image addTarget:self action:@selector(imageSelected:)];
+//        [image.image addTarget:self action:@selector(imageSelected:)];
     }
     
     if (index < 9) {
@@ -389,9 +416,16 @@
 - (void)deleteSelected:(UIButton *)button{
     
     NSLog(@"%ld",button.superview.superview.tag);
-    
-    PhotoImagesModel *imageModel = [_imageArray objectAtIndex:button.superview.superview.tag];
-    [self deletePhotoImage:@{@"imageId":imageModel.Id,@"photoId":self.photoId}];
+    if (_imageArray.count > button.superview.superview.tag) {
+        PhotoImagesModel *imageModel = [_imageArray objectAtIndex:button.superview.superview.tag];
+        if (imageModel.Id) {
+            [self deletePhotoImage:@{@"imageId":imageModel.Id,@"photoId":self.photoId}];
+
+        } else {
+            [_imageArray removeObjectAtIndex:button.superview.superview.tag];
+            [self drawImages];
+        }
+    }
 }
 
 - (void)settingSelected:(UIButton *)button{
@@ -410,13 +444,32 @@
 - (void)imageSelected:(UIButton *)button{
     NSLog(@"%ld",button.superview.superview.tag);
 }
+
 - (void)clearSelecteds {
+    
+    [_imageArray removeAllObjects];
+    [self drawImages];
+    [_photoTitle setText:@""];
+    [_remarksContent setText:@""];
+    [_photoClassContent setText:@""];
+    [_recommendSwitch setOn:NO];
 }
 
 // Target methods
 - (void) backSelected {
-    [self.navigationController popViewControllerAnimated:YES];
-//    [self dismissViewControllerAnimated:YES completion:nil];
+    if (!_isAdd) {
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:@"退出此次编辑?" preferredStyle:UIAlertControllerStyleAlert];
+        [alert addAction:[UIAlertAction actionWithTitle:@"退出" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action){
+            [self.navigationController popViewControllerAnimated:YES];
+        }]];
+        [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+        [self presentViewController:alert animated:YES completion:nil];
+
+    }else{
+        [self.navigationController popViewControllerAnimated:YES];
+        //    [self dismissViewControllerAnimated:YES completion:nil];
+        
+    }
 }
 
 - (void) publishSelected {
@@ -426,27 +479,16 @@
         SPAlert(@"请选择图片",self);
         return;
     }
-    /*
-    if(self.fatherClassSelectIndex == 0){
-        
-        if(self.faherEnter.text.length == 0){
-            SPAlert(@"请输入主分类",self);
-            return;
-        }
-        if(self.subEnter.text.length == 0){
-            SPAlert(@"请输入子分类",self);
-            return;
-        }
-    }else{
-        
-        if(self.subClassSelectIndex == 0){
-            if(self.subClsssEnter.text.length == 0){
-                SPAlert(@"请输入子分类",self);
-                return;
-            }
-        }
+    
+    if (self.classify_id.length == 0) {
+        SPAlert(@"请选父分类",self);
+        return;
     }
-    */
+    
+    if (self.subclassification_id.length == 0) {
+        SPAlert(@"请选子分类",self);
+        return;
+    }
     
     NSMutableString * msg = [NSMutableString string];
     
@@ -463,13 +505,87 @@
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:str preferredStyle:UIAlertControllerStyleAlert];
         [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault handler:nil]];
         [alert addAction:[UIAlertAction actionWithTitle:@"继续上传" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action){
-            [self postImage:self.imageArray];
-            
+            if (self.isAdd) {
+                [self updatePhoto];
+            }
+            else {
+                
+                [self postImage:self.imageArray];
+            }
         }]];
         [self presentViewController:alert animated:YES completion:nil];
     }else{
-        [self postImage:self.imageArray];
+        if (self.isAdd) {
+            [self updatePhoto];
+        }
+        else {
+            
+            [self postImage:self.imageArray];
+        }
     }
+}
+
+- (void)updatePhoto {
+    
+    [self showLoad];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc]init];
+    CongfingURL * config = [self getValueWithKey:ShopPhotosApi];
+
+    [data setValue:self.photoId forKey:@"photoId"];
+    [data setValue:self.photoTitle.text forKey:@"title"];
+    [data setValue:self.remarksContent.text forKey:@"description"];
+    [data setValue:self.recommendSwitch.on?@"1":@"0" forKey:@"recommend"];
+    
+    for (PhotoImagesModel *image in self.imageArray) {
+        if (image.isCover) {
+            [data setValue:image.Id forKey:@"coverImageId"];
+        }
+    }
+    
+    __weak __typeof(self)weakSelef = self;
+    [HTTPRequest requestPUTUrl :[NSString stringWithFormat:@"%@%@",config.updatePhoto,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+        [weakSelef closeLoad];
+        NSLog(@"%@",responseObject);
+        BaseModel * model = [[BaseModel alloc] init];
+        [model analyticInterface:responseObject];
+        if(model.status == 0){
+            [weakSelef showToast:@"更新成功"];
+            [weakSelef.navigationController popViewControllerAnimated:YES];
+        }else{
+            [weakSelef showToast:model.message];
+        }
+    } failure:^(NSError *error){
+        [weakSelef closeLoad];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
+    }];
+}
+
+- (void)copyPhoto {
+    
+    [self showLoad];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc]init];
+    CongfingURL * config = [self getValueWithKey:ShopPhotosApi];
+    
+    [data setValue:self.photoId forKey:@"photoId"];
+    [data setValue:self.classify_id forKey:@"classifyName"];
+    [data setValue:self.subclassification_id forKey:@"subclassName"];
+    
+    __weak __typeof(self)weakSelef = self;
+    [HTTPRequest requestPOSTUrl :[NSString stringWithFormat:@"%@%@",config.ccopyPhoto,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+        [weakSelef closeLoad];
+        NSLog(@"%@",responseObject);
+        BaseModel * model = [[BaseModel alloc] init];
+        [model analyticInterface:responseObject];
+        if(model.status == 0){
+            [weakSelef showToast:@"复制成功"];
+        }else{
+            [weakSelef showToast:model.message];
+        }
+        [weakSelef.navigationController popViewControllerAnimated:YES];
+    } failure:^(NSError *error){
+        [weakSelef closeLoad];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
+    }];
 }
 
 - (void)postImage:(NSArray *)imageArray{
@@ -484,19 +600,20 @@
         [postData setValue:recommendText forKey:@"recommend"];
         [postData setValue:_classify_id forKey:@"classifyName"];
         [postData setValue:_subclassification_id forKey:@"subclassName"];
-        [postData setValue:self.photoTitle.text forKey:@"title"];
-        [postData setValue:self.remarksContent.text forKey:@"description"];
+        //if(self.photoTitle.text.length > 0)
+            [postData setValue:self.photoTitle.text forKey:@"title"];
+        //if(self.remarksContent.text.length > 0)
+            [postData setValue:self.remarksContent.text forKey:@"description"];
         [self showToast:@"正在上传,请保存网络通畅"];
     }
     else {
         [postData setValue:self.photoId forKey:@"photoId"];
-        [self showToast:@"正在添加,请保存网络通畅"];
+        [self showToast:@"正在更新,请保存网络通畅"];
     }
     
 //    [self clearSelected:NO];
     [self.content setContentOffset:CGPointMake(0, 0) animated:YES];
     
-    [self showLoad];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSMutableArray * imageDatas = [NSMutableArray array];
         int index = 0;
@@ -504,7 +621,7 @@
             if (imageModel.isNew == YES) {
                 NSData *imageData = [self compressOriginalImage:imageModel.photo toMaxDataSizeKBytes:300];
                 [imageDatas addObject:imageData];
-                NSLog(@"size == %ld",imageData.length);
+                NSLog(@"size == %ld",(unsigned long)imageData.length);
                 if (imageModel.isCover) {
                     [postData setValue:[NSString stringWithFormat:@"%d",index] forKey:@"idxCover"];
                 }
@@ -513,27 +630,29 @@
         }
         
         [postData setValue:imageDatas forKey:@"images"];
-        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self clearSelecteds];
+        });
         // 耗时的操作
         PublishPhoto * task = [[PublishPhoto alloc] init];
         task.isAdd = self.isAdd;
         [task startTask:postData complete:^(id responseObj){
             dispatch_async(dispatch_get_main_queue(), ^{
                 //回调或者说是通知主线程刷新，
-                [self closeLoad];
+
                 if(responseObj != nil){
                     if (self.isAdd == NO) {
                         [self showToast:@"上传成功"];
                     }
                     else {
                         
-                        [self showToast:@"添加成功"];
+                        [self showToast:@"更新成功"];
                     }
                 } else {
                     if (self.isAdd == NO) {
                         [self showToast:@"上传失败，请检查网络是否通畅，或者重新尝试"];
                     }else{
-                        [self showToast:@"添加失败，请检查网络是否通畅，或者重新尝试"];
+                        [self showToast:@"更新失败，请检查网络是否通畅，或者重新尝试"];
                     }
                 }
             });
@@ -561,14 +680,11 @@
     return data;
 }
 
-- (void) clearPhotoTitle {}
+- (void) clearPhotoTitle {
+    [self.photoTitle setText:@""];
+}
 - (void) selectPhotoClass {}
 - (void) selectRecommendSwitch {}
-
-#pragma makr - UITextViewDelegate
-- (void)textViewDidChange:(UITextView *)textView{
-    
-}
 
 - (void)addPublishImage {
     
@@ -592,7 +708,10 @@
 
 //- (void) imagePickerController:(TZImagePickerController *)picker didFinishPickingPhotos:(NSArray<UIImage *> *)photos sourceAssets:(NSArray *)assets isSelectOriginalPhoto:(BOOL)isSelectOriginalPhoto {};
 - (void) imagePickerController:(TZImagePickerController *)picker didFinishPickingPhotos:(NSArray<UIImage *> *)photos sourceAssets:(NSArray *)assets isSelectOriginalPhoto:(BOOL)isSelectOriginalPhoto infos:(NSArray<NSDictionary *> *)infos {
-
+    BOOL fFirst = YES;
+    if ( _imageArray && _imageArray.count > 0) {
+        fFirst = NO;
+    }
     if(assets && assets.count >0) {
         for (UIImage *photo in photos) {
             PhotoImagesModel * imageModel = [[PhotoImagesModel alloc] init];
@@ -605,7 +724,16 @@
             [_imageArray addObject:imageModel];
         }
     }
-    
+    if (fFirst &&  _imageArray && _imageArray.count > 0) {
+        int index = 0;
+        for (PhotoImagesModel * imageModel in _imageArray) {
+            if (imageModel.isCover) { imageModel.isCover = NO; }
+            if (index == 0) { imageModel.isCover = YES; }
+            index++;
+        }
+
+    }
+
     [self drawImages];
     
     if (self.isAdd == YES) {
@@ -616,10 +744,11 @@
 - (void) selectClass {
     
     AlbumClassCtr * albumClass = GETALONESTORYBOARDPAGE(@"AlbumClassCtr");
+//    albumClass.parentModel = self.pa
     albumClass.isSubClass = NO;
     albumClass.uid = self.photosUserID;
     albumClass.isFromUploadPhoto = YES;
-    albumClass.publish = self;
+    albumClass.fromCtr = self;
     [self.navigationController pushViewController:albumClass animated:YES];
 }
 // AlbumClassCtrDelegate
@@ -644,11 +773,11 @@
         }
     } failure:^(NSError *error){
         [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
 }
 
-- (void)loadNetworkData{
+- (void)loadNetworkData {
     
     [self showLoad];
     //[self showLoad];
@@ -680,9 +809,8 @@
         }
     } failure:^(NSError *error){
         [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
 }
-
 
 @end

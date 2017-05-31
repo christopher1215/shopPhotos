@@ -26,19 +26,21 @@
 #import "PhotoDetailsCtr.h"
 #import "UserInfoDrawerCtr.h"
 
+#import "AlbumPhotosCtr.h"
+#import "AllClassModel.h"
+#import "PersonalSubClassPhotoViewCtr.h"
 #import "PhotoImagesRequset.h"
 #import "DynamicImagesModel.h"
 #import "ShareContentSelectCtr.h"
 #import "DownloadImageCtr.h"
 #import "CopyRequset.h"
 #import "HasCollectPhotoRequset.h"
-#import "DynamicQRAlert.h"
-#import "ShareCtr.h"
 #import <ShareSDK/ShareSDK.h>
 #import "PhotoImagesModel.h"
 #import "SPVideoPlayer.h"
+#import "KSPhotoBrowser.h"
 
-@interface PersonalHomeCtr ()<UIScrollViewDelegate,PhotosEditViewDelegate,AlbumPhotoTableViewDelegate,ShareDelegate,PersonalClassTableDelegate,DynamicTableViewDelegate,UserInfoDrawerDelegate>{
+@interface PersonalHomeCtr ()<UIScrollViewDelegate,PhotosEditViewDelegate,AlbumPhotoTableViewDelegate,PersonalClassTableDelegate,DynamicTableViewDelegate,UserInfoDrawerDelegate>{
     CGFloat screenWidth;
     NSInteger tabIndex;
     SPVideoPlayer *videoView;
@@ -55,9 +57,9 @@
 @property (weak, nonatomic) IBOutlet UIView *attentionView;
 @property (weak, nonatomic) IBOutlet UILabel *attentionLabel;
 @property (weak, nonatomic) IBOutlet UIView *qqView;
-@property (weak, nonatomic) IBOutlet UILabel *qqText;
+@property (strong, nonatomic) UILabel *qqText;
 @property (weak, nonatomic) IBOutlet UIView *chatView;
-@property (weak, nonatomic) IBOutlet UILabel *chatText;
+@property (strong, nonatomic) UILabel *chatText;
 @property (weak, nonatomic) IBOutlet UILabel *signature;
 @property (weak, nonatomic) IBOutlet UILabel *recommend;
 @property (weak, nonatomic) IBOutlet UILabel *dynamic;
@@ -96,9 +98,7 @@
 @property (strong, nonatomic) PersonalClassTable * personalClassTable;
 
 @property (assign, nonatomic) NSInteger itmeSelectedIndex;
-@property (strong, nonatomic) ShareCtr * shareView;
 @property (strong, nonatomic) NSMutableArray * imageArray;
-@property (strong, nonatomic) DynamicQRAlert * qrAlert;
 
 @property (assign, nonatomic) NSInteger recommendPage;
 @property (assign, nonatomic) NSInteger dynamicPage;
@@ -108,7 +108,10 @@
 @property (strong, nonatomic) UserInfoDrawerCtr * userInfo;
 @property (assign, nonatomic) NSInteger userInfoSelectIndex;
 @property (assign, nonatomic) NSInteger shareSelectIndex;
+@property (assign, nonatomic) BOOL firstFlag;
 
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *dataScrollBottom;
+@property (strong, nonatomic) UIView * shareView;
 @end
 
 @implementation PersonalHomeCtr
@@ -142,7 +145,6 @@
     [super viewDidLoad];
     [self.view bringSubviewToFront:_baseContentView];
     [self.view bringSubviewToFront:_titleView];
-    [self.view bringSubviewToFront:self.shareView.view];
     [self.view bringSubviewToFront:self.userInfo.view];
     [self.view bringSubviewToFront:videoView];
     
@@ -153,6 +155,7 @@
     [self loadNetworkData:@{@"uid":self.uid}];
     
     self.automaticallyAdjustsScrollViewInsets = NO;
+    _firstFlag = YES;
 }
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
@@ -172,8 +175,21 @@
     }else{
         [self loadNetworkAlbumData];
     }
+    if (_firstFlag) {
+        _dataScrollBottom.constant = _baseContentView.height - 80;
+        [_contentScrollView updateConstraints];
+    }
+    
 }
+-(void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
+    if (_firstFlag) {
+        self.underBar.frame = CGRectMake(_recommend.frame.origin.x, self.underBar.frame.origin.y, self.recommend.frame.size.width, self.underBar.frame.size.height);
+        [self.underBar setHidden:NO];
+        _firstFlag = NO;
 
+    }
+}
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     
     if ([scrollView isEqual:_contentScrollView]) {
@@ -183,9 +199,10 @@
                 // User began dragging
                 [self.view bringSubviewToFront:_contentScrollView];
                 [self.view bringSubviewToFront:_titleView];
-                [self.view bringSubviewToFront:self.shareView.view];
                 [self.view bringSubviewToFront:self.userInfo.view];
                 [self.view bringSubviewToFront:videoView];
+                [self.view bringSubviewToFront:_shareView];
+                
                 break;
                 
             case UIGestureRecognizerStateChanged:
@@ -212,11 +229,15 @@
         if(_contentScrollView == scrollView){
             CGFloat screenHeight = _spaceView.frame.size.height;
             if(0 <= scrollView.contentOffset.y && scrollView.contentOffset.y < screenHeight){
+                _dataScrollBottom.constant = _baseContentView.height - 80;
+                [_contentScrollView updateConstraints];
+
                 [self.view bringSubviewToFront:_baseContentView];
                 [self.view bringSubviewToFront:_titleView];
-                [self.view bringSubviewToFront:self.shareView.view];
                 [self.view bringSubviewToFront:self.userInfo.view];
                 [self.view bringSubviewToFront:videoView];
+                [self.view bringSubviewToFront:_shareView];
+                
                 [_titleView setBackgroundColor:[UIColor clearColor]];
                 [self.backIcon setImage:[UIImage imageNamed:@"btn_backwhite"]];
                 [self.lblBack setTextColor:[UIColor whiteColor]];
@@ -225,11 +246,15 @@
                 [self.iconShare setImage:[UIImage imageNamed:@"btn_share2.png"]];
                 [self.lblTitle setText:@""];
             } else {
+                _dataScrollBottom.constant = 0;
+                [_contentScrollView updateConstraints];
+
                 [self.view bringSubviewToFront:_contentScrollView];
                 [self.view bringSubviewToFront:_titleView];
-                [self.view bringSubviewToFront:self.shareView.view];
                 [self.view bringSubviewToFront:self.userInfo.view];
                 [self.view bringSubviewToFront:videoView];
+                [self.view bringSubviewToFront:_shareView];
+                
                 [_titleView setBackgroundColor:[UIColor whiteColor]];
                 [self.backIcon setImage:[UIImage imageNamed:@"btn_back_black"]];
                 [self.lblBack setTextColor:[UIColor blackColor]];
@@ -248,7 +273,7 @@
         if(0 <= scrollView.contentOffset.x && scrollView.contentOffset.x < screenWidth){
             [UIView beginAnimations:nil context:nil];//动画开始
             [UIView setAnimationDuration:0.3];
-            self.underBar.frame = CGRectMake(_recommend.frame.origin.x, self.underBar.frame.origin.y, self.underBar.frame.size.width, self.underBar.frame.size.height);
+            self.underBar.frame = CGRectMake(_recommend.frame.origin.x, self.underBar.frame.origin.y, self.recommend.frame.size.width, self.underBar.frame.size.height);
             
             [_recommend setTextColor:ThemeColor];
             [_dynamic setTextColor:[UIColor lightGrayColor]];
@@ -260,7 +285,7 @@
         }else if(screenWidth <= scrollView.contentOffset.x && scrollView.contentOffset.x < screenWidth * 2){
             [UIView beginAnimations:nil context:nil];//动画开始
             [UIView setAnimationDuration:0.3];
-            self.underBar.frame = CGRectMake(_dynamic.frame.origin.x, self.underBar.frame.origin.y, self.underBar.frame.size.width, self.underBar.frame.size.height);
+            self.underBar.frame = CGRectMake(_dynamic.frame.origin.x, self.underBar.frame.origin.y, self.recommend.frame.size.width, self.underBar.frame.size.height);
             [_recommend setTextColor:[UIColor lightGrayColor]];
             [_dynamic setTextColor:ThemeColor];
             [_photos setTextColor:[UIColor lightGrayColor]];
@@ -272,7 +297,7 @@
         }else if(screenWidth * 2 <= scrollView.contentOffset.x && scrollView.contentOffset.x < screenWidth * 3){
             [UIView beginAnimations:nil context:nil];//动画开始
             [UIView setAnimationDuration:0.3];
-            self.underBar.frame = CGRectMake(_photos.frame.origin.x, self.underBar.frame.origin.y, self.underBar.frame.size.width, self.underBar.frame.size.height);
+            self.underBar.frame = CGRectMake(_photos.frame.origin.x, self.underBar.frame.origin.y, self.recommend.frame.size.width, self.underBar.frame.size.height);
             [_recommend setTextColor:[UIColor lightGrayColor]];
             [_dynamic setTextColor:[UIColor lightGrayColor]];
             [_photos setTextColor:ThemeColor];
@@ -283,7 +308,7 @@
         }else if(screenWidth * 3 <= scrollView.contentOffset.x && scrollView.contentOffset.x < screenWidth * 4){
             [UIView beginAnimations:nil context:nil];//动画开始
             [UIView setAnimationDuration:0.3];
-            self.underBar.frame = CGRectMake(_photosClass.frame.origin.x, self.underBar.frame.origin.y, self.underBar.frame.size.width, self.underBar.frame.size.height);
+            self.underBar.frame = CGRectMake(_photosClass.frame.origin.x, self.underBar.frame.origin.y, self.recommend.frame.size.width, self.underBar.frame.size.height);
             [_recommend setTextColor:[UIColor lightGrayColor]];
             [_dynamic setTextColor:[UIColor lightGrayColor]];
             [_photos setTextColor:[UIColor lightGrayColor]];
@@ -296,13 +321,17 @@
 }
 
 - (void)setup {
-    
+    [self imageArray];
+    [self recommendDataArray];
+    [self dynamicDataArray];
+    [self albumDataArray];
+    [self personalClassDataArray];
     tabIndex = 0;
     [self.back addTarget:self action:@selector(backSelected)];
     [self.headImage addTarget:self action:@selector(iconSelected)];
     self.headImage.cornerRadius = 35.5f;
     self.headImage.layer.borderWidth = 3;
-    self.headImage.layer.borderColor = [UIColor whiteColor].CGColor;
+    self.headImage.layer.borderColor = RGBACOLOR(220, 220, 220, 1).CGColor;
     self.headImage.layer.masksToBounds = YES;
     [self.attention addTarget:self action:@selector(attentionSelected) forControlEvents:UIControlEventTouchUpInside];
     [self.attentionView addTarget:self action:@selector(attentionSelected)];
@@ -314,7 +343,10 @@
     [self.photos addTarget:self action:@selector(photosSelected)];
     [self.photosClass addTarget:self action:@selector(photosClassSelected)];
     [self.search addTarget:self action:@selector(searchSelected)];
-//    [self.share addTarget:self action:@selector(shareSelected)];
+    [self.share addTarget:self action:@selector(shareSelected)];
+    
+    self.qqText = [[UILabel alloc] init];
+    self.chatText = [[UILabel alloc] init];
     
     if(self.twoWay){
         [self.attentionLabel setText:@"取消关注"];
@@ -338,15 +370,6 @@
     .rightEqualToView(self.recommendView)
     .topSpaceToView(self.recommendView,0)
     .bottomSpaceToView(self.recommendView,0);
-    
-    self.qrAlert = [[DynamicQRAlert alloc] init];
-    [self.view addSubview:self.qrAlert];
-    self.qrAlert.sd_layout
-    .leftEqualToView(self.view)
-    .rightEqualToView(self.view)
-    .topEqualToView(self.view)
-    .bottomEqualToView(self.view);
-    [self.qrAlert setHidden:YES];
     
     self.dynamicTable = [[DynamicTableView alloc] init];
     self.dynamicTable.delegate = self;
@@ -401,15 +424,10 @@
     [self.userInfo closeDrawe];
     [self.userInfo.view setHidden:YES];
 
-    self.shareView = GETALONESTORYBOARDPAGE(@"ShareCtr");
-    self.shareView.delegate = self;
-    [self.view addSubview:self.shareView.view];
-    [self.shareView.view setHidden:YES];
-    [self.shareView closeAlert];
-
     videoView = [[SPVideoPlayer alloc] init];
     videoView.frame = CGRectMake(0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
 }
+
 - (void)loadNetworkRecommendData{
     self.recommendPage = 1;
     NSDictionary * data = @{@"uid":self.uid,
@@ -431,6 +449,7 @@
             }];
             if(requset.dataArray.count < 30){
                 [weakSelef.recommendTable.photos.mj_footer endRefreshingWithNoMoreData];
+                [weakSelef.recommendTable.photos.mj_footer setHidden:YES];
             }else{
                 [weakSelef.recommendTable.photos.mj_footer resetNoMoreData];
             }
@@ -443,7 +462,7 @@
         
     } failure:^(NSError *error){
         [weakSelef.recommendTable.photos.mj_header endRefreshing];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
 }
 
@@ -465,6 +484,7 @@
             weakSelef.recommendPage ++;
             if(requset.dataArray.count < 30){
                 [weakSelef.recommendTable.photos.mj_footer endRefreshingWithNoMoreData];
+                [weakSelef.recommendTable.photos.mj_footer setHidden:YES];
             }else{
                 [weakSelef.recommendTable.photos.mj_footer resetNoMoreData];
             }
@@ -475,7 +495,7 @@
         }
         
     } failure:^(NSError *error){
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
         [weakSelef.recommendTable.photos.mj_footer endRefreshing];
     }];
 }
@@ -489,7 +509,7 @@
     __weak __typeof(self)weakSelef = self;
     
     NSString *serverApi = @"";
-        serverApi = self.congfing.getUserDynamics;
+    serverApi = self.congfing.getUserDynamics;
     
     [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",serverApi,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
         
@@ -508,6 +528,7 @@
                 [weakSelef.dynamicTable.table.mj_footer resetNoMoreData];
             }else{
                 [weakSelef.dynamicTable.table.mj_footer endRefreshingWithNoMoreData];
+                [weakSelef.dynamicTable.table.mj_footer setHidden:YES];
             }
             [weakSelef.dynamicDataArray removeAllObjects];
             [weakSelef.dynamicDataArray addObjectsFromArray:requset.dataArray];
@@ -517,7 +538,7 @@
         }
         
     } failure:^(NSError *error){
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
         [weakSelef.dynamicTable.table.mj_header endRefreshing];
     }];
 }
@@ -547,6 +568,7 @@
                 [weakSelef.dynamicTable.table.mj_footer resetNoMoreData];
             }else{
                 [weakSelef.dynamicTable.table.mj_footer endRefreshingWithNoMoreData];
+                [weakSelef.dynamicTable.table.mj_footer setHidden:YES];
             }
             [weakSelef.dynamicDataArray addObjectsFromArray:requset.dataArray];
             [weakSelef.dynamicTable loadMoreData:requset.dataArray];
@@ -583,6 +605,7 @@
             }];
             if(requset.dataArray.count < 30){
                 [weakSelef.albumTable.photos.mj_footer endRefreshingWithNoMoreData];
+                [weakSelef.albumTable.photos.mj_footer setHidden:YES];
             }else{
                 [weakSelef.albumTable.photos.mj_footer resetNoMoreData];
             }
@@ -595,7 +618,7 @@
         
     } failure:^(NSError *error){
         [weakSelef.albumTable.photos.mj_header endRefreshing];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
 }
 
@@ -621,6 +644,7 @@
             weakSelef.albumPage ++;
             if(requset.dataArray.count < 30){
                 [weakSelef.albumTable.photos.mj_footer endRefreshingWithNoMoreData];
+                [weakSelef.albumTable.photos.mj_footer setHidden:YES];
             }else{
                 [weakSelef.albumTable.photos.mj_footer resetNoMoreData];
             }
@@ -631,7 +655,7 @@
         }
         
     } failure:^(NSError *error){
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
         [weakSelef.albumTable.photos.mj_footer endRefreshing];
     }];
 }
@@ -658,15 +682,21 @@
             [weakSelef showToast:model.message];
         }
     } failure:^(NSError *error){
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
         [weakSelef.personalClassTable.table.mj_header endRefreshing];
     }];
 }
 
 #pragma mark -OnClick
+
 - (void)backSelected{
     [self.navigationController popViewControllerAnimated:YES];
 }
+
+- (void) shareSelected {
+    [self.appd showShare2view:self];
+}
+
 - (void)searchSelected{
     SearchAllCtr * search = GETALONESTORYBOARDPAGE(@"SearchAllCtr");
     search.uid = self.photosUserID;
@@ -746,6 +776,7 @@
         pasteboard.string = chatStr;
     }else{
         [self showToast:@"微信号为空"];
+        return;
     }
     __weak __typeof(self)weakSelef = self;
     NSString * msg = [NSString stringWithFormat:@"微信号已复制，可以进入微信粘贴"];
@@ -772,7 +803,7 @@
 - (void)recommendSelected{
     [UIView beginAnimations:nil context:nil];//动画开始
     [UIView setAnimationDuration:0.3];
-    self.underBar.frame = CGRectMake(_recommend.frame.origin.x, self.underBar.frame.origin.y, self.underBar.frame.size.width, self.underBar.frame.size.height);
+    self.underBar.frame = CGRectMake(_recommend.frame.origin.x, self.underBar.frame.origin.y, self.recommend.frame.size.width, self.underBar.frame.size.height);
     
     [_recommend setTextColor:ThemeColor];
     [_dynamic setTextColor:[UIColor lightGrayColor]];
@@ -786,7 +817,7 @@
 - (void)dynamicSelected{
     [UIView beginAnimations:nil context:nil];//动画开始
     [UIView setAnimationDuration:0.3];
-    self.underBar.frame = CGRectMake(_dynamic.frame.origin.x, self.underBar.frame.origin.y, self.underBar.frame.size.width, self.underBar.frame.size.height);
+    self.underBar.frame = CGRectMake(_dynamic.frame.origin.x, self.underBar.frame.origin.y, self.recommend.frame.size.width, self.underBar.frame.size.height);
     [_recommend setTextColor:[UIColor lightGrayColor]];
     [_dynamic setTextColor:ThemeColor];
     [_photos setTextColor:[UIColor lightGrayColor]];
@@ -799,7 +830,7 @@
 - (void)photosSelected{
     [UIView beginAnimations:nil context:nil];//动画开始
     [UIView setAnimationDuration:0.3];
-    self.underBar.frame = CGRectMake(_photos.frame.origin.x, self.underBar.frame.origin.y, self.underBar.frame.size.width, self.underBar.frame.size.height);
+    self.underBar.frame = CGRectMake(_photos.frame.origin.x, self.underBar.frame.origin.y, self.recommend.frame.size.width, self.underBar.frame.size.height);
     [_recommend setTextColor:[UIColor lightGrayColor]];
     [_dynamic setTextColor:[UIColor lightGrayColor]];
     [_photos setTextColor:ThemeColor];
@@ -811,7 +842,7 @@
 - (void)photosClassSelected{
     [UIView beginAnimations:nil context:nil];//动画开始
     [UIView setAnimationDuration:0.3];
-    self.underBar.frame = CGRectMake(_photosClass.frame.origin.x, self.underBar.frame.origin.y, self.underBar.frame.size.width, self.underBar.frame.size.height);
+    self.underBar.frame = CGRectMake(_photosClass.frame.origin.x, self.underBar.frame.origin.y, self.recommend.frame.size.width, self.underBar.frame.size.height);
     [_recommend setTextColor:[UIColor lightGrayColor]];
     [_dynamic setTextColor:[UIColor lightGrayColor]];
     [_photos setTextColor:[UIColor lightGrayColor]];
@@ -824,7 +855,7 @@
 #pragma mark - 修改样式
 - (void)setStyle:(UserInfoModel *)model{
     
-    [self.head sd_setImageWithURL:[NSURL URLWithString:model.bg_image] placeholderImage:[UIImage imageNamed:@"personal_back.png"]];
+//    [self.head sd_setImageWithURL:[NSURL URLWithString:model.bg_image] placeholderImage:[UIImage imageNamed:@"personal_back.png"]];
     [self.headImage sd_setImageWithURL:[NSURL URLWithString:model.avatar] placeholderImage:[UIImage imageNamed:@"default-avatar.png"]];
     [self.icon sd_setImageWithURL:[NSURL URLWithString:model.avatar]];
     self.iconURL = model.avatar;
@@ -909,7 +940,7 @@
         str = [NSString stringWithFormat:@"%@",model.signature];
         //[self.signature setText:];
     }else{
-        str = [NSString stringWithFormat:@"这个人很懒什么都没有留下"];
+        str = [NSString stringWithFormat:@""];
         //[self.signature setText:];
     }
     
@@ -944,7 +975,7 @@
         }
     } failure:^(NSError *error){
         [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
 }
 
@@ -968,7 +999,7 @@
         }
     } failure:^(NSError *error){
         [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
 }
 
@@ -993,7 +1024,7 @@
             //            [weakSelef showToast:model.message];
         }
     } failure:^(NSError * error){
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
         [weakSelef closeLoad];
     }];
     
@@ -1101,14 +1132,31 @@
     }
 }
 
-#pragma mark - ShareDelegate
 - (void)shareClicked:(NSIndexPath *)indexPath {
     self.itmeSelectedIndex = indexPath.row;
     //    [self showLoad];
     [self getPhotoImages];
-    [self.shareView showAlert];
+    
+    AlbumPhotosModel * model = [[AlbumPhotosModel alloc] init];
+    if (tabIndex == 0) {
+        model = [self.recommendDataArray objectAtIndex:self.itmeSelectedIndex];
+    } else if (tabIndex == 2) {
+        model = [self.albumDataArray objectAtIndex:self.itmeSelectedIndex];
+    }
+
+    self.shareView = [self.appd showShareview:model.type collected:model.collected model:model from:self];
 }
-- (void)shareSelected:(NSInteger)type{
+- (void)pyqClicked:(NSIndexPath *)indexPath {
+    self.itmeSelectedIndex = indexPath.row;
+    //    [self showLoad];
+    [self getPhotoImages];
+    NSMutableArray * images = [NSMutableArray array];
+    for(PhotoImagesModel * imageModel in _imageArray){
+        DynamicImagesModel * model = [[DynamicImagesModel alloc] init];
+        model.bigImageUrl = imageModel.bigImageUrl;
+        model.thumbnailUrl = imageModel.thumbnailUrl;
+        [images addObject:model];
+    }
     AlbumPhotosModel * model = [[AlbumPhotosModel alloc] init];
     if (tabIndex == 0) {
         model = [self.recommendDataArray objectAtIndex:self.itmeSelectedIndex];
@@ -1116,177 +1164,11 @@
         model = [self.albumDataArray objectAtIndex:self.itmeSelectedIndex];
     }
     
-    NSString * text = [NSString stringWithFormat:@"%@%@/photo/detail/%@",URLHead,self.uid,model.Id];
-    
-    //1、创建分享参数（必要）
-    NSMutableDictionary *shareParams = [NSMutableDictionary dictionary];
-    [shareParams SSDKSetupShareParamsByText:text
-                                     images:nil
-                                        url:nil
-                                      title:text
-                                       type:SSDKContentTypeAuto];
-    
-    switch (type) {
-        case 1: //微信好友
-        {
-            UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
-            pasteboard.string = text;
-            [ShareSDK share:SSDKPlatformSubTypeWechatSession parameters:shareParams onStateChanged:^(SSDKResponseState state, NSDictionary *userData, SSDKContentEntity *contentEntity, NSError *error){
-            }];
-        }
-            break;
-        case 2:// 朋友圈
-        {
-            
-            NSMutableArray * images = [NSMutableArray array];
-            for(PhotoImagesModel * imageModel in self.imageArray){
-                DynamicImagesModel * model = [[DynamicImagesModel alloc] init];
-                model.bigImageUrl = imageModel.bigImageUrl;
-                model.thumbnailUrl = imageModel.thumbnailUrl;
-                [images addObject:model];
-            }
-            UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
-            pasteboard.string = model.title;
-            ShareContentSelectCtr * shareSelect = GETALONESTORYBOARDPAGE(@"ShareContentSelectCtr");
-            shareSelect.dataArray = images;
-            [self.navigationController pushViewController:shareSelect animated:YES];
-        }
-            break;
-        case 3:// QQ好友
-        {
-            UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
-            pasteboard.string = text;
-            [ShareSDK share:SSDKPlatformSubTypeQQFriend parameters:shareParams onStateChanged:^(SSDKResponseState state, NSDictionary *userData, SSDKContentEntity *contentEntity, NSError *error){
-            }];
-        }
-            
-            break;
-        case 4:// 复制相册
-        {
-            
-            NSString * uid = self.uid;
-            if(uid && uid.length > 0){
-                if([self.photosUserID isEqualToString:uid]){
-                    [self showToast:@"不能复制自己的相册"];
-                    break;
-                }
-                
-                [self getAllowPurview:@{@"uid":self.uid}];
-            }
-        }
-            break;
-        case 5:// 复制链接
-        {
-            NSString * text = [NSString stringWithFormat:@"%@%@/photo/detail/%@",URLHead,self.uid,model.Id];
-            UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
-            pasteboard.string = text;
-            [self showToast:@"复制成功"];
-        }
-            
-            break;
-        case 6:// 复制标题
-        {
-            UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
-            pasteboard.string = model.title;
-            [self showToast:@"复制成功"];
-        }
-            break;
-        case 7:// 查看二维码
-        {
-            self.qrAlert.titleText = model.title;
-            self.qrAlert.contentText = [NSString stringWithFormat:@"%@%@/photo/detail/%@",URLHead,self.uid,model.Id];
-            [self.qrAlert showAlert];
-        }
-            
-            break;
-        case 8:// 收藏相册
-        {
-            NSString * uid = self.uid;
-            if(uid && uid.length > 0){
-                if([self.photosUserID isEqualToString:uid]){
-                    [self showToast:@"不能收藏自己的相册"];
-                    break;
-                }
-            }
-            
-            [self hasCollectPhoto:@{@"photoId":model.Id}];
-        }
-            break;
-        case 9:// 下载图片
-        {
-            NSMutableArray * images = [NSMutableArray array];
-            for(PhotoImagesModel * imageModel in self.imageArray){
-                DynamicImagesModel * model = [[DynamicImagesModel alloc] init];
-                model.bigImageUrl = imageModel.bigImageUrl;
-                model.thumbnailUrl = imageModel.thumbnailUrl;
-                [images addObject:model];
-            }
-            
-            DownloadImageCtr * shareSelect = GETALONESTORYBOARDPAGE(@"DownloadImageCtr");
-            shareSelect.dataArray = images;
-            [self.navigationController pushViewController:shareSelect animated:YES];
-            
-        }
-            break;
-    }
-
-}
-
-- (void)sendCopyRequest:(NSDictionary *)data{
-    
-    NSLog(@"1--- %@",data);
-    
-    NSLog(@"2--- %@",self.congfing.sendCopyRequest);
-    //[self showLoad];
-    __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.sendCopyRequest parametric:data succed:^(id responseObject){
-        //[weakSelef closeLoad];
-        NSLog(@"%@",responseObject);
-        BaseModel * model = [[BaseModel alloc] init];
-        [model analyticInterface:responseObject];
-        if(model.status == 0){
-            [weakSelef showToast:@"发送成功，请耐心等待"];
-        }else{
-            [weakSelef showToast:model.message];
-        }
-    } failure:^(NSError *error){
-        //[weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
-    }];
-}
-
-- (void)hasCollectPhoto:(NSDictionary *)data {
-    
-    //[self showLoad];
-    __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.hasCollectPhoto parametric:data succed:^(id responseObject){
-        //[weakSelef closeLoad];
-        NSLog(@"%@",responseObject);
-        HasCollectPhotoRequset * requset = [[HasCollectPhotoRequset alloc] init];
-        [requset analyticInterface:responseObject];
-        if(requset.status == 0){
-            
-            if(requset.hasCollect){
-                
-                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:@"您已经收藏该相册，是否取消收藏" preferredStyle:UIAlertControllerStyleAlert];
-                [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
-                [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action){
-                    
-                    [weakSelef cancelCollectPhotos:@{@"photosId":[NSString stringWithFormat:@"%@,",[data objectForKey:@"photoId"]]}];
-                }]];
-                
-                [weakSelef presentViewController:alert animated:YES completion:nil];
-            }else{
-                [weakSelef collectPhoto:data];
-            }
-            
-        }else{
-            [weakSelef showToast:requset.message];
-        }
-    } failure:^(NSError *error){
-        //[weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
-    }];
+    UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
+    pasteboard.string = model.title;
+    ShareContentSelectCtr * shareSelect = GETALONESTORYBOARDPAGE(@"ShareContentSelectCtr");
+    shareSelect.dataArray = images;
+    [self.navigationController pushViewController:shareSelect animated:YES];
 }
 
 - (void)collectPhoto:(NSDictionary *)data{
@@ -1300,14 +1182,19 @@
         [model analyticInterface:responseObject];
         if(model.status == 0){
             [weakSelef showToast:@"收藏成功"];
-            [weakSelef loadNetworkDynamicData];
+            if (tabIndex == 0)
+                [weakSelef loadNetworkRecommendData];
+            else if (tabIndex == 1)
+                [weakSelef loadNetworkDynamicData];
+            else if (tabIndex == 2)
+                [weakSelef loadNetworkAlbumData];
         }else{
             [weakSelef showToast:model.message];
         }
         
     } failure:^(NSError *error){
         [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
 }
 - (void)collectVideo:(NSDictionary *)data{
@@ -1327,7 +1214,7 @@
         }
     } failure:^(NSError *error){
         [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
 }
 
@@ -1341,14 +1228,18 @@
         BaseModel * model = [[BaseModel alloc] init];
         if(model.status == 0){
             [weakSelef showToast:@"取消收藏成功"];
-            [weakSelef loadNetworkDynamicData];
-
+            if (tabIndex == 0)
+                [weakSelef loadNetworkRecommendData];
+            else if (tabIndex == 1)
+                [weakSelef loadNetworkDynamicData];
+            else if (tabIndex == 2)
+                [weakSelef loadNetworkAlbumData];
         }else{
             [weakSelef showToast:model.message];
         }
     } failure:^(NSError *error){
         [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
 }
 
@@ -1368,65 +1259,39 @@
         }
     } failure:^(NSError *error){
         [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
 }
 
-- (void)getAllowPurview:(NSDictionary *)data{
-    
-    //[self showLoad];
-    __weak __typeof(self)weakSelef = self;
-    [HTTPRequest requestPOSTUrl:self.congfing.isPassiveUserAllow parametric:data succed:^(id responseObject){
-        //[weakSelef closeLoad];
-        NSLog(@"%@",responseObject);
-        CopyRequset * model = [[CopyRequset alloc] init];
-        [model analyticInterface:responseObject];
-        if(model.status == 0){
-            
-            if(model.allow){
-                PublishPhotoCtr * pulish = GETALONESTORYBOARDPAGE(@"PublishPhotoCtr");
-                AlbumPhotosModel * albumModel = [self.recommendDataArray objectAtIndex:self.itmeSelectedIndex];
-                /*
-                 pulish.is_copy = YES;
-                 pulish.photoTitleText = albumModel.title;
-                 pulish.photoTitleText = @"";
-                 pulish.imageCopy = [[NSMutableArray alloc] initWithArray:self.imageArray]; */
-                [weakSelef.navigationController pushViewController:pulish animated:YES];
-            }else{
-                
-                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:@"对方设置了限制复制，是否发送请求复制" preferredStyle:UIAlertControllerStyleAlert];
-                [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
-                [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action){
-                    
-                    [weakSelef sendCopyRequest:data];
-                    
-                }]];
-                
-                [weakSelef presentViewController:alert animated:YES completion:nil];
-            }
-            
-        }else{
-            [weakSelef showToast:model.message];
-        }
-        
-    } failure:^(NSError *error){
-        //[weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
-    }];
-}
 
 - (void)getPhotoImages{
+    [_imageArray removeAllObjects];
+    AlbumPhotosModel * model = [[AlbumPhotosModel alloc] init];
     if (tabIndex == 0) {
-        NSDictionary * model = [self.recommendDataArray objectAtIndex:self.itmeSelectedIndex];
-        self.imageArray = [RequestErrorGrab getArrwitKey:@"images" toTarget:model];
+        model = [self.recommendDataArray objectAtIndex:self.itmeSelectedIndex];
+    } else if (tabIndex == 1) {
+        model = [self.dynamicDataArray objectAtIndex:self.itmeSelectedIndex];
     } else if (tabIndex == 2) {
-        NSDictionary * model = [self.albumDataArray objectAtIndex:self.itmeSelectedIndex];
-        self.imageArray = [RequestErrorGrab getArrwitKey:@"images" toTarget:model];
+        model = [self.albumDataArray objectAtIndex:self.itmeSelectedIndex];
     }
+    for(NSDictionary * image in model.images){
+        PhotoImagesModel * model = [[PhotoImagesModel alloc] init];
+        model.Id = [NSString stringWithFormat:@"%ld",(long)[RequestErrorGrab getIntegetKey:@"id" toTarget:image]];
+        //                model.imageLink_id = [NSString stringWithFormat:@"%ld",[RequestErrorGrab getIntegetKey:@"imageLink_id" toTarget:images]];
+        model.thumbnailUrl = [RequestErrorGrab getStringwitKey:@"thumbnailUrl" toTarget:image];
+        model.bigImageUrl = [RequestErrorGrab getStringwitKey:@"bigImageUrl" toTarget:image];
+        model.srcUrl = [RequestErrorGrab getStringwitKey:@"srcUrl" toTarget:image];
+        model.isCover = [RequestErrorGrab getBooLwitKey:@"isCover" toTarget:image];
+        if (model.isCover) {
+            [_imageArray insertObject:model atIndex:0];
+        }else{
+            [_imageArray addObject:model];
+        }
+    }
+
 }
 
 - (void)loadUserNetworkData:(NSDictionary *)data{
-    
     __weak __typeof(self)weakSelef = self;
     [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",self.congfing.getUserInfo,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
         
@@ -1435,8 +1300,13 @@
         UserInfoModel * infoModel = [[UserInfoModel alloc] init];
         [infoModel analyticInterface:responseObject];
         if(infoModel.status == 0){
-            [weakSelef.userInfo setStyle:infoModel];
-            [weakSelef.userInfo showDrawe];
+            PersonalHomeCtr * personalHome = GETALONESTORYBOARDPAGE(@"PersonalHomeCtr");
+            personalHome.uid = infoModel.uid;
+            personalHome.twoWay = YES;
+            [self.navigationController pushViewController:personalHome animated:YES];
+
+//            [weakSelef.userInfo setStyle:infoModel];
+//            [weakSelef.userInfo showDrawe];
         }else{
             [self showToast:infoModel.message];
         }
@@ -1456,8 +1326,8 @@
         }
     }
     else if(type == 2){
-        self.shareSelectIndex = indexPath.row;
-        [self.shareView showAlert];
+        self.itmeSelectedIndex = indexPath.row;
+        [self.appd showShareview:model.type collected:model.collected model:model from:self];
     }
     else if(type == 3){
         self.userInfoSelectIndex = indexPath.row;
@@ -1503,6 +1373,21 @@
     }
     else if (type == 6) { // pengyou qiu
         NSLog(@"%ld", type);
+        NSMutableArray * images = [NSMutableArray array];
+        for (NSDictionary * dict in model.images) {
+            DynamicImagesModel * dynamic = [[DynamicImagesModel alloc] init];
+            dynamic.Id = [[dict objectForKey:@"id"] integerValue];
+            dynamic.bigImageUrl = [dict objectForKey:@"bigImageUrl"];
+            dynamic.thumbnailUrl = [dict objectForKey:@"thumbnailUrl"];
+            dynamic.select = NO;
+            
+            [images addObject:dynamic];
+        }
+        UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
+        pasteboard.string = model.title;
+        ShareContentSelectCtr * shareSelect = GETALONESTORYBOARDPAGE(@"ShareContentSelectCtr");
+        shareSelect.dataArray = images;
+        [self.navigationController pushViewController:shareSelect animated:YES];
     }
     else if (type == 7) { // delete
 //        if ([model.type isEqualToString:@"photo"]) [self deleteMyPhotos:@{@"photosId[0]":model.Id}];
@@ -1517,20 +1402,16 @@
         NSInteger count = model.images.count;
         NSMutableArray *photos = [NSMutableArray arrayWithCapacity:count];
         for (int i = 0; i < count; i++) {
-            if (tag == i) {
-                NSDictionary * imageModel = [model.images objectAtIndex:i];
-                NSString * getImageStrUrl = [imageModel objectForKey:@"bigImageUrl"];
-                MJPhoto *photo = [[MJPhoto alloc] init];
-                photo.url = [NSURL URLWithString: getImageStrUrl];
-                [photos addObject:photo];
-            }
+            NSDictionary * imageModel = [model.images objectAtIndex:i];
+            NSString * url = [imageModel objectForKey:@"bigImageUrl"];
+            UIImageView * imageView = [[UIImageView alloc] init];
+            KSPhotoItem * item = [KSPhotoItem itemWithSourceView:imageView imageUrl:[NSURL URLWithString:url]];
+            [photos addObject:item];
         }
         
         if(photos.count > 0){
-            MJPhotoBrowser *browser = [[MJPhotoBrowser alloc] init];
-            browser.currentPhotoIndex = 0;//tag;
-            browser.photos = photos;
-            [browser show];
+            KSPhotoBrowser *browser = [KSPhotoBrowser browserWithPhotoItems:photos selectedIndex:tag];
+            [browser showFromViewController:self];
         }
     }
     else {
@@ -1559,7 +1440,18 @@
 }
 
 #pragma mark - PersonalClassTableDelegate
-- (void)personalClassTableSelected:(NSIndexPath *)indexPath{}
+- (void)personalClassTableSelected:(NSIndexPath *)indexPath{
+    
+    AllClassModel *classModel = [self.personalClassDataArray objectAtIndex:indexPath.section];
+    
+    
+    PersonalSubClassPhotoViewCtr * subClassPhotos = [[PersonalSubClassPhotoViewCtr alloc] initWithNibName:@"PersonalSubClassPhotoViewCtr" bundle:nil];
+    subClassPhotos.uid = self.photosUserID;
+    subClassPhotos.subClassid = [[[classModel.subclasses objectAtIndex:indexPath.row] objectForKey:@"id"] intValue];
+    subClassPhotos.strTitle = [[classModel.subclasses objectAtIndex:indexPath.row] objectForKey:@"name"];
+    [self.navigationController pushViewController:subClassPhotos animated:YES];
+}
+
 - (void)personalClassTableHeadSelectType:(NSInteger)type slectedPath:(NSInteger)section{}
 - (void)personalClassTableSelectType:(NSInteger)type selectPath:(NSIndexPath *)indexPath{}
 

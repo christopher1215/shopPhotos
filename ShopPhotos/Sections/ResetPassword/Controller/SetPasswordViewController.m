@@ -96,8 +96,8 @@
         [model analyticInterface:responseObject];
         if(model.status == 0){
             ErrMsgViewController *vc = [[ErrMsgViewController alloc] initWithNibName:@"ErrMsgViewController" bundle:nil];
-            [vc showInView:self.view animated:YES type:@"success" message:@"修改成功！"];
-//            [weakSelef showToast:@"修改成功！"];
+//            [vc showInView:self animated:YES type:@"success" message:@"重置密码成功"];
+            [weakSelef showToast:@"修改成功！"];
             NSArray *viewControllers = weakSelef.navigationController.viewControllers;
             for (UIViewController *vc in viewControllers)
             {
@@ -115,7 +115,7 @@
         }
 
     } failure:^(NSError * error){
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
         [weakSelef closeLoad];
     }];
     
@@ -130,7 +130,7 @@
 }
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
     BOOL bFlag = YES;
-    if (textField == self.txtPass) {
+    if (textField == self.txtPass || textField == self.txtRePass) {
         NSUInteger maxLength = 12;
         bFlag = [textField.text stringByReplacingCharactersInRange:range withString:string].length <= maxLength;
         return bFlag;
@@ -203,7 +203,7 @@
 //        }
 //        
 //    } failure:^(NSError * error){
-//        [weakSelef showToast:NETWORKTIPS];
+//        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
 //        [weakSelef closeLoad];
 //    }];
 //}

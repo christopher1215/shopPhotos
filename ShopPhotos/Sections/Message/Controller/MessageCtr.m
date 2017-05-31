@@ -15,8 +15,9 @@
 #import "MessageMinCell.h"
 #import "DetailMessageCtr.h"
 #import "DetailMessageMinCtr.h"
+#import "MoreAlert.h"
 
-@interface MessageCtr ()<UITableViewDelegate,UITableViewDataSource,MessageEditOptionDelegate>
+@interface MessageCtr ()<UITableViewDelegate,UITableViewDataSource,MessageEditOptionDelegate,MoreAlertDelegate>
 @property (weak, nonatomic) IBOutlet UIButton *back;
 @property (weak, nonatomic) IBOutlet UIView *systemView;
 @property (weak, nonatomic) IBOutlet UILabel *systemText;
@@ -29,6 +30,7 @@
 @property (strong, nonatomic) NSMutableArray * requsetArray;
 @property (strong, nonatomic) MessageEditOption * editOtion;
 @property (assign, nonatomic) NSInteger pageIndex;
+@property (assign, nonatomic) NSInteger pageMinIndex;
 @property (assign, nonatomic) NSInteger type;
 @property (strong, nonatomic) UITableView * tableMin;
 @property (weak, nonatomic) IBOutlet UIButton *btn_add;
@@ -37,6 +39,7 @@
 @property (assign, nonatomic) BOOL isEdit;
 @property (assign, nonatomic) BOOL isEditMin;
 
+@property (strong, nonatomic) MoreAlert * moreAlert;
 
 @end
 
@@ -52,6 +55,13 @@
     return _requsetArray;
 }
 
+- (IBAction)moreSelected:(id)sender {
+    [self.moreAlert showAlert];
+
+}
+- (IBAction)searchSelected:(id)sender {
+    
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -68,7 +78,7 @@
     self.isEdit = NO;
     self.isEditMin = NO;
     self.backText.text = @"";
-    [self.back setTitle:self.str_from forState:UIControlStateNormal];
+    [self.back setTitle:[NSString stringWithFormat:@" %@", self.str_from] forState:UIControlStateNormal];
     
     [self.back addTarget:self action:@selector(backSelected)];
     [self.systemView addTarget:self action:@selector(systemSelected)];
@@ -119,14 +129,28 @@
     
     __weak __typeof(self)weakSelef = self;
     self.table.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+        [weakSelef setTableEditStyle:NO];
        [weakSelef loadNetworkData];
     }];
     
     self.tableMin.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+        [weakSelef setTableEditStyle:NO];
         [weakSelef loadNetworkData];
     }];
     
     [self systemSelected];
+    
+    self.moreAlert = [[MoreAlert alloc] init];
+    [self.view addSubview:self.moreAlert];
+    self.moreAlert.mode = OptionModel;
+    self.moreAlert.delegate = self;
+    [self.moreAlert setHidden:YES];
+    self.moreAlert.sd_layout
+    .leftEqualToView(self.view)
+    .rightEqualToView(self.view)
+    .topEqualToView(self.view)
+    .bottomEqualToView(self.view);
+
 }
 
 #pragma mark - OnClick
@@ -138,11 +162,11 @@
     
     [self.table setHidden:NO];
     [self.tableMin setHidden:YES];
-    [self.systemText setTextColor:IndigoColor];
+    [self.systemText setTextColor:ThemeColor];
     [self.systemLine setHidden:NO];
     
-    [self.btn_search setHidden:NO];
-    [self.btn_add setHidden:NO];
+//    [self.btn_search setHidden:NO];
+//    [self.btn_add setHidden:NO];
     
     [self.mineLine setHidden:YES];
     [self.mineText setTextColor:[UIColor grayColor]];
@@ -163,7 +187,7 @@
     [self.btn_search setHidden:YES];
     [self.btn_add setHidden:YES];
     
-    [self.mineText setTextColor:IndigoColor];
+    [self.mineText setTextColor:ThemeColor];
     [self.mineLine setHidden:NO];
     
     [self.systemLine setHidden:YES];
@@ -303,7 +327,7 @@
     
     UITableViewRowAction * agree = [UITableViewRowAction rowActionWithStyle:(UITableViewRowActionStyleDestructive) title:@"同意" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath) {
         
-        NSDictionary * data = @{@"uid":uid,@"notice_ids":[NSString stringWithFormat:@"%ld",model.itemID]};
+        NSDictionary * data = @{@"uid":uid,@"notice_ids":[NSString stringWithFormat:@"%ld",(long)model.itemID]};
         [weakSelef allowUserCopy:data];
     }];
     
@@ -325,7 +349,7 @@
     if(!edit)[self.editOtion setDeleteCount:0];
     
     for(MessageModel * model in self.systemArray){
-        if(model.edit == edit)return;
+        if(model.edit == edit)continue;
         model.edit = edit;
         if(!edit)model.editSelect = NO;
             
@@ -393,7 +417,7 @@
             NSMutableDictionary * data = [NSMutableDictionary new];
             for(MessageModel * model in self.systemArray){
                 if(model.editSelect){
-                    [data setValue:[NSString stringWithFormat:@"%ld", model.itemID] forKey:[NSString stringWithFormat:@"noticesId[%d]", selectCount]];
+                    [data setValue:[NSString stringWithFormat:@"%ld", (long)model.itemID] forKey:[NSString stringWithFormat:@"noticesId[%d]", selectCount]];
                     selectCount++;
                 }
                 
@@ -404,7 +428,7 @@
                 return;
             }
             __weak __typeof(self)weakSelef = self;
-            NSString * msg = [NSString stringWithFormat:@"确定删除%ld项",selectCount];
+            NSString * msg = [NSString stringWithFormat:@"确定删除%d项",selectCount];
             UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:msg preferredStyle:UIAlertControllerStyleAlert];
             [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action){
                 [weakSelef deleteNotice:data];
@@ -443,7 +467,7 @@
             NSMutableDictionary * data = [NSMutableDictionary new];
             for(MessageModel * model in self.requsetArray){
                 if(model.editSelect){
-                    [data setValue:[NSString stringWithFormat:@"%ld", model.itemID] forKey:[NSString stringWithFormat:@"noticesId[%d]", selectCount]];
+                    [data setValue:[NSString stringWithFormat:@"%ld", (long)model.itemID] forKey:[NSString stringWithFormat:@"noticesId[%d]", selectCount]];
                     selectCount++;
                 }
                 
@@ -454,7 +478,7 @@
                 return;
             }
             __weak __typeof(self)weakSelef = self;
-            NSString * msg = [NSString stringWithFormat:@"确定删除%ld项",selectCount];
+            NSString * msg = [NSString stringWithFormat:@"确定删除%d项",selectCount];
             UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:msg preferredStyle:UIAlertControllerStyleAlert];
             [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action){
                 [weakSelef deleteNotice:data];
@@ -473,16 +497,17 @@
 #pragma makr - AFNetworking网络加载
 - (void)loadNetworkData{
     
-    self.pageIndex = 1;
     [self setTableEditStyle:NO];
     NSString * type = @"";
     if(self.type == 1){
+        self.pageIndex = 1;
         type = @"system";
     }else{
         type = @"copyRequest";
+        self.pageMinIndex = 1;
     }
     
-    NSDictionary * data = @{@"page":[NSString stringWithFormat:@"%ld",self.pageIndex],
+    NSDictionary * data = @{@"page":[NSString stringWithFormat:@"%ld",1],
                             @"pageSize":@"20",
                             @"type":type};
     
@@ -501,10 +526,12 @@
                 [weakSelef.systemArray addObjectsFromArray:requset.dataArray];
                 if(requset.dataArray.count < 20){
                     [weakSelef.table.mj_footer endRefreshingWithNoMoreData];
+                    [weakSelef.table.mj_footer setHidden:YES];
                 }else{
                     [weakSelef.table.mj_footer resetNoMoreData];
                 }
                 [weakSelef.table reloadData];
+                weakSelef.pageIndex++;
             }else{
                 weakSelef.tableMin.mj_footer = [MJRefreshAutoNormalFooter footerWithRefreshingBlock:^{
                     [weakSelef loadNetworkMoreData];
@@ -513,12 +540,13 @@
                 [weakSelef.requsetArray addObjectsFromArray:requset.dataArray];
                 if(requset.dataArray.count < 20){
                     [weakSelef.tableMin.mj_footer endRefreshingWithNoMoreData];
+                    [weakSelef.tableMin.mj_footer setHidden:YES];
                 }else{
                     [weakSelef.tableMin.mj_footer resetNoMoreData];
                 }
                 [weakSelef.tableMin reloadData];
+                weakSelef.pageMinIndex++;
             }
-           weakSelef.pageIndex++;
         }else{
             [self.backText setText:requset.message];
 //            [weakSelef showToast:requset.message];
@@ -527,7 +555,7 @@
         NSLog(@"%@",responseObject);
         
     } failure:^(NSError *error){
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
         [weakSelef.table.mj_header endRefreshing];
         [weakSelef.tableMin.mj_header endRefreshing];
     }];
@@ -543,7 +571,7 @@
         type = @"copyRequest";
     }
     
-    NSDictionary * data = @{@"page":[NSString stringWithFormat:@"%ld",self.pageIndex],
+    NSDictionary * data = @{@"page":[NSString stringWithFormat:@"%ld",self.type == 1?(long)self.pageIndex:(long)self.pageMinIndex],
                             @"pageSize":@"20",
                             @"noticeType":type};
     
@@ -559,20 +587,51 @@
                 [weakSelef.systemArray addObjectsFromArray:requset.dataArray];
                 if(requset.dataArray.count < 20){
                     [weakSelef.table.mj_footer endRefreshingWithNoMoreData];
+                    [weakSelef.table.mj_footer setHidden:YES];
                 }else{
                     [weakSelef.table.mj_footer resetNoMoreData];
                 }
                 [weakSelef.table reloadData];
+                weakSelef.pageIndex++;
+
             }else{
                 [weakSelef.requsetArray addObjectsFromArray:requset.dataArray];
-                if(requset.dataArray.count < 20){
-                    [weakSelef.tableMin.mj_footer endRefreshingWithNoMoreData];
-                }else{
-                    [weakSelef.tableMin.mj_footer resetNoMoreData];
-                }
-                [weakSelef.tableMin reloadData];
+                
+                NSDictionary * data = @{@"page":[NSString stringWithFormat:@"%ld",(long)self.pageMinIndex],
+                                        @"pageSize":@"20",
+                                        @"noticeType":@"copyRequestReply"};
+                
+                __weak __typeof(self)weakSelefSub = weakSelef;
+                [HTTPRequest requestGETUrl:[NSString stringWithFormat:@"%@%@",self.congfing.getNotices,[self.appd getParameterString]] parametric:data succed:^(id responseObject){
+                    [weakSelef.table.mj_footer endRefreshing];
+                    [weakSelef.tableMin.mj_footer endRefreshing];
+                    MessageRequset * requsetsub = [[MessageRequset alloc] init];
+                    [requsetsub analyticInterface:responseObject];
+                    if(requsetsub.status == 0){
+                        
+                        [weakSelefSub.requsetArray addObjectsFromArray:requsetsub.dataArray];
+                        if(requsetsub.dataArray.count < 20 && requset.dataArray.count < 20){
+                            [weakSelefSub.tableMin.mj_footer endRefreshingWithNoMoreData];
+                            [weakSelefSub.tableMin.mj_footer setHidden:YES];
+                        }else{
+                            [weakSelefSub.tableMin.mj_footer resetNoMoreData];
+                        }
+                        [weakSelefSub.tableMin reloadData];
+                        weakSelefSub.pageMinIndex++;
+                    }else{
+                        [weakSelefSub showToast:requset.message];
+                        [weakSelefSub.tableMin reloadData];
+                    }
+                    
+                    NSLog(@"%@",responseObject);
+                    
+                } failure:^(NSError *error){
+                    [weakSelefSub showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
+                    [weakSelefSub.table.mj_footer endRefreshing];
+                    [weakSelefSub.tableMin.mj_footer endRefreshing];
+                    [weakSelefSub.tableMin reloadData];
+                }];
             }
-            weakSelef.pageIndex++;
         }else{
             [weakSelef showToast:requset.message];
         }
@@ -580,7 +639,7 @@
         NSLog(@"%@",responseObject);
      
     } failure:^(NSError *error){
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
         [weakSelef.table.mj_footer endRefreshing];
         [weakSelef.tableMin.mj_footer endRefreshing];
     }];
@@ -596,13 +655,14 @@
         [model analyticInterface:responseObject];
         if(model.status == 0){
             //[weakSelef showToast:@"删除成功"];
+            [weakSelef setTableEditStyle:NO];
             [weakSelef loadNetworkData];
         }else{
             [weakSelef showToast:model.message];
         }
         
     } failure:^(NSError *error){
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
 }
 
@@ -629,7 +689,7 @@
         
     } failure:^(NSError *error){
         [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
 }
 

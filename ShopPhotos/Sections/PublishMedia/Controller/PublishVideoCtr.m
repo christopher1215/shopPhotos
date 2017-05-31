@@ -60,7 +60,9 @@ typedef NS_ENUM( NSInteger, AVCamLivePhotoMode ) {
 
 @end
 
-@interface PublishVideoCtr () <AVCaptureFileOutputRecordingDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,TZImagePickerControllerDelegate>
+@interface PublishVideoCtr () <AVCaptureFileOutputRecordingDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,TZImagePickerControllerDelegate>{
+    NSTimer * countTimer;
+}
 
 // Session management.
 @property (nonatomic, weak) IBOutlet AVCamPreviewView *previewView;
@@ -107,7 +109,9 @@ typedef NS_ENUM( NSInteger, AVCamLivePhotoMode ) {
 @property (strong,nonatomic) UIImage * coverImage;
 //@property (strong,nonatomic) NSURL * videoUrl;
 @property (strong,nonatomic) NSString * videoUrl;
-
+@property (weak, nonatomic) IBOutlet UILabel *lblTime;
+@property (assign, nonatomic) float countdown;
+@property (weak, nonatomic) IBOutlet UIProgressView *progressTime;
 @end
 
 @implementation PublishVideoCtr
@@ -367,7 +371,7 @@ typedef NS_ENUM( NSInteger, AVCamLivePhotoMode ) {
 		We do not create an AVCaptureMovieFileOutput when setting up the session because the
 		AVCaptureMovieFileOutput does not support movie recording with AVCaptureSessionPresetPhoto.
 	*/
-	self.session.sessionPreset = AVCaptureSessionPresetPhoto;
+	self.session.sessionPreset = AVCaptureSessionPresetMedium;
 	
 	// Add video input.
 	
@@ -460,7 +464,7 @@ typedef NS_ENUM( NSInteger, AVCamLivePhotoMode ) {
     if ( [self.session canAddOutput:movieFileOutput] )
     {
         [self.session addOutput:movieFileOutput];
-        self.session.sessionPreset = AVCaptureSessionPresetHigh;
+        self.session.sessionPreset = AVCaptureSessionPresetMedium;
         AVCaptureConnection *connection = [movieFileOutput connectionWithMediaType:AVMediaTypeVideo];
         if ( connection.isVideoStabilizationSupported ) {
             connection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeAuto;
@@ -516,11 +520,16 @@ typedef NS_ENUM( NSInteger, AVCamLivePhotoMode ) {
     dispatch_async( self.sessionQueue, ^{
         AVCaptureDevice *currentVideoDevice = self.videoDeviceInput.device;
         [currentVideoDevice lockForConfiguration:nil]; //you must lock before setting torch mode
+        
         if (currentVideoDevice.torchMode == AVCaptureTorchModeOn) {
-            [currentVideoDevice setTorchMode:AVCaptureTorchModeOff];
+            if ([currentVideoDevice isTorchModeSupported:AVCaptureTorchModeOff]) {
+                [currentVideoDevice setTorchMode:AVCaptureTorchModeOff];
+            }
         }
         else if (currentVideoDevice.torchMode == AVCaptureTorchModeOff) {
-            [currentVideoDevice setTorchMode:AVCaptureTorchModeOn];
+            if ([currentVideoDevice isTorchModeSupported:AVCaptureTorchModeOn]) {
+                [currentVideoDevice setTorchMode:AVCaptureTorchModeOn];
+            }
         }
         [currentVideoDevice unlockForConfiguration];
     });
@@ -756,9 +765,10 @@ typedef NS_ENUM( NSInteger, AVCamLivePhotoMode ) {
 		before entering the session queue. We do this to ensure UI elements are
 		accessed on the main thread and session configuration is done on the session queue.
 	*/
+    __weak __typeof(self)weakSelf = self;
 	AVCaptureVideoOrientation videoPreviewLayerVideoOrientation = self.previewView.videoPreviewLayer.connection.videoOrientation;
 	dispatch_async( self.sessionQueue, ^{
-		if ( ! self.movieFileOutput.isRecording ) {
+		if ( ! weakSelf.movieFileOutput.isRecording ) {
 			if ( [UIDevice currentDevice].isMultitaskingSupported ) {
 				/*
 					Setup background task.
@@ -768,7 +778,7 @@ typedef NS_ENUM( NSInteger, AVCamLivePhotoMode ) {
 					To conclude this background execution, -[endBackgroundTask:] is called in
 					-[captureOutput:didFinishRecordingToOutputFileAtURL:fromConnections:error:] after the recorded file has been saved.
 				*/
-				self.backgroundRecordingID = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:nil];
+				weakSelf.backgroundRecordingID = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:nil];
 			}
 			
 			// Update the orientation on the movie file output video connection before starting recording.
@@ -779,12 +789,24 @@ typedef NS_ENUM( NSInteger, AVCamLivePhotoMode ) {
 			NSString *outputFileName = [NSUUID UUID].UUIDString;
 			NSString *outputFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:[outputFileName stringByAppendingPathExtension:@"mov"]];
             
-			[self.movieFileOutput startRecordingToOutputFileURL:[NSURL fileURLWithPath:outputFilePath] recordingDelegate:self];
+			[weakSelf.movieFileOutput startRecordingToOutputFileURL:[NSURL fileURLWithPath:outputFilePath] recordingDelegate:self];
 		}
 		else {
-			[self.movieFileOutput stopRecording];
+			[weakSelf.movieFileOutput stopRecording];
 		}
 	} );
+}
+- (void)countDownSec:(NSTimer *)timer{
+    self.countdown = self.countdown + 0.01 ;
+    if(self.countdown <= 10.01){
+        NSString * title = [NSString stringWithFormat:@"%.1f",self.countdown];
+        [self.lblTime setText:title];
+        [self.progressTime setProgress:self.countdown / 10 animated:NO];
+    }else{
+        [self toggleMovieRecording:nil];
+        [countTimer invalidate];
+        countTimer = nil;
+    }
 }
 
 - (void)captureOutput:(AVCaptureFileOutput *)captureOutput didStartRecordingToOutputFileAtURL:(NSURL *)fileURL fromConnections:(NSArray *)connections
@@ -794,6 +816,12 @@ typedef NS_ENUM( NSInteger, AVCamLivePhotoMode ) {
 		self.recordButton.enabled = YES;
         self.recordButton.backgroundColor = ColorHex(0xff1111);
 		[self.recordButton setTitle:NSLocalizedString( @"停止录", @"Recording button stop title" ) forState:UIControlStateNormal];
+        self.countdown = 0;
+        countTimer = [NSTimer scheduledTimerWithTimeInterval: 0.01f
+                                                      target: self
+                                                    selector:@selector(countDownSec:)
+                                                    userInfo: nil repeats:YES];
+
 	});
 }
 
@@ -829,7 +857,14 @@ typedef NS_ENUM( NSInteger, AVCamLivePhotoMode ) {
 		NSLog( @"Movie file finishing error: %@", error );
 		success = [error.userInfo[AVErrorRecordingSuccessfullyFinishedKey] boolValue];
 	}
-    
+    if (self.countdown <= 3) {
+        success = NO;
+        [countTimer invalidate];
+        countTimer = nil;
+
+        [self clearVideo:nil];
+        [self showToast:@"录制时长不能小于3秒钟"];
+    }
 	if ( success ) {
         self.clearButton.hidden = NO;
         self.saveButton.hidden = NO;
@@ -846,6 +881,21 @@ typedef NS_ENUM( NSInteger, AVCamLivePhotoMode ) {
                     if ( ! success ) {
                         NSLog( @"Could not save movie to photo library: %@", error );
                     }
+                    PHFetchOptions *fetchOptions = [[PHFetchOptions alloc] init];
+                    fetchOptions.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending:YES]];
+                    PHFetchResult *fetchResult = [PHAsset fetchAssetsWithMediaType:PHAssetMediaTypeVideo options:fetchOptions];
+                    PHAsset *lastAsset = [fetchResult lastObject];
+                    TZImageManager *imageManager = [[TZImageManager alloc]init];
+                    [imageManager getVideoOutputPathWithAsset:lastAsset completion:^(NSString *videoPath){
+                        self.videoUrl = videoPath;
+                        UIImage * cover = [self firstFrame:[NSURL fileURLWithPath:self.videoUrl]];
+                        self.videoImageView.image = cover;
+                        self.coverImage = [[UIImage alloc] init];
+                        self.coverImage = cover;
+
+                    }];
+
+
                     cleanup();
                 }];
             }
@@ -865,54 +915,69 @@ typedef NS_ENUM( NSInteger, AVCamLivePhotoMode ) {
 		self.recordButton.enabled = YES;
         self.recordButton.backgroundColor = ColorHex(0x3a9dec);
 		[self.recordButton setTitle:NSLocalizedString( @"开始录", @"Recording button record title" ) forState:UIControlStateNormal];
+        [countTimer invalidate];
+        countTimer = nil;
+
 	});
 }
-
+- (UIImage *)firstFrame:(NSURL *)videoURL {
+    
+    // courtesy of null0pointer and Javi Campaña
+    // http://stackoverflow.com/questions/10221242/first-frame-of-a-video-using-avfoundation
+    
+    AVURLAsset* asset = [AVURLAsset URLAssetWithURL:videoURL options:nil];
+    AVAssetImageGenerator* generator = [AVAssetImageGenerator assetImageGeneratorWithAsset:asset];
+    generator.appliesPreferredTrackTransform = YES;
+    UIImage* image = [UIImage imageWithCGImage:[generator copyCGImageAtTime:CMTimeMake(0, 1) actualTime:nil error:nil]];
+    
+    return image;
+}
 - (IBAction)saveVideo:(id)sender {
 
-    if (![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]) {
-        SPAlert(@"请允许相册访问",self);
-        return;
-    }
-
-    TZImagePickerController *imagePickerVc = [[TZImagePickerController alloc] initWithMaxImagesCount:1 delegate:self];
-    imagePickerVc.allowPickingVideo = YES;
-    imagePickerVc.allowPickingOriginalPhoto = NO;
-    imagePickerVc.allowPickingImage = NO;
-    imagePickerVc.photoWidth = 960;
-    imagePickerVc.photoPreviewMaxWidth = 960;
-    [imagePickerVc setDidFinishPickingVideoHandle:^(UIImage *cover, PHAsset *assets){
-        if(assets) {
-            self.videoImageView.image = cover;
-            self.coverImage = [[UIImage alloc] init];
-            self.coverImage = cover;
-            
-            TZImageManager *imageManager = [[TZImageManager alloc]init];
-            [imageManager getVideoOutputPathWithAsset:assets completion:^(NSString *videoPath){
-                self.videoUrl = videoPath;
-            }];
-            [self showPublishView];
-/*
-            PHVideoRequestOptions *videoUrlRequest = [[PHVideoRequestOptions alloc] init];
-            videoUrlRequest.version = PHVideoRequestOptionsVersionOriginal;
-            videoUrlRequest.deliveryMode = PHVideoRequestOptionsDeliveryModeFastFormat;
-            
-            [[PHImageManager defaultManager] requestAVAssetForVideo:assets options:videoUrlRequest resultHandler:^(AVAsset * asset, AVAudioMix * audioMix, NSDictionary * info)
-            {
-                if ([asset isKindOfClass:[AVURLAsset class]]) {
-                    AVURLAsset* urlAsset = (AVURLAsset*)asset;
-                    self.videoUrl = urlAsset.URL;
-                    
-//                    NSNumber *size;
-//                    [urlAsset.URL getResourceValue:&size forKey:NSURLFileSizeKey error:nil];
-//                    NSInteger fileLength = size.integerValue;
-//                    self.videoUrl = [[urlAsset.URL absoluteString] stringByResolvingSymlinksInPath];
-                }
-            }];*/
-        }
-    }];
-    
-    [self presentViewController:imagePickerVc animated:YES completion:nil];
+    [self showPublishView];
+//    if (![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]) {
+//        SPAlert(@"请允许相册访问",self);
+//        return;
+//    }
+//    
+//    TZImagePickerController *imagePickerVc = [[TZImagePickerController alloc] initWithMaxImagesCount:1 delegate:self];
+//    imagePickerVc.allowPickingVideo = YES;
+//    imagePickerVc.allowPickingOriginalPhoto = NO;
+//    imagePickerVc.allowPickingImage = NO;
+//    imagePickerVc.photoWidth = 960;
+//    imagePickerVc.photoPreviewMaxWidth = 960;
+//    [imagePickerVc setDidFinishPickingVideoHandle:^(UIImage *cover, PHAsset *assets){
+//        if(assets) {
+//            self.videoImageView.image = cover;
+//            self.coverImage = [[UIImage alloc] init];
+//            self.coverImage = cover;
+//            
+//            TZImageManager *imageManager = [[TZImageManager alloc]init];
+//            [imageManager getVideoOutputPathWithAsset:assets completion:^(NSString *videoPath){
+//                self.videoUrl = videoPath;
+//            }];
+//            [self showPublishView];
+///*
+//            PHVideoRequestOptions *videoUrlRequest = [[PHVideoRequestOptions alloc] init];
+//            videoUrlRequest.version = PHVideoRequestOptionsVersionOriginal;
+//            videoUrlRequest.deliveryMode = PHVideoRequestOptionsDeliveryModeFastFormat;
+//            
+//            [[PHImageManager defaultManager] requestAVAssetForVideo:assets options:videoUrlRequest resultHandler:^(AVAsset * asset, AVAudioMix * audioMix, NSDictionary * info)
+//            {
+//                if ([asset isKindOfClass:[AVURLAsset class]]) {
+//                    AVURLAsset* urlAsset = (AVURLAsset*)asset;
+//                    self.videoUrl = urlAsset.URL;
+//                    
+////                    NSNumber *size;
+////                    [urlAsset.URL getResourceValue:&size forKey:NSURLFileSizeKey error:nil];
+////                    NSInteger fileLength = size.integerValue;
+////                    self.videoUrl = [[urlAsset.URL absoluteString] stringByResolvingSymlinksInPath];
+//                }
+//            }];*/
+//        }
+//    }];
+//    
+//    [self presentViewController:imagePickerVc animated:YES completion:nil];
 }
 
 - (IBAction)clearVideo:(id)sender {
@@ -924,6 +989,8 @@ typedef NS_ENUM( NSInteger, AVCamLivePhotoMode ) {
     };
     
     cleanup();
+    [self.lblTime setText:@"0.0"];
+    [self.progressTime setProgress:0 animated:YES];
 }
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
@@ -1080,6 +1147,10 @@ typedef NS_ENUM( NSInteger, AVCamLivePhotoMode ) {
 
 - (IBAction)publishVideo:(id)sender {
 
+    if (self.videoDescription.text.length <= 0) {
+        [self showToast:@"请输入视频说明"];
+        return;
+    }
     NSMutableDictionary * postData = [[NSMutableDictionary alloc] init];
     
     [postData setValue:self.videoDescription.text forKey:@"title"];
@@ -1092,10 +1163,10 @@ typedef NS_ENUM( NSInteger, AVCamLivePhotoMode ) {
         NSData *videoData = [NSData dataWithContentsOfFile:self.videoUrl];
 
         [postData setValue:imageData forKey:@"cover"];
-        [postData setValue:[NSString stringWithFormat:@"%ld", imageData.length] forKey:@"coversize"];
+        [postData setValue:[NSString stringWithFormat:@"%ld", (unsigned long)imageData.length] forKey:@"coversize"];
         
         [postData setValue:videoData forKey:@"video"];
-        [postData setValue:[NSString stringWithFormat:@"%ld", videoData.length] forKey:@"videosize"];
+        [postData setValue:[NSString stringWithFormat:@"%ld", (unsigned long)videoData.length] forKey:@"videosize"];
         
         // 耗时的操作
         PublishVideo * task = [[PublishVideo alloc] init];
@@ -1120,13 +1191,15 @@ typedef NS_ENUM( NSInteger, AVCamLivePhotoMode ) {
 }
 
 - (IBAction)clearDescription:(id)sender {
+    self.videoDescription.text = @"";
+
 }
 
 - (NSData *) readVideo:(NSString *) videoUrl {
     
     NSData *data = nil;
-    NSError *error = nil;
-    NSFileHandle *fileHandele = [NSFileHandle fileHandleForReadingAtPath:videoUrl];
+//    NSError *error = nil;
+//    NSFileHandle *fileHandele = [NSFileHandle fileHandleForReadingAtPath:videoUrl];
     
     return data;
 }

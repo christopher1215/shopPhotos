@@ -2,7 +2,7 @@
 //  UIAlertController_SPAlertCtr.h
 //  ShopPhotos
 //
-//  Created by Park Jin Hyok on 4/1/17.
+//  Created by  on 4/1/17.
 //  Copyright © 2017 addcn. All rights reserved.
 //
 

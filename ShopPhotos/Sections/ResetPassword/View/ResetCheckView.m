@@ -154,7 +154,7 @@
     NSLog(@"123213");
     self.countdown -- ;
     if(self.countdown > 0){
-        NSString * title = [NSString stringWithFormat:@"%ldS",self.countdown];
+        NSString * title = [NSString stringWithFormat:@"%ldS",(long)self.countdown];
         [self.phone.send setTitle:title forState:UIControlStateNormal];
     }else{
         [self.phone.send setTitle:@"获取验证码" forState:UIControlStateNormal];

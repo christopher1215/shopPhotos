@@ -26,7 +26,7 @@
                 model.title = [RequestErrorGrab getStringwitKey:@"title" toTarget:photo];
                 model.cover = [RequestErrorGrab getStringwitKey:@"cover" toTarget:photo];
                 model.createdAt = [RequestErrorGrab getStringwitKey:@"createdAt" toTarget:photo];
-                model.Id = [NSString stringWithFormat:@"%ld",[RequestErrorGrab getIntegetKey:@"id" toTarget:photo]];
+                model.Id = [NSString stringWithFormat:@"%ld",(long)[RequestErrorGrab getIntegetKey:@"id" toTarget:photo]];
                 model.user = [RequestErrorGrab getDicwitKey:@"user" toTarget:photo];
                 model.collected = [RequestErrorGrab getIntegetKey:@"isCollected" toTarget:photo];
                 model.recommend = [RequestErrorGrab getBooLwitKey:@"recommend" toTarget:photo];
@@ -36,7 +36,7 @@
         
     } @catch (NSException *exception) {
         self.status = 1;
-        self.message = NETWORKTIPS;
+        self.message = exception.name;//NETWORKTIPS;
     }
 }
 

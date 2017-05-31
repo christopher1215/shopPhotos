@@ -71,9 +71,19 @@
         SPAlert(@"请输入新密码",self);
         return;
     }
+    if(self.nPwd.text.length < 6 || self.nPwd.text.length > 32){
+        //        ShowAlert(@"请输入新密码");
+        
+        SPAlert(@"密码不能少于6位",self);
+        return;
+    }
     
     if(![self.nPwd.text isEqualToString:self.anPwd.text]){
         SPAlert(@"两次密码输入不一致",self);
+        return;
+    }
+    if([self.nPwd.text isEqualToString:self.jPwd.text]){
+        SPAlert(@"新密码和原密码一样请重新输入新密码",self);
         return;
     }
     
@@ -87,6 +97,12 @@
 - (BOOL)textFieldShouldReturn:(UITextField *)textField{
     [textField resignFirstResponder];
     return YES;
+}
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    BOOL bFlag = YES;
+    NSUInteger maxLength = 32;
+    bFlag = [textField.text stringByReplacingCharactersInRange:range withString:string].length <= maxLength;
+    return bFlag;
 }
 
 #pragma makr - AFNetworking网络加载
@@ -108,7 +124,7 @@
         }
     } failure:^(NSError *error){
         [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
     
 }

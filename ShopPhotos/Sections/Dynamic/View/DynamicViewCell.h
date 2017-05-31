@@ -16,6 +16,8 @@ static NSString * CellID = @"DynamicViewCell";
 - (void)cellSelectType:(NSInteger)type tableViewCelelIndexPath:(NSIndexPath *)indexPath;
 - (void)cellImageSelected:(NSInteger)tag TabelViewCellIndexPath:(NSIndexPath *)indexPath;
 
+- (void)rowExpanded;
+
 @end
 
 @interface DynamicViewCell : BaseViewCell

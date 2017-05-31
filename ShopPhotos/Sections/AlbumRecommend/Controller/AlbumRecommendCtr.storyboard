@@ -26,9 +26,9 @@
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="64"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="我的推荐" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kLx-oa-GIN">
-                                        <rect key="frame" x="147" y="29" width="82" height="24"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                        <nil key="textColor"/>
+                                        <rect key="frame" x="154" y="29" width="68" height="24"/>
+                                        <fontDescription key="fontDescription" name="PingFangSC-Regular" family="PingFang SC" pointSize="17"/>
+                                        <color key="textColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pPA-EA-kYm">
@@ -39,14 +39,14 @@
                                         </constraints>
                                     </view>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Sza-vG-iZe" userLabel="Back">
-                                        <rect key="frame" x="0.0" y="19" width="70" height="44"/>
+                                        <rect key="frame" x="5" y="19" width="60" height="44"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="44" id="PPs-Jy-JEq"/>
-                                            <constraint firstAttribute="width" constant="70" id="lLY-6x-ldg"/>
+                                            <constraint firstAttribute="width" constant="60" id="lLY-6x-ldg"/>
                                         </constraints>
-                                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                        <state key="normal" title="首页" image="btn_back_black">
-                                            <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                        <fontDescription key="fontDescription" name="PingFangSC-Regular" family="PingFang SC" pointSize="16"/>
+                                        <state key="normal" title=" 首页" image="btn_back_black">
+                                            <color key="titleColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
                                         </state>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gXd-NF-jVD" userLabel="edit">
@@ -80,7 +80,7 @@
                                     <constraint firstItem="pPA-EA-kYm" firstAttribute="leading" secondItem="WJ5-tO-XDd" secondAttribute="leading" id="Xed-9L-5EE"/>
                                     <constraint firstAttribute="bottom" secondItem="pPA-EA-kYm" secondAttribute="bottom" id="XrC-DE-fL4"/>
                                     <constraint firstAttribute="trailing" secondItem="gXd-NF-jVD" secondAttribute="trailing" constant="6" id="ehg-HY-6lL"/>
-                                    <constraint firstItem="Sza-vG-iZe" firstAttribute="leading" secondItem="WJ5-tO-XDd" secondAttribute="leading" id="fzH-pH-H4E"/>
+                                    <constraint firstItem="Sza-vG-iZe" firstAttribute="leading" secondItem="WJ5-tO-XDd" secondAttribute="leading" constant="5" id="fzH-pH-H4E"/>
                                     <constraint firstAttribute="height" constant="64" id="v5c-MY-PI2"/>
                                 </constraints>
                             </view>

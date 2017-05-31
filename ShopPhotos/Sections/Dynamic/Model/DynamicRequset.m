@@ -49,7 +49,7 @@
                     
                     if(photo && photo.count > 0){
                         model.isCollected = [RequestErrorGrab getIntegetKey:@"isCollected" toTarget:photo];
-                        model.photosID = [NSString stringWithFormat:@"%ld",[RequestErrorGrab getIntegetKey:@"id" toTarget:photo]];
+                        model.photosID = [NSString stringWithFormat:@"%ld",(long)[RequestErrorGrab getIntegetKey:@"id" toTarget:photo]];
                         model.showPrice = [RequestErrorGrab getBooLwitKey:@"showPrice" toTarget:photo];
                         model.price = [RequestErrorGrab getStringwitKey:@"price" toTarget:photo];
                         model.title = [RequestErrorGrab getStringwitKey:@"title" toTarget:photo];
@@ -75,7 +75,7 @@
         
     } @catch (NSException *exception) {
         self.status = 1;
-        self.message = NETWORKTIPS;
+        self.message = exception.name;//NETWORKTIPS;
     }
 
 }

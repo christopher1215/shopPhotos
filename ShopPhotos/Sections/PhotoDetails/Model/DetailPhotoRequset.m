@@ -22,7 +22,7 @@
             self.cover = [RequestErrorGrab getStringwitKey:@"cover" toTarget:json];
             self.showPrice = [RequestErrorGrab getBooLwitKey:@"showPrice" toTarget:json];
             self.big = [RequestErrorGrab getStringwitKey:@"big" toTarget:json];
-            self.photoId = [NSString stringWithFormat:@"%ld",[RequestErrorGrab getIntegetKey:@"id" toTarget:json]];
+            self.photoId = [NSString stringWithFormat:@"%ld",(long)[RequestErrorGrab getIntegetKey:@"id" toTarget:json]];
             self.name = [RequestErrorGrab getStringwitKey:@"name" toTarget:json];
             self.isCollected = [RequestErrorGrab getBooLwitKey:@"isCollected" toTarget:json];
             self.date = [RequestErrorGrab getStringwitKey:@"date" toTarget:json];
@@ -37,19 +37,19 @@
             
             NSDictionary * subclass = [RequestErrorGrab getDicwitKey:@"subclass" toTarget:json];
             if(subclass && subclass.count > 0){
-                self.subclassID = [NSString stringWithFormat:@"%ld",[RequestErrorGrab getIntegetKey:@"id" toTarget:subclass]];
+                self.subclassID = [NSString stringWithFormat:@"%ld",(long)[RequestErrorGrab getIntegetKey:@"id" toTarget:subclass]];
                 self.subclassName = [RequestErrorGrab getStringwitKey:@"name" toTarget:subclass];
             }
             
             NSDictionary * classify = [RequestErrorGrab getDicwitKey:@"classify" toTarget:json];
             if(classify && classify.count > 0){
                 self.classifyName = [RequestErrorGrab getStringwitKey:@"name" toTarget:classify];
-                self.classifyID = [NSString stringWithFormat:@"%ld",[RequestErrorGrab getIntegetKey:@"id" toTarget:classify]];
+                self.classifyID = [NSString stringWithFormat:@"%ld",(long)[RequestErrorGrab getIntegetKey:@"id" toTarget:classify]];
             }
         }
     } @catch (NSException *exception) {
         self.status = 1;
-        self.message = NETWORKTIPS;
+        self.message = exception.name;//NETWORKTIPS;
     }
 }
 

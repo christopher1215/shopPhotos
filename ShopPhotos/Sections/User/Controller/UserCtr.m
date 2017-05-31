@@ -27,6 +27,7 @@
 
 #import "UserUpdateViewController.h"
 #import "BindEmailViewController.h"
+#import "MJPhoto.h"
 
 @interface UserCtr ()<UITableViewDelegate,UserShareAlertDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,TZImagePickerControllerDelegate,TOCropViewControllerDelegate>{
 }
@@ -55,7 +56,8 @@
     
     self.table.delegate = self;
     self.table.separatorStyle = UITableViewCellSeparatorStyleNone;
-    [self.icon addTarget:self action:@selector(iconSelected)];
+    [self.icon addTarget:self action:@selector(headSelected)];
+//    [self.icon addTarget:self action:@selector(iconSelected)];
     [self.head addTarget:self action:@selector(headSelected)];
     [self.qrView addTarget:self action:@selector(qrViewSelected)];
     [self.feedback addTarget:self action:@selector(feedbackSelected)];
@@ -161,12 +163,26 @@
 }
 
 - (IBAction)onUpdate:(id)sender {
-    [self updateUserInfo:@{@"name":self.nameText.text,
-                           @"signature":self.signatureText.text,
-                           @"qq":self.qqText.text,
-                           @"wechat":self.chatText.text,
-                           @"phone":self.phone.text,
-                           @"address":self.locationText.text}];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
+    if (self.nameText.text.length > 0) {
+        [data addEntriesFromDictionary:@{@"name":self.nameText.text}];
+    }
+    if (self.signatureText.text.length > 0) {
+        [data addEntriesFromDictionary:@{@"signature":self.signatureText.text}];
+    }
+    if (self.qqText.text.length > 0) {
+        [data addEntriesFromDictionary:@{@"qq":self.qqText.text}];
+    }
+    if (self.chatText.text.length > 0) {
+        [data addEntriesFromDictionary:@{@"wechat":self.chatText.text}];
+    }
+    if (self.phone.text.length > 0) {
+        [data addEntriesFromDictionary:@{@"phone":self.phone.text}];
+    }
+    if (self.locationText.text.length > 0) {
+        [data addEntriesFromDictionary:@{@"address":self.locationText.text}];
+    }
+    [self updateUserInfo:data];
 }
 
 #pragma mark - OnClick
@@ -434,7 +450,7 @@
         LoginCtr * login = GETALONESTORYBOARDPAGE(@"LoginCtr");
         [weakSelef.navigationController pushViewController:login animated:YES];
         [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
     }];
 }
 
@@ -456,6 +472,7 @@
         }
         
     } failure:^(NSError *error){
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
         [weakSelef closeLoad];
         [weakSelef.table.mj_header endRefreshing];
     }];

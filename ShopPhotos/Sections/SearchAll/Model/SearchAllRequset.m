@@ -7,7 +7,7 @@
 //
 
 #import "SearchAllRequset.h"
-#import "AttentionPersonalSearchModel.h"
+#import "UserModel.h"
 #import "AlbumPhotosModel.h"
 
 @implementation SearchAllRequset
@@ -32,17 +32,19 @@
             
             if(user && user.count > 0){
                 for (NSDictionary * userDic in user) {
-                    AttentionPersonalSearchModel * model = [[AttentionPersonalSearchModel alloc] init];
+                    UserModel * model = [[UserModel alloc] init];
+                    model.uid = [RequestErrorGrab getStringwitKey:@"uid" toTarget:userDic];
                     model.address = [RequestErrorGrab getStringwitKey:@"address" toTarget:userDic];
-                    model.name = [RequestErrorGrab getStringwitKey:@"name" toTarget:userDic];
-                    model.qq = [RequestErrorGrab getStringwitKey:@"qq" toTarget:userDic];
-                    model.phone = [RequestErrorGrab getStringwitKey:@"phone" toTarget:userDic];
-                    model.wechat = [RequestErrorGrab getStringwitKey:@"wechat" toTarget:userDic];
                     model.avatar = [RequestErrorGrab getStringwitKey:@"avatar" toTarget:userDic];
                     model.bg_image = [RequestErrorGrab getStringwitKey:@"bg_image" toTarget:userDic];
-                    model.signature = [RequestErrorGrab getStringwitKey:@"signature" toTarget:userDic];
-                    model.uid = [RequestErrorGrab getStringwitKey:@"uid" toTarget:userDic];
+                    model.name = [RequestErrorGrab getStringwitKey:@"name" toTarget:userDic];
+                    model.name_abbr = [RequestErrorGrab getStringwitKey:@"name_abbr" toTarget:userDic];
+                    model.phone = [RequestErrorGrab getStringwitKey:@"phone" toTarget:userDic];
+                    model.qq = [RequestErrorGrab getStringwitKey:@"qq" toTarget:userDic];
                     model.settings = [RequestErrorGrab getDicwitKey:@"settings" toTarget:userDic];
+                    model.signature = [RequestErrorGrab getStringwitKey:@"signature" toTarget:userDic];
+                    model.wechat = [RequestErrorGrab getStringwitKey:@"wechat" toTarget:userDic];
+                    model.email = [RequestErrorGrab getStringwitKey:@"email" toTarget:userDic];
                     [self.users addObject:model];
                 }
             }
@@ -51,12 +53,19 @@
                 for(NSDictionary * photo in photos){
                     AlbumPhotosModel * model = [[AlbumPhotosModel alloc] init];
                     model.title = [RequestErrorGrab getStringwitKey:@"title" toTarget:photo];
-                    model.cover = [RequestErrorGrab getStringwitKey:@"cover" toTarget:photo];
-                    model.createdAt = [RequestErrorGrab getStringwitKey:@"createdAt" toTarget:photo];
-                    model.Id = [NSString stringWithFormat:@"%ld",[RequestErrorGrab getIntegetKey:@"id" toTarget:photo]];
-                    model.user = [RequestErrorGrab getDicwitKey:@"user" toTarget:photo];
-                    model.collected = [RequestErrorGrab getIntegetKey:@"collected" toTarget:photo];
                     model.recommend = [RequestErrorGrab getBooLwitKey:@"recommend" toTarget:photo];
+                    model.collected = [RequestErrorGrab getBooLwitKey:@"collected" toTarget:photo];
+                    model.dateDiff = [RequestErrorGrab getStringwitKey:@"dateDiff" toTarget:photo];
+                    model.cover = [RequestErrorGrab getStringwitKey:@"cover" toTarget:photo];
+                    model.video = [RequestErrorGrab getStringwitKey:@"video" toTarget:photo];
+                    model.desc = [RequestErrorGrab getStringwitKey:@"description" toTarget:photo];
+                    model.Id = [NSString stringWithFormat:@"%ld",(long)[RequestErrorGrab getIntegetKey:@"id" toTarget:photo]];
+                    model.createdAt = [RequestErrorGrab getStringwitKey:@"createdAt" toTarget:photo];
+                    model.user = [RequestErrorGrab getDicwitKey:@"user" toTarget:photo];
+                    model.classify = [RequestErrorGrab getDicwitKey:@"classify" toTarget:photo];
+                    model.subclass = [RequestErrorGrab getDicwitKey:@"subclass" toTarget:photo];
+                    model.images = [RequestErrorGrab getArrwitKey:@"images" toTarget:photo];
+                    model.type = [RequestErrorGrab getStringwitKey:@"type" toTarget:photo];
                     [self.photos addObject:model];
                 }
             }
@@ -66,12 +75,19 @@
                 for(NSDictionary * photo in selfPhotos){
                     AlbumPhotosModel * model = [[AlbumPhotosModel alloc] init];
                     model.title = [RequestErrorGrab getStringwitKey:@"title" toTarget:photo];
-                    model.cover = [RequestErrorGrab getStringwitKey:@"cover" toTarget:photo];
-                    model.createdAt = [RequestErrorGrab getStringwitKey:@"createdAt" toTarget:photo];
-                    model.Id = [NSString stringWithFormat:@"%ld",[RequestErrorGrab getIntegetKey:@"id" toTarget:photo]];
-                    model.user = [RequestErrorGrab getDicwitKey:@"user" toTarget:photo];
-                    model.collected = [RequestErrorGrab getIntegetKey:@"collected" toTarget:photo];
                     model.recommend = [RequestErrorGrab getBooLwitKey:@"recommend" toTarget:photo];
+                    model.collected = [RequestErrorGrab getBooLwitKey:@"collected" toTarget:photo];
+                    model.dateDiff = [RequestErrorGrab getStringwitKey:@"dateDiff" toTarget:photo];
+                    model.cover = [RequestErrorGrab getStringwitKey:@"cover" toTarget:photo];
+                    model.video = [RequestErrorGrab getStringwitKey:@"video" toTarget:photo];
+                    model.desc = [RequestErrorGrab getStringwitKey:@"description" toTarget:photo];
+                    model.Id = [NSString stringWithFormat:@"%ld",(long)[RequestErrorGrab getIntegetKey:@"id" toTarget:photo]];
+                    model.createdAt = [RequestErrorGrab getStringwitKey:@"createdAt" toTarget:photo];
+                    model.user = [RequestErrorGrab getDicwitKey:@"user" toTarget:photo];
+                    model.classify = [RequestErrorGrab getDicwitKey:@"classify" toTarget:photo];
+                    model.subclass = [RequestErrorGrab getDicwitKey:@"subclass" toTarget:photo];
+                    model.images = [RequestErrorGrab getArrwitKey:@"images" toTarget:photo];
+                    model.type = [RequestErrorGrab getStringwitKey:@"type" toTarget:photo];
 
                     [self.selfPhotos addObject:model];
                 }
@@ -82,7 +98,7 @@
         
     } @catch (NSException *exception) {
         self.status = 0;
-        self.message = NETWORKTIPS;
+        self.message = exception.name;//NETWORKTIPS;
     }
 }
 

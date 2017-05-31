@@ -32,7 +32,7 @@
         self.titleText = [UILabel new];
         [self.titleText setText:@""];
         [self.titleText setTextAlignment:NSTextAlignmentCenter];
-        [self.titleText setFont:[UIFont fontWithName:@"Helvetica-Bold" size:19]];
+        [self.titleText setFont:[UIFont fontWithName:@"Helvetica-Bold" size:17]];
         
         [self.titleText setTextColor:[UIColor whiteColor]];
         [self addSubview:self.titleText];

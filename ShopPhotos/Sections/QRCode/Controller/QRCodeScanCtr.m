@@ -256,7 +256,8 @@
         }
         case AVAuthorizationStatusDenied:
         case AVAuthorizationStatusRestricted:
-            SPAlert(@"請在“設置－隱私－相機選項中，允許8591訪問您的相機",self);
+            //SPAlert(@"請在“設置－隱私－相機選項中，允許8591訪問您的相機",self);
+            SPAlert(@"请在设置－隐私－相机选项中，允许有图访问您的相机",self);
             break;
         default:
             break;
@@ -383,7 +384,8 @@
             //            [weakSelef showToast:model.message];
         }
     } failure:^(NSError * error){
-        [weakSelef showToast:NETWORKTIPS];
+        [popupErrVC showInView:self animated:YES type:@"error" message:@"不是有图二维码"];
+        //[weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
         [weakSelef closeLoad];
     }];
 
@@ -430,7 +432,7 @@
         }
     } failure:^(NSError *error){
         [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
         [weakSelef startScan];
     }];
 }
@@ -457,7 +459,7 @@
         }
     } failure:^(NSError *error){
         [weakSelef closeLoad];
-        [weakSelef showToast:NETWORKTIPS];
+        [weakSelef showToast:[NSString stringWithFormat:@"%@", error]];//NETWORKTIPS];
         [weakSelef startScan];
     }];
 }

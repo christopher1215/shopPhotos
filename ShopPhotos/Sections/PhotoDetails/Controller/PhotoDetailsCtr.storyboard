@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16B2657" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -27,9 +27,9 @@
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="64"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="相册详情" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Trh-AP-0IS">
-                                        <rect key="frame" x="147" y="29" width="82" height="24"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                        <nil key="textColor"/>
+                                        <rect key="frame" x="99" y="30" width="178" height="24"/>
+                                        <fontDescription key="fontDescription" name="PingFangSC-Regular" family="PingFang SC" pointSize="17"/>
+                                        <color key="textColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6QT-DX-hg3" userLabel="seperate">
@@ -41,43 +41,50 @@
                                         </constraints>
                                     </view>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="w2r-Vq-vCC" userLabel="Back">
-                                        <rect key="frame" x="15" y="31" width="52" height="22"/>
+                                        <rect key="frame" x="5" y="21" width="60" height="42"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" secondItem="w2r-Vq-vCC" secondAttribute="height" multiplier="7:3" id="BDp-Wy-ziV"/>
+                                            <constraint firstAttribute="height" constant="42" id="lJC-Op-5al"/>
+                                            <constraint firstAttribute="width" constant="60" id="u87-Yv-1kr"/>
                                         </constraints>
-                                        <state key="normal" title="首页" image="btn_back_black">
-                                            <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                        <fontDescription key="fontDescription" name="PingFangSC-Regular" family="PingFang SC" pointSize="15"/>
+                                        <state key="normal" title=" 返回" image="btn_back_black">
+                                            <color key="titleColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
                                         </state>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="19I-OG-48R" userLabel="edit">
-                                        <rect key="frame" x="340" y="33" width="20" height="20"/>
+                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="19I-OG-48R" userLabel="edit">
+                                        <rect key="frame" x="330" y="23" width="40" height="40"/>
                                         <constraints>
+                                            <constraint firstAttribute="width" constant="40" id="Hta-oy-Awk"/>
                                             <constraint firstAttribute="width" secondItem="19I-OG-48R" secondAttribute="height" multiplier="1:1" id="tjv-sc-2NT"/>
                                         </constraints>
-                                        <state key="normal" backgroundImage="ico_edit"/>
+                                        <inset key="contentEdgeInsets" minX="10" minY="10" maxX="10" maxY="10"/>
+                                        <state key="normal" image="ico_edit"/>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="u22-mj-hSD" userLabel="search">
-                                        <rect key="frame" x="295" y="33" width="20" height="20"/>
+                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="u22-mj-hSD" userLabel="search">
+                                        <rect key="frame" x="285" y="23" width="40" height="40"/>
                                         <constraints>
+                                            <constraint firstAttribute="width" constant="40" id="2zR-S7-Tea"/>
                                             <constraint firstAttribute="width" secondItem="u22-mj-hSD" secondAttribute="height" multiplier="1:1" id="E1v-UP-cH3"/>
                                         </constraints>
-                                        <state key="normal" backgroundImage="ico_search_b"/>
+                                        <inset key="contentEdgeInsets" minX="10" minY="10" maxX="10" maxY="10"/>
+                                        <state key="normal" image="ico_search_b"/>
                                     </button>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="19I-OG-48R" secondAttribute="trailing" constant="15" id="2ka-c8-d7D"/>
+                                    <constraint firstAttribute="trailing" secondItem="19I-OG-48R" secondAttribute="trailing" constant="5" id="2ka-c8-d7D"/>
                                     <constraint firstItem="6QT-DX-hg3" firstAttribute="leading" secondItem="1ht-uq-EhC" secondAttribute="leading" id="4fr-Yt-A5G"/>
-                                    <constraint firstItem="w2r-Vq-vCC" firstAttribute="leading" secondItem="1ht-uq-EhC" secondAttribute="leading" constant="15" id="7Kg-dA-0dK"/>
+                                    <constraint firstItem="w2r-Vq-vCC" firstAttribute="leading" secondItem="1ht-uq-EhC" secondAttribute="leading" constant="5" id="7Kg-dA-0dK"/>
                                     <constraint firstAttribute="trailing" secondItem="6QT-DX-hg3" secondAttribute="trailing" id="Flz-Fa-Y38"/>
-                                    <constraint firstItem="6QT-DX-hg3" firstAttribute="top" secondItem="w2r-Vq-vCC" secondAttribute="bottom" constant="10" id="JGe-V0-7kY"/>
+                                    <constraint firstItem="6QT-DX-hg3" firstAttribute="top" secondItem="w2r-Vq-vCC" secondAttribute="bottom" id="JGe-V0-7kY"/>
                                     <constraint firstAttribute="height" constant="64" id="LR1-Wp-ILd"/>
-                                    <constraint firstItem="6QT-DX-hg3" firstAttribute="top" secondItem="u22-mj-hSD" secondAttribute="bottom" constant="10" id="O2p-HY-Acv"/>
-                                    <constraint firstItem="19I-OG-48R" firstAttribute="leading" secondItem="u22-mj-hSD" secondAttribute="trailing" constant="25" id="XNh-Oe-NY1"/>
+                                    <constraint firstItem="6QT-DX-hg3" firstAttribute="top" secondItem="u22-mj-hSD" secondAttribute="bottom" id="O2p-HY-Acv"/>
+                                    <constraint firstItem="u22-mj-hSD" firstAttribute="leading" secondItem="Trh-AP-0IS" secondAttribute="trailing" constant="8" id="Stc-Fk-G0N"/>
+                                    <constraint firstItem="19I-OG-48R" firstAttribute="leading" secondItem="u22-mj-hSD" secondAttribute="trailing" constant="5" id="XNh-Oe-NY1"/>
                                     <constraint firstItem="Trh-AP-0IS" firstAttribute="centerX" secondItem="1ht-uq-EhC" secondAttribute="centerX" id="bOp-my-msg"/>
-                                    <constraint firstItem="6QT-DX-hg3" firstAttribute="top" secondItem="19I-OG-48R" secondAttribute="bottom" constant="10" id="iRg-GY-NfX"/>
+                                    <constraint firstItem="Trh-AP-0IS" firstAttribute="centerY" secondItem="w2r-Vq-vCC" secondAttribute="centerY" id="hlq-4f-2fX"/>
+                                    <constraint firstItem="6QT-DX-hg3" firstAttribute="top" secondItem="19I-OG-48R" secondAttribute="bottom" id="iRg-GY-NfX"/>
                                     <constraint firstAttribute="bottom" secondItem="6QT-DX-hg3" secondAttribute="bottom" id="qMl-fD-bvN"/>
-                                    <constraint firstItem="6QT-DX-hg3" firstAttribute="top" secondItem="Trh-AP-0IS" secondAttribute="bottom" constant="10" id="wWT-wi-XUT"/>
                                 </constraints>
                             </view>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="AhC-dt-OsV" userLabel="content">
@@ -99,6 +106,7 @@
                         <outlet property="back" destination="w2r-Vq-vCC" id="dFd-c5-DmO"/>
                         <outlet property="content" destination="AhC-dt-OsV" id="2Xb-YX-3um"/>
                         <outlet property="edit" destination="19I-OG-48R" id="gmx-Xj-M5q"/>
+                        <outlet property="lblTitle" destination="Trh-AP-0IS" id="l5e-JX-rWx"/>
                         <outlet property="search" destination="u22-mj-hSD" id="DS6-28-74U"/>
                     </connections>
                 </viewController>

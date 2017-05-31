@@ -10,6 +10,7 @@
 
 
 #define CacheUserModel @"CacheUserModelKeY"
+#define FirstRun @"FirstRun"
 
 
 @interface UserModel : BaseModel
